@@ -1,11 +1,5 @@
 package de.blume2000.finden.testutils
 
-import de.blume2000.avro.produkte.AvroArtikelTypNonFlower
-import de.blume2000.avro.produkte.AvroKlassifikation3
-import de.blume2000.avro.produkte.AvroPreis
-import de.blume2000.avro.produkte.AvroProdukt
-import de.blume2000.avro.produkte.AvroProduktBild
-import de.blume2000.avro.produkte.AvroStandort
 import de.blume2000.finden.domain.model.produkte.produkt.Blumensorte
 import de.blume2000.finden.domain.model.produkte.produkt.Klassifikation
 import de.blume2000.finden.domain.model.produkte.produkt.KlassifikationId
@@ -52,53 +46,3 @@ fun erstelleProdukt(
   blumensorten = blumensorten,
   verfügbarkeiten = verfügbarkeiten,
 )
-
-@Suppress("LongParameterList")
-fun erstelleAvroProdukt(
-  nummer: String = "ABC123",
-  name: String = "Name",
-) =
-  AvroProdukt.newBuilder().setProduktNummer(nummer).setName(name)
-    .setErpNummer("ErpNummer")
-    .setTyp("Typ")
-    .setProduktNameShops("ProduktNameShops")
-    .setProduktLangBeschreibung("ProduktLangBeschreibung")
-    .setAktiv(true)
-    .setAusverkauft(false)
-    .setLieferZeitraumStartdatum("LieferZeitraumStartdatum")
-    .setLieferZeitraumEnddatum("LieferZeitraumEnddatum")
-    .setAenderungsDatum("AenderungsDatum")
-    .setStandort(AvroStandort())
-    .setArtikelTypNonFlower(AvroArtikelTypNonFlower())
-    .setKlassifikation3(AvroKlassifikation3("11", "Strauss"))
-    .setPreis(
-      AvroPreis(
-        BigDecimal.ONE.toString(),
-        BigDecimal.ONE.toString(),
-        "0.19",
-        Currency.getInstance(Locale.GERMANY).toString()
-      )
-    )
-    .setUvp(
-      AvroPreis(
-        BigDecimal.ONE.toString(),
-        BigDecimal.ONE.toString(),
-        "0.19",
-        Currency.getInstance(Locale.GERMANY).toString()
-      )
-    )
-    .setAusgeschlosseneLiefertage(emptyList())
-    .setProduktBild(AvroProduktBild("https://res.cloudinary.com/blume2000/image/upload/c_fill,f_auto,h_%h%,q_auto,w_%w%"))
-    .setAusgeschlosseneVersandarten(emptyList())
-    .setAusgeschlosseneWochentage(emptyList())
-    .setDetailBilder(emptyList())
-    .setBlumenSorten(emptyList())
-    .setArtikelFarben(emptyList())
-    .setPflegetippsAnzeigen(false)
-    .setAbo(false)
-    .setLieferAussage("LieferAussage")
-    .setUrlName("/zurpds")
-    .setMuttertagsVersand(false)
-    .setErlaubteZusatzArtikelGroessen(emptyList())
-    .setZusatzArtikel(false)
-    .build()

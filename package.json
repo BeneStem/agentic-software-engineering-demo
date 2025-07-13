@@ -20,7 +20,6 @@
     "vueDev": "vue-cli-service serve"
   },
   "dependencies": {
-    "@blume2000/design-system": "4.62.2",
     "@fastify/env": "4.0.0",
     "@fastify/static": "6.4.0",
     "@google-cloud/opentelemetry-cloud-monitoring-exporter": "0.14.0",
