@@ -1,0 +1,448 @@
+include:
+  - project: "blume2000/ecom/toolbox/gitlab-ci-job-templates"
+    ref: "main"
+    file: "terraform.gitlab-ci.yml"
+  - project: "blume2000/ecom/toolbox/gitlab-ci-job-templates"
+    ref: "main"
+    file: "environment.gitlab-ci.yml"
+  - project: "blume2000/ecom/toolbox/gitlab-ci-job-templates"
+    ref: "main"
+    file: "rules.gitlab-ci.yml"
+  - project: "blume2000/ecom/toolbox/gitlab-ci-job-templates"
+    ref: "main"
+    file: "erkunden/experimental.gitlab-ci.yml"
+
+
+variables:
+  GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx2048m
+  GRADLE_USER_HOME: ".gradle"
+  APPLICATION_NAME: $CI_PROJECT_NAME
+  TF_VAR_application_name: $CI_PROJECT_NAME
+  TF_VAR_application_version: $CI_PIPELINE_ID
+  TF_VAR_b2k_unleash_project_id: $CI_PROJECT_ID
+
+
+workflow:
+  rules:
+    - if: ($CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "web")
+
+
+### Terraform - Operations ###
+.Terraform - Operations:
+  extends:
+    - ".terraform job template gcp state 1.0.4"
+    - ".terraform rule"
+  variables:
+    TF_VAR_b2k_gcp_shared_operations_project_name: $B2K_GCP_SHARED_OPERATIONS_PROJECT_NAME
+    TERRAFORM_DIRECTORY: infrastructure/operations
+
+Terraform - Operations DEV:
+  extends:
+    - ".Terraform - Operations"
+    - ".dev environment"
+  needs: [ ]
+  variables:
+    TF_VAR_b2k_gcp_project_name: $B2K_GCP_PROJECT_NAME_DEV
+    TERRAFORM_STATE_BUCKET: $TERRAFORM_STATE_BUCKET_DEV
+  before_script:
+    - sed -i "s/%environment%/$CI_ENVIRONMENT_NAME/g" infrastructure/operations/my-little-dashboard.json
+    - sed -i "s/%project_id%/$B2K_GCP_PROJECT_NAME_DEV/g" infrastructure/operations/my-little-dashboard.json
+    - export GOOGLE_APPLICATION_CREDENTIALS=$FINDEN_SERVICE_ACCOUNT_KEY_dev
+
+Terraform - Operations PROD:
+  extends:
+    - ".Terraform - Operations"
+    - ".prod environment"
+  needs: [ ]
+  variables:
+    TF_VAR_b2k_gcp_project_name: $B2K_GCP_PROJECT_NAME_PROD
+    TERRAFORM_STATE_BUCKET: $TERRAFORM_STATE_BUCKET_PROD
+  before_script:
+    - sed -i "s/%environment%/$CI_ENVIRONMENT_NAME/g" infrastructure/operations/my-little-dashboard.json
+    - sed -i "s/%project_id%/$B2K_GCP_PROJECT_NAME_PROD/g" infrastructure/operations/my-little-dashboard.json
+    - export GOOGLE_APPLICATION_CREDENTIALS=$FINDEN_SERVICE_ACCOUNT_KEY_prod
+
+
+### Terraform - Mongo DB ###
+Terraform - Mongo DB DEV:
+  extends:
+    - ".terraform job template gcp state 1.0.4"
+    - ".dev environment"
+    - ".terraform rule"
+  needs: []
+  variables:
+    TF_VAR_mongo_atlas_project_id: $MONGO_ATLAS_PROJECT_ID_DEV
+    TF_VAR_mongo_atlas_master_public_key: $MONGO_ATLAS_MASTER_PUBLIC_KEY_DEV
+    TF_VAR_mongo_atlas_master_private_key: $MONGO_ATLAS_MASTER_PRIVATE_KEY_DEV
+    TF_VAR_mongo_atlas_db_user_name: $MONGO_DB_USER_DEV
+    TF_VAR_mongo_atlas_db_user_password: $MONGO_DB_PASSWORD_DEV
+    TF_VAR_atlas_network_container_id: $TF_VAR_atlas_network_container_id_dev
+    TF_VAR_b2k_gcp_shared_network_project_name: $B2K_GCP_SHARED_NETWORK_PROJECT_NAME_DEV
+    TF_VAR_atlas_region: "WESTERN_EUROPE"
+    TERRAFORM_STATE_BUCKET: $TERRAFORM_STATE_BUCKET_DEV
+    TERRAFORM_DIRECTORY: infrastructure/mongo
+  before_script:
+    - export GOOGLE_APPLICATION_CREDENTIALS=$FINDEN_SERVICE_ACCOUNT_KEY_dev
+
+Terraform - Mongo DB PROD:
+  extends:
+    - ".terraform job template gcp state 1.0.4"
+    - ".prod environment"
+    - ".terraform rule"
+  needs: []
+  variables:
+    TF_VAR_mongo_atlas_project_id: $MONGO_ATLAS_PROJECT_ID_PROD
+    TF_VAR_mongo_atlas_master_public_key: $MONGO_ATLAS_MASTER_PUBLIC_KEY_PROD
+    TF_VAR_mongo_atlas_master_private_key: $MONGO_ATLAS_MASTER_PRIVATE_KEY_PROD
+    TF_VAR_mongo_atlas_db_user_name: $MONGO_DB_USER_PROD
+    TF_VAR_mongo_atlas_db_user_password: $MONGO_DB_PASSWORD_PROD
+    TF_VAR_atlas_network_container_id: $TF_VAR_atlas_network_container_id_prod
+    TF_VAR_b2k_gcp_shared_network_project_name: $B2K_GCP_SHARED_NETWORK_PROJECT_NAME_PROD
+    TF_VAR_atlas_region: "WESTERN_EUROPE"
+    TERRAFORM_STATE_BUCKET: $TERRAFORM_STATE_BUCKET_PROD
+    TERRAFORM_DIRECTORY: infrastructure/mongo
+  before_script:
+    - export GOOGLE_APPLICATION_CREDENTIALS=$FINDEN_SERVICE_ACCOUNT_KEY_prod
+
+
+### Terraform - Kubernetes ###
+Terraform - K8s DEV:
+  extends:
+    - ".terraform gcp sdk job template 1.0.4"
+    - ".dev environment"
+    - ".terraform rule"
+  needs:
+    - job: "Terraform - Operations DEV"
+      artifacts: false
+    - job: "Terraform - Mongo DB DEV"
+      artifacts: false
+  variables:
+    TF_VAR_b2k_gcp_project_name: $B2K_GCP_PROJECT_NAME_DEV
+    TF_VAR_mongo_atlas_db_user_name: $MONGO_DB_USER_DEV
+    TF_VAR_mongo_atlas_db_user_password: $MONGO_DB_PASSWORD_DEV
+    TF_VAR_mongo_atlas_master_public_key: $MONGO_ATLAS_MASTER_PUBLIC_KEY_DEV
+    TF_VAR_mongo_atlas_master_private_key: $MONGO_ATLAS_MASTER_PRIVATE_KEY_DEV
+    TF_VAR_mongo_atlas_project_id: $MONGO_ATLAS_PROJECT_ID_DEV
+    TF_VAR_aiven_schema_registry_user: $AIVEN_SCHEMA_REGISTRY_USER_DEV
+    TF_VAR_aiven_schema_registry_password: $AIVEN_SCHEMA_REGISTRY_PASSWORD_DEV
+    TERRAFORM_STATE_BUCKET: $TERRAFORM_STATE_BUCKET_DEV
+    TERRAFORM_DIRECTORY: infrastructure/gke
+
+  before_script:
+    - export GOOGLE_APPLICATION_CREDENTIALS=$FINDEN_SERVICE_ACCOUNT_KEY_dev
+    - export TF_VAR_kafka_produkte_read_ssl_keystore_password=$FINDEN_SSL_KEYSTORE_PASSWORD_DEV
+    - export TF_VAR_kafka_produkte_read_ssl_truststore_password=$FINDEN_SSL_TRUSTSTORE_PASSWORD_DEV
+    - export TF_VAR_kafka_verfuegbarkeiten_read_ssl_keystore_password=$FINDEN_VERFUEGBARKEITEN_SSL_KEYSTORE_PASSWORD_DEV
+    - export TF_VAR_kafka_verfuegbarkeiten_read_ssl_truststore_password=$FINDEN_VERFUEGBARKEITEN_SSL_TRUSTSTORE_PASSWORD_DEV
+    - gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS
+    - gcloud container clusters get-credentials $KUBERNETES_CLUSTER_NAME_dev --region=$TF_VAR_region --project=$B2K_GCP_PROJECT_NAME_DEV
+
+Terraform - K8s PROD:
+  extends:
+    - ".terraform gcp sdk job template 1.0.4"
+    - ".prod environment"
+    - ".terraform rule"
+  needs:
+    - job: "Terraform - Operations PROD"
+      artifacts: false
+    - job: "Terraform - Mongo DB PROD"
+      artifacts: false
+  variables:
+    TF_VAR_b2k_gcp_project_name: $B2K_GCP_PROJECT_NAME_PROD
+    TF_VAR_mongo_atlas_db_user_name: $MONGO_DB_USER_PROD
+    TF_VAR_mongo_atlas_db_user_password: $MONGO_DB_PASSWORD_PROD
+    TF_VAR_mongo_atlas_master_public_key: $MONGO_ATLAS_MASTER_PUBLIC_KEY_PROD
+    TF_VAR_mongo_atlas_master_private_key: $MONGO_ATLAS_MASTER_PRIVATE_KEY_PROD
+    TF_VAR_mongo_atlas_project_id: $MONGO_ATLAS_PROJECT_ID_PROD
+    TF_VAR_aiven_schema_registry_user: $AIVEN_SCHEMA_REGISTRY_USER_PROD
+    TF_VAR_aiven_schema_registry_password: $AIVEN_SCHEMA_REGISTRY_PASSWORD_PROD
+    TERRAFORM_STATE_BUCKET: $TERRAFORM_STATE_BUCKET_PROD
+    TERRAFORM_DIRECTORY: infrastructure/gke
+  before_script:
+    - export GOOGLE_APPLICATION_CREDENTIALS=$FINDEN_SERVICE_ACCOUNT_KEY_prod
+    - export TF_VAR_kafka_produkte_read_ssl_keystore_password=$FINDEN_SSL_KEYSTORE_PASSWORD_PROD
+    - export TF_VAR_kafka_produkte_read_ssl_truststore_password=$FINDEN_SSL_TRUSTSTORE_PASSWORD_PROD
+    - export TF_VAR_kafka_verfuegbarkeiten_read_ssl_keystore_password=$FINDEN_VERFUEGBARKEITEN_SSL_KEYSTORE_PASSWORD_PROD
+    - export TF_VAR_kafka_verfuegbarkeiten_read_ssl_truststore_password=$FINDEN_VERFUEGBARKEITEN_SSL_TRUSTSTORE_PASSWORD_PROD
+    - gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS
+    - gcloud container clusters get-credentials $KUBERNETES_CLUSTER_NAME_prod --region=$TF_VAR_region --project=$B2K_GCP_PROJECT_NAME_PROD
+
+
+### Backend - Build ###
+Backend - Build DEV:
+  extends: ".Backend - Build DEV"
+
+Backend - Build PROD:
+  extends: ".Backend - Build PROD"
+
+
+### Frontend - Build ###
+Frontend - Install dependencies:
+  extends: ".Frontend - Install dependencies"
+
+
+### Backend - Test ###
+Backend - Lint:
+  extends: ".Backend - Lint"
+
+Backend - Unit Test:
+  extends: ".Backend - Unit Test"
+
+Backend - Integration Test:
+  extends: ".Backend - Integration Test"
+
+Backend - Audit:
+  extends: ".Backend - Audit"
+
+
+### Frontend - Test ###
+Frontend - Lint:
+  extends: ".Frontend - Lint"
+
+Frontend - Unit Test:
+  extends: ".Frontend - Unit Test"
+
+Frontend - Audit:
+  extends: ".Frontend - Audit"
+
+
+### Backend - Build Docker Image ###
+Backend - Build Docker Image DEV:
+  extends:
+    - ".Backend - Build Docker Image DEV"
+    - ".dev environment"
+  before_script:
+    - export GOOGLE_APPLICATION_CREDENTIALS=$FINDEN_SERVICE_ACCOUNT_KEY_dev
+
+Backend - Build Docker Image PROD:
+  extends:
+    - ".Backend - Build Docker Image PROD"
+    - ".prod environment"
+  before_script:
+    - export GOOGLE_APPLICATION_CREDENTIALS=$FINDEN_SERVICE_ACCOUNT_KEY_prod
+
+
+### Frontend - Push Docker Images ###
+Frontend - Push Docker Image DEV:
+  extends: ".Frontend - Push Docker Image DEV"
+  variables:
+    PROJECT_NAME: $B2K_GCP_PROJECT_NAME_DEV
+    VUE_APP_API_HOST: http://dev.finden-backend.erkunden.ecom.blume2000.de
+  before_script:
+    - gcloud auth activate-service-account --key-file $FINDEN_SERVICE_ACCOUNT_KEY_dev
+
+Frontend - Push Docker Image PROD:
+  extends: ".Frontend - Push Docker Image PROD"
+  variables:
+    PROJECT_NAME: $B2K_GCP_PROJECT_NAME_PROD
+    VUE_APP_API_HOST: http://prod.finden-backend.erkunden.ecom.blume2000.de
+  before_script:
+    - gcloud auth activate-service-account --key-file $FINDEN_SERVICE_ACCOUNT_KEY_prod
+
+
+# Try to build docker for non master branches to verify functionality
+#build frontend image:
+#  stage: push
+#  extends: ".npm base task"
+#  dependencies: []
+#  rules: #same rules as npm base task NOT on master
+#    - if: $CI_COMMIT_BRANCH != "main"
+#      changes:
+#        - .gitlab-ci.yml
+#        - src/main/frontend/**/*
+#        - src/main/resources/**/*
+#        - src/test/frontend/**/*
+#        - infrastructure
+#        - "*.js"
+#        - "*.json"
+#      when: on_success
+#    - when: never
+#  needs:
+#    - job: frontend lint
+#      artifacts: false
+#    - job: frontend audit
+#      artifacts: false
+#    - job: frontend unit
+#      artifacts: false
+#  services:
+#    - docker:dind
+#  image: registry.gitlab.com/blume2000/ecom/toolbox/node-docker-gcp-sdk-docker-image/node-docker-gcp-sdk:latest
+#  variables:
+#    DOCKER_HOST: tcp://docker:2375
+#    DOCKER_DRIVER: overlay2
+#    # See https://github.com/docker-library/docker/pull/166
+#    DOCKER_TLS_CERTDIR: ""
+#    DOCKER_IMAGE: ${CI_PROJECT_NAME}-frontend:${CI_PIPELINE_ID}
+#  script:
+#    # Build Frontend
+#    - npm run build
+#    - NODE_ENV=production npm ci --prefer-offline
+#    # build image with DEV tag
+#    - docker build -f frontend.Dockerfile -t "${DOCKER_IMAGE}" .
+#  cache:
+#    key: $CI_COMMIT_REF_SLUG-$CI_PROJECT_DIR
+#    policy: pull
+#    paths:
+#      - node_modules
+
+
+# --- deploy ---
+# Kubernetes
+.k8s deployment backend:
+  extends: ".terraform gcp sdk job template 1.0.4"
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - .gitlab-ci.yml
+        - src/main/jib/**/*
+        - src/main/kotlin/**/*
+        - src/main/resources/**/*
+        - src/test/kotlin/**/*
+        - gradle/**/*
+        - build.gradle.kts
+        - detekt-config.yml
+        - gradle.properties
+        - settings.gradle.kts
+        - infrastructure
+      when: on_success
+    - when: never
+  needs:
+    - job: Frontend - Push Docker Image PROD
+      artifacts: false
+      optional: true
+    - job: Frontend - Push Docker Image DEV
+      artifacts: false
+      optional: true
+    - job: Backend - Build Docker Image PROD
+      artifacts: false
+    - job: Backend - Build Docker Image DEV
+      artifacts: false
+  variables:
+    TF_VAR_application_backend_port: 8081
+    TF_VAR_kubernetes_namespace_backend: $QUARKUS_APPLICATION_NAME
+    TERRAFORM_DIRECTORY: infrastructure/service/backend
+
+.k8s deployment frontend:
+  extends: ".terraform gcp sdk job template 1.0.4"
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - .gitlab-ci.yml
+        - src/main/frontend/**/*
+        - src/main/resources/**/*
+        - src/test/frontend/**/*
+        - infrastructure
+        - "*.js"
+        - "*.json"
+      when: on_success
+    - when: never
+  needs:
+    - job: Frontend - Push Docker Image PROD
+      artifacts: false
+    - job: Frontend - Push Docker Image DEV
+      artifacts: false
+    - job: Backend - Build Docker Image PROD
+      artifacts: false
+      optional: true
+    - job: Backend - Build Docker Image DEV
+      artifacts: false
+      optional: true
+  variables:
+    TF_VAR_application_frontend_port: 8080
+    TERRAFORM_DIRECTORY: infrastructure/service/frontend
+
+k8s dev deployment backend:
+  extends:
+    - ".k8s deployment backend"
+    - ".dev environment"
+  variables:
+    TF_VAR_b2k_gcp_project_name: $B2K_GCP_PROJECT_NAME_DEV
+    TF_VAR_b2k_host: $B2K_HOST_DEV
+    TF_VAR_ssl_certificate_name: $SSL_CERTIFICATE_NAME_dev
+    TF_VAR_team_kafka_bootstrap_servers: "your kafka url goes here" # insert kafka url
+    TF_VAR_kafka_schema_registry_url: "https://entscheiden-kafka-cluster-entscheiden-dev-project.aivencloud.com:20609"
+    TF_VAR_produkte_kafka_bootstrap_servers: $PRODUKTE_KAFKA_BOOTSTRAP_SERVER_DEV
+    TF_VAR_erkunden_kafka_produkte_ssl_keystore_location: /ssl/erkunden-finden-backend-produkte-consumer.dev.keystore.p12
+    TF_VAR_erkunden_kafka_produkte_ssl_truststore_location: /ssl/erkunden-finden-backend-produkte-consumer.dev.truststore.jks
+    TF_VAR_erkunden_kafka_verfuegbarkeiten_ssl_keystore_location: /ssl/erkunden-finden-backend-verfuegbarkeiten-consumer.dev.keystore.p12
+    TF_VAR_erkunden_kafka_verfuegbarkeiten_ssl_truststore_location: /ssl/erkunden-finden-backend-verfuegbarkeiten-consumer.dev.truststore.jks
+    TERRAFORM_STATE_BUCKET: $TERRAFORM_STATE_BUCKET_DEV
+  before_script:
+    - export GOOGLE_APPLICATION_CREDENTIALS=$FINDEN_SERVICE_ACCOUNT_KEY_dev
+    - gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS
+    - gcloud container clusters get-credentials $KUBERNETES_CLUSTER_NAME_dev --region=$TF_VAR_region --project=$B2K_GCP_PROJECT_NAME_DEV
+
+k8s dev deployment frontend:
+  extends:
+    - ".k8s deployment frontend"
+    - ".dev environment"
+  variables:
+    TF_VAR_b2k_gcp_project_name: $B2K_GCP_PROJECT_NAME_DEV
+    TF_VAR_ssl_certificate_name: $SSL_CERTIFICATE_NAME_dev
+    TERRAFORM_STATE_BUCKET: $TERRAFORM_STATE_BUCKET_DEV
+  before_script:
+    - export GOOGLE_APPLICATION_CREDENTIALS=$FINDEN_SERVICE_ACCOUNT_KEY_dev
+    - gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS
+    - gcloud container clusters get-credentials $KUBERNETES_CLUSTER_NAME_dev --region=$TF_VAR_region --project=$B2K_GCP_PROJECT_NAME_DEV
+
+k8s prod deployment backend:
+  extends:
+    - ".k8s deployment backend"
+    - ".prod environment"
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - .gitlab-ci.yml
+        - src/main/jib/**/*
+        - src/main/kotlin/**/*
+        - src/main/resources/**/*
+        - src/test/kotlin/**/*
+        - gradle/**/*
+        - build.gradle.kts
+        - detekt-config.yml
+        - gradle.properties
+        - settings.gradle.kts
+        - infrastructure
+      when: on_success
+    - when: never
+  variables:
+    TF_VAR_b2k_gcp_project_name: $B2K_GCP_PROJECT_NAME_PROD
+    TF_VAR_b2k_host: $B2K_HOST_PROD
+    TF_VAR_ssl_certificate_name: $SSL_CERTIFICATE_NAME_prod
+    TF_VAR_team_kafka_bootstrap_servers: "your kafka url goes here" # insert kafka url
+    TF_VAR_kafka_schema_registry_url: "https://entscheiden-kafka-cluster-entscheiden-prod-project.aivencloud.com:20609"
+    TF_VAR_produkte_kafka_bootstrap_servers: $PRODUKTE_KAFKA_BOOTSTRAP_SERVER_PROD
+    TF_VAR_erkunden_kafka_produkte_ssl_keystore_location: /ssl/erkunden-finden-backend-produkte-consumer.prod.keystore.p12
+    TF_VAR_erkunden_kafka_produkte_ssl_truststore_location: /ssl/erkunden-finden-backend-produkte-consumer.prod.truststore.jks
+    TF_VAR_erkunden_kafka_verfuegbarkeiten_ssl_keystore_location: /ssl/erkunden-finden-backend-verfuegbarkeiten-consumer.prod.keystore.p12
+    TF_VAR_erkunden_kafka_verfuegbarkeiten_ssl_truststore_location: /ssl/erkunden-finden-backend-verfuegbarkeiten-consumer.prod.truststore.jks
+    TERRAFORM_STATE_BUCKET: $TERRAFORM_STATE_BUCKET_PROD
+  before_script:
+    - export GOOGLE_APPLICATION_CREDENTIALS=$FINDEN_SERVICE_ACCOUNT_KEY_prod
+    - gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS
+    - gcloud container clusters get-credentials $KUBERNETES_CLUSTER_NAME_prod --region=$TF_VAR_region --project=$B2K_GCP_PROJECT_NAME_PROD
+
+k8s prod deployment frontend:
+  extends:
+    - ".k8s deployment frontend"
+    - ".prod environment"
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - .gitlab-ci.yml
+        - src/main/frontend/**/*
+        - src/main/resources/**/*
+        - src/test/frontend/**/*
+        - infrastructure
+        - "*.js"
+        - "*.json"
+      when: on_success
+    - when: never
+  variables:
+    TF_VAR_b2k_gcp_project_name: $B2K_GCP_PROJECT_NAME_PROD
+    TF_VAR_ssl_certificate_name: $SSL_CERTIFICATE_NAME_prod
+    TERRAFORM_STATE_BUCKET: $TERRAFORM_STATE_BUCKET_PROD
+  before_script:
+    - export GOOGLE_APPLICATION_CREDENTIALS=$FINDEN_SERVICE_ACCOUNT_KEY_prod
+    - gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS
+    - gcloud container clusters get-credentials $KUBERNETES_CLUSTER_NAME_prod --region=$TF_VAR_region --project=$B2K_GCP_PROJECT_NAME_PROD

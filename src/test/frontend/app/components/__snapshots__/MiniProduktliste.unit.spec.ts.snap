@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MiniProduktliste Rendert eine MiniProduktliste 1`] = `
+<div
+  class="erk_finden__mini-produktliste"
+>
+  <div
+    class="erk_finden__mini-produktliste-wrapper"
+  >
+    <div
+      class="erk_finden__mini-produktliste-grid"
+    >
+      
+      <mini-produktkachel-stub
+        listenname="trackingname"
+        listennummer="1"
+        position="0"
+        produkt="[object Object]"
+      />
+      <mini-produktkachel-stub
+        listenname="trackingname"
+        listennummer="1"
+        position="1"
+        produkt="[object Object]"
+      />
+      
+    </div>
+  </div>
+</div>
+`;

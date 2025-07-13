@@ -1,0 +1,256 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ProduktlisteView.vue Zeigt Filter an, wenn Produktfilter nicht ausgeblendet ist und Feature Toggle profuktfilter_anzeigen an 1`] = `
+<div
+  class="erk_finden__produktliste"
+>
+  <ueberschrift-zwei-stub
+    class="erk_finden__produktliste-headline"
+    isthauptueberschrift="false"
+    istsemantischeueberschrift="true"
+    mitrahmen="false"
+    theme="hell"
+  />
+  <div
+    class="erk_finden__produktliste-produkte"
+  >
+    <!--v-if-->
+    <produktfilter-stub />
+    <produktliste-stub
+      produkte="[object Object]"
+      trackingname="trackingname"
+      trackingnummer="1234567890"
+    />
+    <!--v-if-->
+    <!--v-if-->
+  </div>
+  <!--v-if-->
+</div>
+`;
+
+exports[`ProduktlisteView.vue Zeigt keine Filter an, wenn Produktfilter ausgeblendet ist und Feature Toggle profuktfilter_anzeigen aus 1`] = `
+<div
+  class="erk_finden__produktliste"
+>
+  <ueberschrift-zwei-stub
+    class="erk_finden__produktliste-headline"
+    isthauptueberschrift="false"
+    istsemantischeueberschrift="true"
+    mitrahmen="false"
+    theme="hell"
+  />
+  <div
+    class="erk_finden__produktliste-produkte"
+  >
+    <!--v-if-->
+    <!--v-if-->
+    <produktliste-stub
+      produkte="[object Object]"
+      trackingname="trackingname"
+      trackingnummer="1234567890"
+    />
+    <!--v-if-->
+    <!--v-if-->
+  </div>
+  <!--v-if-->
+</div>
+`;
+
+exports[`ProduktlisteView.vue Zeigt keineprodukte meldung wenn keine filter aktiv und trotzdem keine Produkte sichtbar 1`] = `
+<div
+  class="erk_finden__produktliste"
+>
+  <ueberschrift-zwei-stub
+    class="erk_finden__produktliste-headline"
+    isthauptueberschrift="false"
+    istsemantischeueberschrift="true"
+    mitrahmen="false"
+    theme="hell"
+  />
+  <div
+    class="erk_finden__produktliste-produkte"
+  >
+    <!--v-if-->
+    <produktfilter-stub />
+    <produktliste-stub
+      produkte=""
+      trackingname="trackingname"
+      trackingnummer="1234567890"
+    />
+    <!--v-if-->
+    <keine-produkte-meldung-stub />
+  </div>
+  <!--v-if-->
+</div>
+`;
+
+exports[`ProduktlisteView.vue Zeigt nulltreffer meldung wenn filter aktiv und dadurch keine Produkte sichtbar 1`] = `
+<div
+  class="erk_finden__produktliste"
+>
+  <ueberschrift-zwei-stub
+    class="erk_finden__produktliste-headline"
+    isthauptueberschrift="false"
+    istsemantischeueberschrift="true"
+    mitrahmen="false"
+    theme="hell"
+  />
+  <div
+    class="erk_finden__produktliste-produkte"
+  >
+    <!--v-if-->
+    <produktfilter-stub />
+    <produktliste-stub
+      produkte=""
+      trackingname="trackingname"
+      trackingnummer="1234567890"
+    />
+    <!--v-if-->
+    <keine-produkte-meldung-stub />
+  </div>
+  <!--v-if-->
+</div>
+`;
+
+exports[`ProduktlisteView.vue kein alle anzeigen link wenn text fehlt 1`] = `
+<div
+  class="erk_finden__produktliste"
+>
+  <ueberschrift-zwei-stub
+    class="erk_finden__produktliste-headline"
+    isthauptueberschrift="false"
+    istsemantischeueberschrift="true"
+    mitrahmen="false"
+    theme="hell"
+  />
+  <div
+    class="erk_finden__produktliste-produkte"
+  >
+    <!--v-if-->
+    <!--v-if-->
+    <produktliste-stub
+      produkte="[object Object]"
+      trackingname="trackingname"
+      trackingnummer="1234567890"
+    />
+    <!--v-if-->
+    <!--v-if-->
+  </div>
+  <!--v-if-->
+</div>
+`;
+
+exports[`ProduktlisteView.vue kein alle anzeigen link wenn ziel fehlt 1`] = `
+<div
+  class="erk_finden__produktliste"
+>
+  <ueberschrift-zwei-stub
+    class="erk_finden__produktliste-headline"
+    isthauptueberschrift="false"
+    istsemantischeueberschrift="true"
+    mitrahmen="false"
+    theme="hell"
+  />
+  <div
+    class="erk_finden__produktliste-produkte"
+  >
+    <!--v-if-->
+    <!--v-if-->
+    <produktliste-stub
+      produkte="[object Object]"
+      trackingname="trackingname"
+      trackingnummer="1234567890"
+    />
+    <!--v-if-->
+    <!--v-if-->
+  </div>
+  <!--v-if-->
+</div>
+`;
+
+exports[`ProduktlisteView.vue keine überschrift wenn undefined 1`] = `
+<div
+  class="erk_finden__produktliste"
+>
+  <!--v-if-->
+  <div
+    class="erk_finden__produktliste-produkte"
+  >
+    <!--v-if-->
+    <!--v-if-->
+    <produktliste-stub
+      produkte="[object Object]"
+      trackingname="trackingname"
+      trackingnummer="1234567890"
+    />
+    <!--v-if-->
+    <!--v-if-->
+  </div>
+  <!--v-if-->
+</div>
+`;
+
+exports[`ProduktlisteView.vue zeigt alle anzeigen link wenn text und ziel defined 1`] = `
+<div
+  class="erk_finden__produktliste"
+>
+  <ueberschrift-zwei-stub
+    class="erk_finden__produktliste-headline"
+    isthauptueberschrift="false"
+    istsemantischeueberschrift="true"
+    mitrahmen="false"
+    theme="hell"
+  />
+  <div
+    class="erk_finden__produktliste-produkte"
+  >
+    <!--v-if-->
+    <!--v-if-->
+    <produktliste-stub
+      produkte="[object Object]"
+      trackingname="trackingname"
+      trackingnummer="1234567890"
+    />
+    <!--v-if-->
+    <!--v-if-->
+  </div>
+  <div
+    class="erk_finden__produktliste-alle-anzeigen-link-container"
+  >
+    <a
+      class="erk_finden__produktliste-alle-anzeigen-link"
+      href="linkziel"
+    >
+      linktext
+    </a>
+  </div>
+</div>
+`;
+
+exports[`ProduktlisteView.vue zeigt ueberschrift wenn defined 1`] = `
+<div
+  class="erk_finden__produktliste"
+>
+  <ueberschrift-zwei-stub
+    class="erk_finden__produktliste-headline"
+    isthauptueberschrift="false"
+    istsemantischeueberschrift="true"
+    mitrahmen="false"
+    theme="hell"
+  />
+  <div
+    class="erk_finden__produktliste-produkte"
+  >
+    <!--v-if-->
+    <!--v-if-->
+    <produktliste-stub
+      produkte="[object Object]"
+      trackingname="trackingname"
+      trackingnummer="1234567890"
+    />
+    <!--v-if-->
+    <!--v-if-->
+  </div>
+  <!--v-if-->
+</div>
+`;

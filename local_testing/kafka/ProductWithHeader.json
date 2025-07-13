@@ -1,0 +1,26 @@
+{
+  "topic": "produkte",
+  "partition": 0,
+  "offset": 171,
+  "tstype": "create",
+  "ts": 1617794750706,
+  "broker": 1001,
+  "headers": [
+    "ce_specversion",
+    "1.0",
+    "ce_id",
+    "f0e7c0fd-9bd8-4ffb-9ce2-64331f487334",
+    "ce_type",
+    "PRODUKT_UPDATE_KAFKA_EVENT",
+    "ce_source",
+    "https://entscheiden.blume2000.de",
+    "ce_subject",
+    "verfuegbarkeiten",
+    "ce_time",
+    "2021-04-07T13:25:50.705527Europe/Berlin",
+    "ce_eventversion",
+    "1.1.0"
+  ],
+  "key": "102345",
+  "payload": "{\"produktNummer\": \"102345\",\"name\": \"Tulpen Mix 20 Stiele\",\"erpNummer\": \"20003025\",\"typ\": \"Marktware\",\"produktNameShops\": \"Tulpen Mix 40 Stiele\",\"produktLangBeschreibung\": \"Tulpen zählen zu den ersten Blumen des Jahres und kündigen nach tristen, kalten Wintertagen das lang ersehnte Frühlingserwachen an. Schon allein das ist ein guter Grund, den Tulpen Mix mit 30 Stielen im Wohnraum zu platzieren. 30 Stiele mit prächtigen Blütenköpfen in den unterschiedlichsten Farben vereinen sich mit ihrem satten Blattgrün zu einem gelungenen Kunstwerk. Bei diesem Anblick lässt die gute Laune nicht lange auf sich warten. Möchtest Du auch anderen Personen, die Dir am Herzen liegen, einen Hauch von Frühling und Freude vermitteln, dann überraschen Sie mit diesen hübschen Tulpen, die sich dank ihrer Farbvielfalt in jeden Wohnraum perfekt einfügen.\",\"aktiv\": true,\"aktivDev\": true,\"ausverkauft\": false,\"lieferZeitraumStartdatum\": \"2021-03-24\",\"lieferZeitraumEnddatum\": \"2021-05-11\",\"aenderungsDatum\": \"2021-03-23T10:02:00\",\"standort\": {\"id\": \"9\",\"name\": \"Schwabhausen\"},\"artikelTypNonFlower\": {\"id\": \"3\",\"name\": \"Marktware\"},\"klassifikation3\": {\"id\": \"13\",\"name\": \"Marktware\"},\"preis\": {\"bruttoBetrag\": \"17.19\",\"nettoBetrag\": \"16.06542056074766345139\",\"mwst\": \"0.07\",\"waehrung\": \"EUR\"},\"uvp\": null,\"ausgeschlosseneLiefertage\": [], \"produktBild\": {\"baseLink\":\"https://res.cloudinary.com/blume2000/image/upload/c_fill,f_auto,h_%h%,q_auto,w_%w%/v1/prod/produkte/PRIMAER/20003385\"}}\n"
+}

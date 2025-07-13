@@ -1,0 +1,24 @@
+{
+  "_id": "101929",
+  "klassifikationId": "11",
+  "name": "Sunshine",
+  "nummer": "101929",
+  "preis": {
+    "bruttoBetrag": "21.69",
+    "waehrung": "EUR"
+  },
+  "streichpreis": {
+    "bruttoBetrag": "21.69",
+    "waehrung": "EUR"
+  },
+  "verfuegbarkeit": {
+    "ausverkauft": false,
+    "enddatum": ISODate(
+    "2024-01-15T00:00:00.000Z"
+    ),
+    "startdatum": ISODate(
+    "2021-01-01T00:00:00.000Z"
+    )
+  },
+  "bildUrl": "https://assets.ecom.blume2000.de/images/produkt_platzhalter.png"
+}

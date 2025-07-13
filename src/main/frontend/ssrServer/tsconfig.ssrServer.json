@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "removeComments": false,
+    "esModuleInterop": true,
+    "outDir": "../../../../dist/ssrServer",
+    "strict": true
+  },
+  "include": ["**/*.ts"]
+}

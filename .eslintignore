@@ -1,0 +1,3 @@
+src/main/frontend/app/shims-vue.d.ts
+src/main/frontend/app/shims-global.d.ts
+*.scss

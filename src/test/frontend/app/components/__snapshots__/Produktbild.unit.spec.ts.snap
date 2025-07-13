@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Produktbild.vue Rendert Produktbild 1`] = `
+<div
+  class="erk_finden__produktbild"
+>
+  <picture>
+    
+    <source
+      media="(min-width: 361px)"
+      srcset="https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_1,f_auto,h_401,q_auto,w_401/v1/prod/produkte/PRIMAER/20003385 1x,https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_2,f_auto,h_401,q_auto,w_401/v1/prod/produkte/PRIMAER/20003385 2x,https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_3,f_auto,h_401,q_auto,w_401/v1/prod/produkte/PRIMAER/20003385 3x"
+      type="image/jpeg"
+    />
+    
+    <img
+      alt="Alt text"
+      loading="lazy"
+      src="https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_2,f_auto,h_328,q_auto,w_328/v1/prod/produkte/PRIMAER/20003385"
+      srcset="https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_1,f_auto,h_328,q_auto,w_328/v1/prod/produkte/PRIMAER/20003385 1x,https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_2,f_auto,h_328,q_auto,w_328/v1/prod/produkte/PRIMAER/20003385 2x,https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_3,f_auto,h_328,q_auto,w_328/v1/prod/produkte/PRIMAER/20003385 3x"
+    />
+  </picture>
+</div>
+`;

@@ -1,0 +1,28 @@
+{
+  "_id": "20001711",
+  "bildUrl": "https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20001711",
+  "klassifikationId": "11",
+  "name": "Herzensangelegenheit Größe L",
+  "nummer": "20001711",
+  "preis": {
+    "bruttoBetragDecimal": {
+      "$numberDecimal": "32.99"
+    },
+    "waehrung": "EUR"
+  },
+  "streichpreis": {
+    "bruttoBetragDecimal": {
+      "$numberDecimal": "32.99"
+    },
+    "waehrung": "EUR"
+  },
+  "verfuegbarkeit": {
+    "ausverkauft": false,
+    "enddatum": ISODate(
+    "2022-04-20T00:00:00.000Z"
+    ),
+    "startdatum": ISODate(
+    "2021-04-20T00:00:00.000Z"
+    )
+  }
+}

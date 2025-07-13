@@ -1,0 +1,7 @@
+export enum FilterTyp {
+  SORTE = 'SORTE',
+  FARBE = 'FARBE',
+  PREIS = 'PREIS',
+  PRODUKTART = 'PRODUKTART',
+  VERFUEGBARKEIT = 'VERFUEGBARKEIT',
+}

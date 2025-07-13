@@ -1,0 +1,146 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MiniProduktlisteView kein alle anzeigen link wenn text fehlt 1`] = `
+<div
+  class="erk_finden__mini-produktliste-view"
+>
+  <div
+    class="erk_finden__mini-produktliste-view-header"
+  >
+    <ueberschrift-drei-stub
+      class="erk_finden__mini-produktliste-view-headline"
+      isthauptueberschrift="false"
+      istsemantischeueberschrift="true"
+      theme="hell"
+    />
+    <!--v-if-->
+  </div>
+  <div
+    class="erk_finden__mini-produktliste-view-produkte"
+  >
+    <mini-produktliste-stub
+      produkte="[object Object]"
+      trackingname="trackingname"
+      trackingnummer="1234567890"
+    />
+  </div>
+</div>
+`;
+
+exports[`MiniProduktlisteView kein alle anzeigen link wenn ziel fehlt 1`] = `
+<div
+  class="erk_finden__mini-produktliste-view"
+>
+  <div
+    class="erk_finden__mini-produktliste-view-header"
+  >
+    <ueberschrift-drei-stub
+      class="erk_finden__mini-produktliste-view-headline"
+      isthauptueberschrift="false"
+      istsemantischeueberschrift="true"
+      theme="hell"
+    />
+    <!--v-if-->
+  </div>
+  <div
+    class="erk_finden__mini-produktliste-view-produkte"
+  >
+    <mini-produktliste-stub
+      produkte="[object Object]"
+      trackingname="trackingname"
+      trackingnummer="1234567890"
+    />
+  </div>
+</div>
+`;
+
+exports[`MiniProduktlisteView keine überschrift wenn undefined 1`] = `
+<div
+  class="erk_finden__mini-produktliste-view"
+>
+  <div
+    class="erk_finden__mini-produktliste-view-header"
+  >
+    <!--v-if-->
+    <!--v-if-->
+  </div>
+  <div
+    class="erk_finden__mini-produktliste-view-produkte"
+  >
+    <mini-produktliste-stub
+      produkte="[object Object]"
+      trackingname="trackingname"
+      trackingnummer="1234567890"
+    />
+  </div>
+</div>
+`;
+
+exports[`MiniProduktlisteView zeigt alle anzeigen link wenn text und ziel defined 1`] = `
+<div
+  class="erk_finden__mini-produktliste-view"
+>
+  <div
+    class="erk_finden__mini-produktliste-view-header"
+  >
+    <ueberschrift-drei-stub
+      class="erk_finden__mini-produktliste-view-headline"
+      isthauptueberschrift="false"
+      istsemantischeueberschrift="true"
+      theme="hell"
+    />
+    <a
+      class="erk_finden__mini-produktliste-view-alle-anzeigen-link"
+      href="linkziel"
+    >
+      <span
+        class="erk_finden__mini-produktliste-view-alle-anzeigen-link-text"
+      >
+        linktext
+      </span>
+      <pfeilspitze-im-kreis-stub
+        class="erk_finden__mini-produktliste-view-alle-anzeigen-link-pfeil"
+        istgefuellt="false"
+        richtung="rechts"
+        theme="hell"
+      />
+    </a>
+  </div>
+  <div
+    class="erk_finden__mini-produktliste-view-produkte"
+  >
+    <mini-produktliste-stub
+      produkte="[object Object]"
+      trackingname="trackingname"
+      trackingnummer="1234567890"
+    />
+  </div>
+</div>
+`;
+
+exports[`MiniProduktlisteView zeigt ueberschrift wenn defined 1`] = `
+<div
+  class="erk_finden__mini-produktliste-view"
+>
+  <div
+    class="erk_finden__mini-produktliste-view-header"
+  >
+    <ueberschrift-drei-stub
+      class="erk_finden__mini-produktliste-view-headline"
+      isthauptueberschrift="false"
+      istsemantischeueberschrift="true"
+      theme="hell"
+    />
+    <!--v-if-->
+  </div>
+  <div
+    class="erk_finden__mini-produktliste-view-produkte"
+  >
+    <mini-produktliste-stub
+      produkte="[object Object]"
+      trackingname="trackingname"
+      trackingnummer="1234567890"
+    />
+  </div>
+</div>
+`;

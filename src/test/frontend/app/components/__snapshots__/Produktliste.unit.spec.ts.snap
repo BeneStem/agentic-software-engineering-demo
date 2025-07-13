@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Produktliste.vue Rendert eine Produktliste 1`] = `
+<div
+  class="erk_finden__produktliste"
+>
+  
+  <produktkachel-stub
+    listenname="trackingname"
+    listennummer="1"
+    position="0"
+    produkt="[object Object]"
+  />
+  <produktkachel-stub
+    listenname="trackingname"
+    listennummer="1"
+    position="1"
+    produkt="[object Object]"
+  />
+  
+</div>
+`;

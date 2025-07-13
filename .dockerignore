@@ -1,0 +1,8 @@
+*
+!build/quarkus-app/*
+!dist/*
+!node_modules/*
+!src/main/frontend/*
+!src/main/resources/*
+!package.json
+!package-lock.json

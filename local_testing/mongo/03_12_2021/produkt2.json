@@ -1,0 +1,31 @@
+{
+  "_id": "20003349",
+  "bildUrl": "https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003349",
+  "klassifikation": {
+    "id": "12",
+    "name": "Topfpflanze"
+  },
+  "name": "Livistona mit Korb",
+  "nummer": "20003349",
+  "preis": {
+    "bruttoBetragDecimal": {
+      "$numberDecimal": "24.99"
+    },
+    "waehrung": "EUR"
+  },
+  "streichpreis": {
+    "bruttoBetragDecimal": {
+      "$numberDecimal": "24.99"
+    },
+    "waehrung": "EUR"
+  },
+  "verfuegbarkeit": {
+    "ausverkauft": false,
+    "enddatum": ISODate(
+    "2022-04-20T00:00:00.000Z"
+    ),
+    "startdatum": ISODate(
+    "2021-04-20T00:00:00.000Z"
+    )
+  }
+}

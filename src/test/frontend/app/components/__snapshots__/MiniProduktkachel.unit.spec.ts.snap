@@ -1,0 +1,85 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MiniProduktkachel Rendert eine MiniProduktkachel 1`] = `
+<a
+  class="erk_finden__mini-produktkachel"
+  href="#"
+  title="Produktname"
+>
+  <div
+    class="erk_finden__mini-produktkachel-border"
+  >
+    <div
+      class="erk_finden__mini-produktkachel-bild"
+    >
+      <produktbild-stub
+        alttext="Produktname"
+        url="https://assets.ecom.blume2000.de/images/produkt_platzhalter.png"
+      />
+    </div>
+  </div>
+  <div
+    class="erk_finden__mini-produktkachel-name"
+  >
+    Produktname
+  </div>
+  <div
+    class="erk_finden__mini-produktkachel-lieferaussage"
+  >
+    <fliesstext-stub
+      theme="hell"
+      typ="klein"
+    />
+  </div>
+  <div
+    class="erk_finden__mini-produktkachel-preis"
+  >
+    10.00 € 
+    <!--v-if-->
+  </div>
+</a>
+`;
+
+exports[`MiniProduktkachel Rendert eine MiniProduktkachel mit Streichpreis 1`] = `
+<a
+  class="erk_finden__mini-produktkachel"
+  href="#"
+  title="Produktname"
+>
+  <div
+    class="erk_finden__mini-produktkachel-border"
+  >
+    <div
+      class="erk_finden__mini-produktkachel-bild"
+    >
+      <produktbild-stub
+        alttext="Produktname"
+        url="https://assets.ecom.blume2000.de/images/produkt_platzhalter.png"
+      />
+    </div>
+  </div>
+  <div
+    class="erk_finden__mini-produktkachel-name"
+  >
+    Produktname
+  </div>
+  <div
+    class="erk_finden__mini-produktkachel-lieferaussage"
+  >
+    <fliesstext-stub
+      theme="hell"
+      typ="klein"
+    />
+  </div>
+  <div
+    class="erk_finden__mini-produktkachel-preis"
+  >
+    10.00 € 
+    <div
+      class="erk_finden__mini-produktkachel-streichpreis"
+    >
+      20.00 € 
+    </div>
+  </div>
+</a>
+`;

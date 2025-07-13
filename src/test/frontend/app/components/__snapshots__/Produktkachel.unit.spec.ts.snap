@@ -1,0 +1,85 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Produktkachel.vue Rendert eine Produktkachel 1`] = `
+<a
+  class="erk_finden__produktkachel"
+  href="#"
+  title="Produktname"
+>
+  <div
+    class="erk_finden__produktkachel-bild"
+  >
+    <produktbild-stub
+      alttext="Produktname"
+      url="https://assets.ecom.blume2000.de/images/produkt_platzhalter.png"
+    />
+  </div>
+  <div
+    class="erk_finden__produktkachel-infos"
+  >
+    <div
+      class="erk_finden__produktkachel-name"
+    >
+      Produktname
+    </div>
+    <div
+      class="erk_finden__produktkachel-lieferaussage"
+    >
+      <fliesstext-stub
+        theme="hell"
+        typ="klein"
+      />
+    </div>
+    <div
+      class="erk_finden__produktkachel-preis"
+    >
+      10.00 € 
+      <!--v-if-->
+    </div>
+  </div>
+</a>
+`;
+
+exports[`Produktkachel.vue Rendert eine Produktkachel mit Streichpreis 1`] = `
+<a
+  class="erk_finden__produktkachel"
+  href="#"
+  title="Produktname"
+>
+  <div
+    class="erk_finden__produktkachel-bild"
+  >
+    <produktbild-stub
+      alttext="Produktname"
+      url="https://assets.ecom.blume2000.de/images/produkt_platzhalter.png"
+    />
+  </div>
+  <div
+    class="erk_finden__produktkachel-infos"
+  >
+    <div
+      class="erk_finden__produktkachel-name"
+    >
+      Produktname
+    </div>
+    <div
+      class="erk_finden__produktkachel-lieferaussage"
+    >
+      <fliesstext-stub
+        theme="hell"
+        typ="klein"
+      />
+    </div>
+    <div
+      class="erk_finden__produktkachel-preis"
+    >
+      10.00 € 
+      <div
+        class="erk_finden__produktkachel-streichpreis"
+      >
+        20.00 € 
+      </div>
+    </div>
+  </div>
+</a>
+`;

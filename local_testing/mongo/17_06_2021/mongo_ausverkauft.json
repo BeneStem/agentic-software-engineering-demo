@@ -1,0 +1,24 @@
+{
+  "_id": "ausverkauft",
+  "klassifikationId": "11",
+  "name": "Ein wunderschöner Strauß nicht reduziert",
+  "nummer": "ausverkauft",
+  "preis": {
+    "bruttoBetrag": "20.00",
+    "waehrung": "EUR"
+  },
+  "streichpreis": {
+    "bruttoBetrag": "20.00",
+    "waehrung": "EUR"
+  },
+  "verfuegbarkeit": {
+    "ausverkauft": true,
+    "enddatum": ISODate(
+    "2024-04-30T00:00:00.000Z"
+    ),
+    "startdatum": ISODate(
+    "2021-04-16T00:00:00.000Z"
+    )
+  },
+  "bildUrl": "https://assets.ecom.blume2000.de/images/produkt_platzhalter.png"
+}

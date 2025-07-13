@@ -1,0 +1,31 @@
+{
+  "_id": "102405",
+  "bildUrl": "https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/102405",
+  "klassifikation": {
+    "id": "12",
+    "name": "Topfpflanze"
+  },
+  "name": "Nelken Duo Pink Kisses mit Zink-Übertopf",
+  "nummer": "102405",
+  "preis": {
+    "bruttoBetragDecimal": {
+      "$numberDecimal": "19.99"
+    },
+    "waehrung": "EUR"
+  },
+  "streichpreis": {
+    "bruttoBetragDecimal": {
+      "$numberDecimal": "19.99"
+    },
+    "waehrung": "EUR"
+  },
+  "verfuegbarkeit": {
+    "ausverkauft": false,
+    "enddatum": ISODate(
+    "2022-04-20T00:00:00.000Z"
+    ),
+    "startdatum": ISODate(
+    "2021-04-20T00:00:00.000Z"
+    )
+  }
+}

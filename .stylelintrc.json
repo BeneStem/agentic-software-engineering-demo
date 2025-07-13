@@ -1,0 +1,14 @@
+{
+  "extends": "stylelint-config-recommended-vue/scss",
+  "rules": {
+    "selector-pseudo-element-no-unknown": [
+      true,
+      {
+        "ignorePseudoElements": [
+          "v-deep"
+        ]
+      }
+    ],
+    "selector-class-pattern": ["^(sha|erk|erf|ent)_[a-z-]+", {"resolveNestedSelectors": true} ]
+  }
+}

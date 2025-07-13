@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FilterwertEntfernen.vue Rendert FilterwertEntfernen 1`] = `
+<button
+  class="erk_finden__filterwert-entfernen"
+  role="tab"
+  type="button"
+>
+  FilterwertName 
+  <svg
+    aria-hidden="true"
+    class="erk_finden__filterwert-entfernen-schliessen"
+    role="img"
+  >
+    <!--v-if-->
+    <use
+      href="/static/assets/svgs/icons/Schliessen.svg#svg"
+    />
+  </svg>
+</button>
+`;

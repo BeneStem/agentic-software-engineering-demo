@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>[DEV] Finden</title>
+  <link rel="preload" href="https://assets.ecom.blume2000.de/fonts/soblume2000/soblume2000-filled.woff2" as="font"
+        type="font/woff2"
+        crossorigin="anonymous">
+  <link rel="preload" href="https://assets.ecom.blume2000.de/fonts/rubik/rubik-medium.woff2" as="font"
+        type="font/woff2"
+        crossorigin="anonymous">
+  <link rel="preload" href="https://assets.ecom.blume2000.de/fonts/rubik/rubik-light.woff2" as="font"
+        type="font/woff2"
+        crossorigin="anonymous">
+  <style>
+    @font-face {
+      font-family: 'BLUME2000';
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: url('https://assets.ecom.blume2000.de/fonts/soblume2000/soblume2000-filled.woff2') format('woff2'), url('https://assets.ecom.blume2000.de/fonts/soblume2000/soblume2000-filled.woff') format('woff'), url('https://assets.ecom.blume2000.de/fonts/soblume2000/soblume2000-filled.ttf') format('truetype');
+    }
+
+    @font-face {
+      font-family: 'Rubik';
+      font-style: normal;
+      font-weight: 300;
+      font-display: swap;
+      src: url('https://assets.ecom.blume2000.de/fonts/rubik/rubik-light.woff2') format('woff2'), url('https://assets.ecom.blume2000.de/fonts/rubik/rubik-light.woff') format('woff'), url('https://assets.ecom.blume2000.de/fonts/rubik/rubik-light.ttf') format('truetype');
+    }
+
+    @font-face {
+      font-family: 'Rubik';
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: url('https://assets.ecom.blume2000.de/fonts/rubik/rubik-regular.woff2') format('woff2'), url('https://assets.ecom.blume2000.de/fonts/rubik/rubik-regular.woff') format('woff'), url('https://assets.ecom.blume2000.de/fonts/rubik/rubik-regular.ttf') format('truetype');
+    }
+
+    @font-face {
+      font-family: 'Rubik';
+      font-style: normal;
+      font-weight: 500;
+      font-display: swap;
+      src: url('https://assets.ecom.blume2000.de/fonts/rubik/rubik-medium.woff2') format('woff2'), url('https://assets.ecom.blume2000.de/fonts/rubik/rubik-medium.woff') format('woff'), url('https://assets.ecom.blume2000.de/fonts/rubik/rubik-medium.ttf') format('truetype');
+    }
+
+    @font-face {
+      font-family: 'Rubik';
+      font-style: normal;
+      font-weight: 700;
+      font-display: swap;
+      src: url('https://assets.ecom.blume2000.de/fonts/rubik/rubik-bold.woff2') format('woff2'), url('https://assets.ecom.blume2000.de/fonts/rubik/rubik-bold.woff') format('woff'), url('https://assets.ecom.blume2000.de/fonts/rubik/rubik-bold.ttf') format('truetype');
+    }
+
+    @font-face {
+      font-family: 'Rubik';
+      font-style: normal;
+      font-weight: 900;
+      font-display: swap;
+      src: url('https://assets.ecom.blume2000.de/fonts/rubik/rubik-black.woff2') format('woff2'), url('https://assets.ecom.blume2000.de/fonts/rubik/rubik-black.woff') format('woff'), url('https://assets.ecom.blume2000.de/fonts/rubik/rubik-black.ttf') format('truetype');
+    }
+
+    @font-face {
+      font-family: 'Rubik';
+      font-style: italic;
+      font-weight: 300;
+      font-display: swap;
+      src: url('https://assets.ecom.blume2000.de/fonts/rubik/rubik-lightitalic.woff2') format('woff2'), url('https://assets.ecom.blume2000.de/fonts/rubik/rubik-lightitalic.woff') format('woff'), url('https://assets.ecom.blume2000.de/fonts/rubik/rubik-lightitalic.ttf') format('truetype');
+    }
+
+    @font-face {
+      font-family: 'Rubik';
+      font-style: italic;
+      font-weight: 400;
+      font-display: swap;
+      src: url('https://assets.ecom.blume2000.de/fonts/rubik/rubik-italic.woff2') format('woff2'), url('https://assets.ecom.blume2000.de/fonts/rubik/rubik-italic.woff') format('woff'), url('https://assets.ecom.blume2000.de/fonts/rubik/rubik-italic.ttf') format('truetype');
+    }
+
+    @font-face {
+      font-family: 'Rubik';
+      font-style: italic;
+      font-weight: 500;
+      font-display: swap;
+      src: url('https://assets.ecom.blume2000.de/fonts/rubik/rubik-mediumitalic.woff2') format('woff2'), url('https://assets.ecom.blume2000.de/fonts/rubik/rubik-mediumitalic.woff') format('woff'), url('https://assets.ecom.blume2000.de/fonts/rubik/rubik-mediumitalic.ttf') format('truetype');
+    }
+
+    @font-face {
+      font-family: 'Rubik';
+      font-style: italic;
+      font-weight: 700;
+      font-display: swap;
+      src: url('https://assets.ecom.blume2000.de/fonts/rubik/rubik-bolditalic.woff2') format('woff2'), url('https://assets.ecom.blume2000.de/fonts/rubik/rubik-bolditalic.woff') format('woff'), url('https://assets.ecom.blume2000.de/fonts/rubik/rubik-bolditalic.ttf') format('truetype');
+    }
+
+    @font-face {
+      font-family: 'Rubik';
+      font-style: italic;
+      font-weight: 900;
+      font-display: swap;
+      src: url('https://assets.ecom.blume2000.de/fonts/rubik/rubik-blackitalic.woff2') format('woff2'), url('https://assets.ecom.blume2000.de/fonts/rubik/rubik-blackitalic.woff') format('woff'), url('https://assets.ecom.blume2000.de/fonts/rubik/rubik-blackitalic.ttf') format('truetype');
+    }
+  </style>
+</head>
+<body>
+<script>
+  function fetchProdukteMitVerfuegbarenFilterwerten() {
+    const body = JSON.stringify({
+      'cmsProdukteFilter': {
+        'blumensorten': [],
+        'farben': [],
+        'klassifikationen': [{'name': '11', 'id': '11'}, {'name': '13', 'id': '13'}, {
+          'name': '24',
+          'id': '24'
+        }, {'name': '27', 'id': '27'}],
+        'preisbereich': {'minPreis': null, 'maxPreis': null},
+        'limit': null,
+        'produktNummern': [],
+        'produktnummernVerwendung': 'ausblenden'
+      },
+      'userProdukteFilter': {
+        'sorten': [],
+        'farben': [],
+        'klassifikationen': [],
+        'liefertage': {'verfuegbareLiefertage': []},
+        'preisbereich': null
+      }
+    });
+    fetch('http://localhost:8080/api/finden/produkte', {
+      method: 'POST',
+      body,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).then(response => response.json())
+      .then(data => console.log(data));
+  }
+
+  // Einkommentieren wenn man alle Produkte mit Filterwerten laden will
+  // fetchProdukteMitVerfuegbarenFilterwerten();
+</script>
+<script>
+  const data = {
+    produkte: [
+      {
+        nummer: '20003075',
+        name: 'Lilien in Weiß 10 Stiele',
+        preis: '24,99',
+        streichpreis: '24,99',
+        klassifikationName: 'Marktware',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003075',
+        produktUrl: '/produkte/20003075/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-19T14:45+02:00', liefertag: '2022-04-20'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T14:45+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '97479',
+        name: 'Premium-Rosen in Rot  40 Stiele',
+        preis: '44,99',
+        streichpreis: '44,99',
+        klassifikationName: 'Marktware',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/97479',
+        produktUrl: '/produkte/97479/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-19T14:45+02:00', liefertag: '2022-04-20'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T14:45+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '98013',
+        name: 'Rosen in Weiß 20 Stiele',
+        preis: '22,99',
+        streichpreis: '22,99',
+        klassifikationName: 'Marktware',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/98013',
+        produktUrl: '/produkte/98013/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-19T14:45+02:00', liefertag: '2022-04-20'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T14:45+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '98014',
+        name: 'Rosen in Weiß 40 Stiele',
+        preis: '39,99',
+        streichpreis: '39,99',
+        klassifikationName: 'Marktware',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/98014',
+        produktUrl: '/produkte/98014/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-19T14:45+02:00', liefertag: '2022-04-20'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T14:45+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '98292',
+        name: 'Premium-Rosen in Rot 25 Stiele',
+        preis: '29,99',
+        streichpreis: '29,99',
+        klassifikationName: 'Marktware',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/98292',
+        produktUrl: '/produkte/98292/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-19T14:45+02:00', liefertag: '2022-04-20'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T14:45+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20002890',
+        name: 'Schön, dass es Dich gibt',
+        preis: '24,99',
+        streichpreis: '24,99',
+        klassifikationName: 'Strauß',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20002890',
+        produktUrl: '/produkte/20002890/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-19T18:00+02:00', liefertag: '2022-04-20'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T18:00+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20003804',
+        name: 'Strauß-Abo (3 mal Freude)',
+        preis: '74,97',
+        streichpreis: '89,94',
+        klassifikationName: 'Strauß',
+        zeigeStreichpreis: true,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003804',
+        produktUrl: '/produkte/20003804/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-08T10:00+02:00', liefertag: '2022-04-09'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-08-13T08:00+02:00', liefertag: '2022-08-15'},
+      },
+      {
+        nummer: '20003391',
+        name: 'Mini Pampasgras 5 Stiele',
+        preis: '16,99',
+        streichpreis: '16,99',
+        klassifikationName: 'Trockenblumen',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003391',
+        produktUrl: '/produkte/20003391/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-07T18:00+02:00', liefertag: '2022-04-08'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-06-03T18:00+02:00', liefertag: '2022-06-04'},
+      },
+      {
+        nummer: '20003106',
+        name: 'Yellow Sunshine',
+        preis: '29,99',
+        streichpreis: '29,99',
+        klassifikationName: 'Trockenblumen',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003106',
+        produktUrl: '/produkte/20003106/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-07T14:45+02:00', liefertag: '2022-04-08'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T14:45+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20003341',
+        name: 'Winter Breeze',
+        preis: '39,99',
+        streichpreis: '39,99',
+        klassifikationName: 'Trockenblumen',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003341',
+        produktUrl: '/produkte/20003341/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-07T14:45+02:00', liefertag: '2022-04-08'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T14:45+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20003635',
+        name: 'Mähnenschilfgras 3 Stiele',
+        preis: '16,99',
+        streichpreis: '16,99',
+        klassifikationName: 'Trockenblumen',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003635',
+        produktUrl: '/produkte/20003635/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-07T18:00+02:00', liefertag: '2022-04-08'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-06-03T18:00+02:00', liefertag: '2022-06-04'},
+      },
+      {
+        nummer: '20002886',
+        name: 'Only for You Größe L',
+        preis: '29,99',
+        streichpreis: '29,99',
+        klassifikationName: 'Strauß',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20002886',
+        produktUrl: '/produkte/20002886/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-19T18:00+02:00', liefertag: '2022-04-20'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T18:00+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '99282',
+        name: 'Premium-Rosen in Rot 20 Stiele',
+        preis: '24,99',
+        streichpreis: '24,99',
+        klassifikationName: 'Marktware',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/99282',
+        produktUrl: '/produkte/99282/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-19T14:45+02:00', liefertag: '2022-04-20'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T14:45+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20002885',
+        name: 'Only for You Größe M',
+        preis: '23,99',
+        streichpreis: '23,99',
+        klassifikationName: 'Strauß',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20002885',
+        produktUrl: '/produkte/20002885/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-19T18:00+02:00', liefertag: '2022-04-20'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T18:00+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20002895',
+        name: 'Helena',
+        preis: '49,99',
+        streichpreis: '49,99',
+        klassifikationName: 'Strauß',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20002895',
+        produktUrl: '/produkte/20002895/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-19T18:00+02:00', liefertag: '2022-04-20'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T18:00+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20003826',
+        name: 'Mira',
+        preis: '39,99',
+        streichpreis: '39,99',
+        klassifikationName: 'Strauß',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003826',
+        produktUrl: '/produkte/20003826/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-19T14:45+02:00', liefertag: '2022-04-20'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T14:45+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20003807',
+        name: 'Kira',
+        preis: '19,99',
+        streichpreis: '19,99',
+        klassifikationName: 'Strauß',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003807',
+        produktUrl: '/produkte/20003807/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-19T18:00+02:00', liefertag: '2022-04-20'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T18:00+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20003718',
+        name: 'Trockenblumenstrauß Fresh Spring',
+        preis: '21,99',
+        streichpreis: '21,99',
+        klassifikationName: 'Trockenblumen',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003718',
+        produktUrl: '/produkte/20003718/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-07T14:45+02:00', liefertag: '2022-04-08'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-06-03T14:45+02:00', liefertag: '2022-06-04'},
+      },
+      {
+        nummer: '20003734',
+        name: 'Trockenkranz Zarte Natürlichkeit',
+        preis: '29,99',
+        streichpreis: '29,99',
+        klassifikationName: 'Trockenblumen',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003734',
+        produktUrl: '/produkte/20003734/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-07T18:00+02:00', liefertag: '2022-04-08'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-06-03T18:00+02:00', liefertag: '2022-06-04'},
+      },
+      {
+        nummer: '20003819',
+        name: 'Tilda',
+        preis: '24,99',
+        streichpreis: '24,99',
+        klassifikationName: 'Strauß',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003819',
+        produktUrl: '/produkte/20003819/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-19T14:45+02:00', liefertag: '2022-04-20'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T14:45+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20003721',
+        name: 'Trockenblumenstrauß Sparkling Rosé',
+        preis: '29,99',
+        streichpreis: '29,99',
+        klassifikationName: 'Trockenblumen',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003721',
+        produktUrl: '/produkte/20003721/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-07T14:45+02:00', liefertag: '2022-04-08'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-06-03T14:45+02:00', liefertag: '2022-06-04'},
+      },
+      {
+        nummer: '20003823',
+        name: 'Ida Größe L',
+        preis: '29,99',
+        streichpreis: '29,99',
+        klassifikationName: 'Strauß',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003823',
+        produktUrl: '/produkte/20003823/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-19T18:00+02:00', liefertag: '2022-04-20'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T18:00+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20003818',
+        name: 'Joleen',
+        preis: '24,99',
+        streichpreis: '24,99',
+        klassifikationName: 'Strauß',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003818',
+        produktUrl: '/produkte/20003818/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-19T18:00+02:00', liefertag: '2022-04-20'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T18:00+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20003816',
+        name: 'Ida Größe M',
+        preis: '24,99',
+        streichpreis: '24,99',
+        klassifikationName: 'Strauß',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003816',
+        produktUrl: '/produkte/20003816/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-19T18:00+02:00', liefertag: '2022-04-20'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T18:00+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20003720',
+        name: 'Trockenblumenstrauß Color Crush',
+        preis: '19,99',
+        streichpreis: '19,99',
+        klassifikationName: 'Trockenblumen',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003720',
+        produktUrl: '/produkte/20003720/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-07T14:45+02:00', liefertag: '2022-04-08'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-06-03T14:45+02:00', liefertag: '2022-06-04'},
+      },
+      {
+        nummer: '20003813',
+        name: 'Happy Birthday Größe M',
+        preis: '24,99',
+        streichpreis: '24,99',
+        klassifikationName: 'Strauß',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003813',
+        produktUrl: '/produkte/20003813/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-19T18:00+02:00', liefertag: '2022-04-20'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T18:00+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20003820',
+        name: 'Happy Birthday Größe L',
+        preis: '29,99',
+        streichpreis: '29,99',
+        klassifikationName: 'Strauß',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003820',
+        produktUrl: '/produkte/20003820/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-19T18:00+02:00', liefertag: '2022-04-20'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T18:00+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20003722',
+        name: 'Trockenblumenstrauß Girl\'s Favorite',
+        preis: '23,99',
+        streichpreis: '23,99',
+        klassifikationName: 'Trockenblumen',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003722',
+        produktUrl: '/produkte/20003722/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-07T14:45+02:00', liefertag: '2022-04-08'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-06-03T14:45+02:00', liefertag: '2022-06-04'},
+      },
+      {
+        nummer: '20003069',
+        name: 'Ranunkeln Mix mit Eukalyptus',
+        preis: '28,99',
+        streichpreis: '28,99',
+        klassifikationName: 'Marktware',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003069',
+        produktUrl: '/produkte/20003069/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-20T10:00+02:00', liefertag: '2022-04-21'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T10:00+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20002974',
+        name: 'Tulpen Mix 50 Stiele',
+        preis: '25,99',
+        streichpreis: '29,99',
+        klassifikationName: 'Marktware',
+        zeigeStreichpreis: true,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20002974',
+        produktUrl: '/produkte/20002974/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-07T14:45+02:00', liefertag: '2022-04-08'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T14:45+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20003025',
+        name: 'Tulpen Mix 30 Stiele',
+        preis: '17,99',
+        streichpreis: '19,99',
+        klassifikationName: 'Marktware',
+        zeigeStreichpreis: true,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003025',
+        produktUrl: '/produkte/20003025/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-07T14:45+02:00', liefertag: '2022-04-08'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T14:45+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20003879',
+        name: 'DIY Mini Trockenblumenwolke',
+        preis: '49,99',
+        streichpreis: '49,99',
+        klassifikationName: 'Trockenblumen',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003879',
+        produktUrl: '/produkte/20003879/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-07T14:45+02:00', liefertag: '2022-04-08'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-06-03T14:45+02:00', liefertag: '2022-06-04'},
+      },
+      {
+        nummer: '20003074',
+        name: 'Hyazinthentraum',
+        preis: '22,99',
+        streichpreis: '22,99',
+        klassifikationName: 'Marktware',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003074',
+        produktUrl: '/produkte/20003074/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-20T10:00+02:00', liefertag: '2022-04-21'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T10:00+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20003959',
+        name: 'Paula',
+        preis: '23,99',
+        streichpreis: '23,99',
+        klassifikationName: 'Strauß',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003959',
+        produktUrl: '/produkte/20003959/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-19T18:00+02:00', liefertag: '2022-04-20'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-23T11:30+02:00', liefertag: '2022-04-25'},
+      },
+      {
+        nummer: '20003255',
+        name: 'DIY Tischdeko Eva',
+        preis: '19,99',
+        streichpreis: '19,99',
+        klassifikationName: 'Blumenbund',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003255',
+        produktUrl: '/produkte/20003255/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-20T10:00+02:00', liefertag: '2022-04-21'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T10:00+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20003026',
+        name: 'Flower Bomb 30 Stiele',
+        preis: '22,99',
+        streichpreis: '22,99',
+        klassifikationName: 'Marktware',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003026',
+        produktUrl: '/produkte/20003026/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-08T10:00+02:00', liefertag: '2022-04-09'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T10:00+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20001956',
+        name: 'Tulpentraum',
+        preis: '19,99',
+        streichpreis: '22,99',
+        klassifikationName: 'Blumenbund',
+        zeigeStreichpreis: true,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20001956',
+        produktUrl: '/produkte/20001956/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-08T10:00+02:00', liefertag: '2022-04-09'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T10:00+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20003992',
+        name: 'Blumenbox-Abo (3 mal Freude)',
+        preis: '59,97',
+        streichpreis: '74,94',
+        klassifikationName: 'Marktware',
+        zeigeStreichpreis: true,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003992',
+        produktUrl: '/produkte/20003992/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-08T10:00+02:00', liefertag: '2022-04-09'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-08-13T08:00+02:00', liefertag: '2022-08-15'},
+      },
+      {
+        nummer: '20003811',
+        name: 'Lotta Größe M',
+        preis: '22,99',
+        streichpreis: '22,99',
+        klassifikationName: 'Blumenbund',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003811',
+        produktUrl: '/produkte/20003811/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-07T14:45+02:00', liefertag: '2022-04-08'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-05-09T14:45+02:00', liefertag: '2022-05-10'},
+      },
+      {
+        nummer: '20003821',
+        name: 'Lotta Größe L',
+        preis: '28,99',
+        streichpreis: '28,99',
+        klassifikationName: 'Blumenbund',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003821',
+        produktUrl: '/produkte/20003821/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-07T14:45+02:00', liefertag: '2022-04-08'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-05-09T14:45+02:00', liefertag: '2022-05-10'},
+      },
+      {
+        nummer: '20003824',
+        name: 'Lotta Größe XL',
+        preis: '34,99',
+        streichpreis: '34,99',
+        klassifikationName: 'Blumenbund',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003824',
+        produktUrl: '/produkte/20003824/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-07T14:45+02:00', liefertag: '2022-04-08'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-05-09T14:45+02:00', liefertag: '2022-05-10'},
+      },
+      {
+        nummer: '20003995',
+        name: 'Charo',
+        preis: '22,99',
+        streichpreis: '22,99',
+        klassifikationName: 'Blumenbund',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003995',
+        produktUrl: '/produkte/20003995/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-19T18:00+02:00', liefertag: '2022-04-20'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T18:00+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20003817',
+        name: 'Alma',
+        preis: '24,99',
+        streichpreis: '24,99',
+        klassifikationName: 'Blumenbund',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003817',
+        produktUrl: '/produkte/20003817/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-19T18:00+02:00', liefertag: '2022-04-20'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T18:00+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20003150',
+        name: 'Blumenbox Lilia',
+        preis: '19,99',
+        streichpreis: '19,99',
+        klassifikationName: 'Marktware',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003150',
+        produktUrl: '/produkte/20003150/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-08T10:00+02:00', liefertag: '2022-04-09'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T10:00+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20003151',
+        name: 'Blumenbox Mariella',
+        preis: '19,99',
+        streichpreis: '19,99',
+        klassifikationName: 'Marktware',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003151',
+        produktUrl: '/produkte/20003151/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-08T10:00+02:00', liefertag: '2022-04-09'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T10:00+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20003152',
+        name: 'Blumenbox Zoe',
+        preis: '19,99',
+        streichpreis: '19,99',
+        klassifikationName: 'Marktware',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003152',
+        produktUrl: '/produkte/20003152/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-08T10:00+02:00', liefertag: '2022-04-09'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T10:00+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20003307',
+        name: 'Französische Tulpen in Pink mit Zweigen',
+        preis: '29,99',
+        streichpreis: '29,99',
+        klassifikationName: 'Marktware',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003307',
+        produktUrl: '/produkte/20003307/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-20T10:00+02:00', liefertag: '2022-04-21'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T10:00+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20003195',
+        name: 'Frühlingsblumenmix in Blau',
+        preis: '27,99',
+        streichpreis: '29,99',
+        klassifikationName: 'Marktware',
+        zeigeStreichpreis: true,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003195',
+        produktUrl: '/produkte/20003195/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-20T10:00+02:00', liefertag: '2022-04-21'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T10:00+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20003193',
+        name: 'Frühlingsblumenmix in Rosa',
+        preis: '24,99',
+        streichpreis: '29,99',
+        klassifikationName: 'Marktware',
+        zeigeStreichpreis: true,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003193',
+        produktUrl: '/produkte/20003193/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-20T10:00+02:00', liefertag: '2022-04-21'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T10:00+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20004025',
+        name: 'Tulpen Columbus 30 Stiele',
+        preis: '19,99',
+        streichpreis: '19,99',
+        klassifikationName: 'Marktware',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20004025',
+        produktUrl: '/produkte/20004025/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-07T14:45+02:00', liefertag: '2022-04-08'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T14:45+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20004024',
+        name: 'Tulpen Flash Point 30 Stiele',
+        preis: '17,99',
+        streichpreis: '22,99',
+        klassifikationName: 'Marktware',
+        zeigeStreichpreis: true,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20004024',
+        produktUrl: '/produkte/20004024/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-08T10:00+02:00', liefertag: '2022-04-09'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-09T08:00+02:00', liefertag: '2022-04-11'},
+      },
+      {
+        nummer: '20004098',
+        name: 'Rosen Nalani',
+        preis: '22,99',
+        streichpreis: '24,99',
+        klassifikationName: 'Marktware',
+        zeigeStreichpreis: true,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20004098',
+        produktUrl: '/produkte/20004098/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-20T10:00+02:00', liefertag: '2022-04-21'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T10:00+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20004102',
+        name: 'Ranunkel Mix in Rosa 30 Stiele',
+        preis: '24,99',
+        streichpreis: '24,99',
+        klassifikationName: 'Marktware',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20004102',
+        produktUrl: '/produkte/20004102/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-20T10:00+02:00', liefertag: '2022-04-21'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T10:00+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20004055',
+        name: 'Community Blumenbox',
+        preis: '19,99',
+        streichpreis: '19,99',
+        klassifikationName: 'Marktware',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20004055',
+        produktUrl: '/produkte/20004055/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-08T10:00+02:00', liefertag: '2022-04-09'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T10:00+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20003342',
+        name: 'Wildblumen Trockenstrauß',
+        preis: '27,99',
+        streichpreis: '27,99',
+        klassifikationName: 'Trockenblumen',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003342',
+        produktUrl: '/produkte/20003342/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-07T14:45+02:00', liefertag: '2022-04-08'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-06-03T14:45+02:00', liefertag: '2022-06-04'},
+      },
+      {
+        nummer: '20003363',
+        name: 'Frühlingserwachen',
+        preis: '27,99',
+        streichpreis: '27,99',
+        klassifikationName: 'Strauß',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003363',
+        produktUrl: '/produkte/20003363/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-07T14:45+02:00', liefertag: '2022-04-08'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-14T14:45+02:00', liefertag: '2022-04-16'},
+      },
+      {
+        nummer: '20003365',
+        name: 'Schöne Ostern',
+        preis: '21,99',
+        streichpreis: '21,99',
+        klassifikationName: 'Blumenbund',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003365',
+        produktUrl: '/produkte/20003365/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-07T18:00+02:00', liefertag: '2022-04-08'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-14T18:00+02:00', liefertag: '2022-04-16'},
+      },
+      {
+        nummer: '20003361',
+        name: 'Liebliche Ostern',
+        preis: '24,99',
+        streichpreis: '24,99',
+        klassifikationName: 'Strauß',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003361',
+        produktUrl: '/produkte/20003361/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-07T18:00+02:00', liefertag: '2022-04-08'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-14T18:00+02:00', liefertag: '2022-04-16'},
+      },
+      {
+        nummer: '20003357',
+        name: 'Stella Größe L',
+        preis: '29,99',
+        streichpreis: '29,99',
+        klassifikationName: 'Blumenbund',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003357',
+        produktUrl: '/produkte/20003357/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-07T18:00+02:00', liefertag: '2022-04-08'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-14T18:00+02:00', liefertag: '2022-04-16'},
+      },
+      {
+        nummer: '20003362',
+        name: 'Anna',
+        preis: '27,99',
+        streichpreis: '27,99',
+        klassifikationName: 'Strauß',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003362',
+        produktUrl: '/produkte/20003362/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-07T18:00+02:00', liefertag: '2022-04-08'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-14T18:00+02:00', liefertag: '2022-04-16'},
+      },
+      {
+        nummer: '20003356',
+        name: 'Stella Größe M',
+        preis: '22,99',
+        streichpreis: '22,99',
+        klassifikationName: 'Blumenbund',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003356',
+        produktUrl: '/produkte/20003356/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-07T18:00+02:00', liefertag: '2022-04-08'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-14T18:00+02:00', liefertag: '2022-04-16'},
+      },
+      {
+        nummer: '20003366',
+        name: 'Farbrausch',
+        preis: '21,99',
+        streichpreis: '21,99',
+        klassifikationName: 'Blumenbund',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003366',
+        produktUrl: '/produkte/20003366/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-07T18:00+02:00', liefertag: '2022-04-08'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-14T18:00+02:00', liefertag: '2022-04-16'},
+      },
+      {
+        nummer: '20003360',
+        name: 'Lea',
+        preis: '24,99',
+        streichpreis: '24,99',
+        klassifikationName: 'Strauß',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003360',
+        produktUrl: '/produkte/20003360/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-08T18:00+02:00', liefertag: '2022-04-09'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-14T18:00+02:00', liefertag: '2022-04-16'},
+      },
+      {
+        nummer: '20003364',
+        name: 'Osterfest',
+        preis: '27,99',
+        streichpreis: '27,99',
+        klassifikationName: 'Strauß',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003364',
+        produktUrl: '/produkte/20003364/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-07T18:00+02:00', liefertag: '2022-04-08'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-14T18:00+02:00', liefertag: '2022-04-16'},
+      },
+      {
+        nummer: '20003251',
+        name: 'Osterfreude',
+        preis: '22,99',
+        streichpreis: '22,99',
+        klassifikationName: 'Marktware',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003251',
+        produktUrl: '/produkte/20003251/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-08T10:00+02:00', liefertag: '2022-04-09'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-14T10:00+02:00', liefertag: '2022-04-16'},
+      },
+      {
+        nummer: '20003355',
+        name: 'Frühlingsrausch',
+        preis: '26,99',
+        streichpreis: '26,99',
+        klassifikationName: 'Blumenbund',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003355',
+        produktUrl: '/produkte/20003355/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-08T10:00+02:00', liefertag: '2022-04-09'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-14T10:00+02:00', liefertag: '2022-04-16'},
+      },
+      {
+        nummer: '20003373',
+        name: 'Osterglück',
+        preis: '26,99',
+        streichpreis: '26,99',
+        klassifikationName: 'Strauß',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003373',
+        produktUrl: '/produkte/20003373/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-07T18:00+02:00', liefertag: '2022-04-08'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-14T18:00+02:00', liefertag: '2022-04-16'},
+      },
+      {
+        nummer: '20003359',
+        name: 'Ostertraum',
+        preis: '29,99',
+        streichpreis: '29,99',
+        klassifikationName: 'Strauß',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003359',
+        produktUrl: '/produkte/20003359/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-07T18:00+02:00', liefertag: '2022-04-08'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-14T18:00+02:00', liefertag: '2022-04-16'},
+      },
+      {
+        nummer: '20004105',
+        name: 'Oster Rosen-Mix 30 Stiele',
+        preis: '24,99',
+        streichpreis: '24,99',
+        klassifikationName: 'Marktware',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20004105',
+        produktUrl: '/produkte/20004105/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-08T10:00+02:00', liefertag: '2022-04-09'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-14T10:00+02:00', liefertag: '2022-04-16'},
+      },
+      {
+        nummer: '20002902',
+        name: 'Beste Mama',
+        preis: '27,99',
+        streichpreis: '27,99',
+        klassifikationName: 'Blumenbund',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20002902',
+        produktUrl: '/produkte/20002902/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-27T18:00+02:00', liefertag: '2022-04-28'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-05-09T18:00+02:00', liefertag: '2022-05-10'},
+      },
+      {
+        nummer: '20004127',
+        name: 'Pampasgraskranz Love XL',
+        preis: '59,99',
+        streichpreis: '59,99',
+        klassifikationName: 'Trockenblumen',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20004127',
+        produktUrl: '/produkte/20004127/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-19T14:45+02:00', liefertag: '2022-04-20'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-27T14:45+02:00', liefertag: '2022-04-28'},
+      },
+      {
+        nummer: '20004128',
+        name: 'Trockenblumenkranz Hello Summer',
+        preis: '16,99',
+        streichpreis: '16,99',
+        klassifikationName: 'Trockenblumen',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20004128',
+        produktUrl: '/produkte/20004128/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-07T18:00+02:00', liefertag: '2022-04-08'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-27T18:00+02:00', liefertag: '2022-04-28'},
+      },
+      {
+        nummer: '20002158',
+        name: 'Lieben Dank',
+        preis: '24,99',
+        streichpreis: '24,99',
+        klassifikationName: 'Blumenbund',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20002158',
+        produktUrl: '/produkte/20002158/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-27T18:00+02:00', liefertag: '2022-04-28'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-05-09T18:00+02:00', liefertag: '2022-05-10'},
+      },
+      {
+        nummer: '20003451',
+        name: 'Die Beste',
+        preis: '19,99',
+        streichpreis: '19,99',
+        klassifikationName: 'Blumenbund',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003451',
+        produktUrl: '/produkte/20003451/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-27T18:00+02:00', liefertag: '2022-04-28'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-05-09T18:00+02:00', liefertag: '2022-05-10'},
+      },
+      {
+        nummer: '20002899',
+        name: 'Mamas Liebling',
+        preis: '21,99',
+        streichpreis: '21,99',
+        klassifikationName: 'Blumenbund',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20002899',
+        produktUrl: '/produkte/20002899/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-27T18:00+02:00', liefertag: '2022-04-28'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-05-09T18:00+02:00', liefertag: '2022-05-10'},
+      },
+      {
+        nummer: '20003450',
+        name: 'Just for You',
+        preis: '24,99',
+        streichpreis: '24,99',
+        klassifikationName: 'Blumenbund',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003450',
+        produktUrl: '/produkte/20003450/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-27T18:00+02:00', liefertag: '2022-04-28'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-05-09T18:00+02:00', liefertag: '2022-05-10'},
+      },
+      {
+        nummer: '20002903',
+        name: 'In meinem Herzen',
+        preis: '27,99',
+        streichpreis: '27,99',
+        klassifikationName: 'Blumenbund',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20002903',
+        produktUrl: '/produkte/20002903/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-27T18:00+02:00', liefertag: '2022-04-28'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-05-09T18:00+02:00', liefertag: '2022-05-10'},
+      },
+      {
+        nummer: '20003808',
+        name: 'Nika',
+        preis: '19,99',
+        streichpreis: '19,99',
+        klassifikationName: 'Blumenbund',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003808',
+        produktUrl: '/produkte/20003808/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-19T18:00+02:00', liefertag: '2022-04-20'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T18:00+02:00', liefertag: '2022-04-30'},
+      },
+      {
+        nummer: '20003397',
+        name: 'Blumenpresse Blumenwiese DIY',
+        preis: '29,99',
+        streichpreis: '29,99',
+        klassifikationName: 'Blumenbund',
+        zeigeStreichpreis: false,
+        bildUrl:
+          'https://res.cloudinary.com/blume2000/image/upload/c_fill,dpr_%d%,f_jpg,fl_progressive:steep,h_%h%,q_auto,w_%w%/v1/dev/produkte/PRIMAER/20003397',
+        produktUrl: '/produkte/20003397/produktDetailSeite',
+        naechstmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-20T10:00+02:00', liefertag: '2022-04-21'},
+        letztmoeglicheVerfuegbarkeit: {bestellschluss: '2022-04-29T10:00+02:00', liefertag: '2022-04-30'},
+      },
+    ],
+    verfuegbareFilterwerte: {
+      sorten: [
+        {name: 'Agapanthus'},
+        {name: 'Allium'},
+        {name: 'Alstromerien'},
+        {name: 'Anemonen'},
+        {name: 'Astern'},
+        {name: 'Birkenzweige'},
+        {name: 'Bromelie'},
+        {name: 'Bupleurum'},
+        {name: 'Chrysanthemen'},
+        {name: 'Craspedia'},
+        {name: 'Dill'},
+        {name: 'Disteln'},
+        {name: 'Eukalyptus'},
+        {name: 'Eustoma'},
+        {name: 'Federgras'},
+        {name: 'Freesien'},
+        {name: 'Frühblüher'},
+        {name: 'Gerbera'},
+        {name: 'Heidelbeere'},
+        {name: 'Hirtentäschelkraut'},
+        {name: 'Hyazinthen'},
+        {name: 'Johanniskraut'},
+        {name: 'Kaffeebusch'},
+        {name: 'Levkoje'},
+        {name: 'Lilien'},
+        {name: 'Lisianthus'},
+        {name: 'Löwenmaul'},
+        {name: 'Löwenmäulchen'},
+        {name: 'Milchstern'},
+        {name: 'Mähnenschilfgras'},
+        {name: 'Narzissen'},
+        {name: 'Nelken'},
+        {name: 'Olivenzweige'},
+        {name: 'Pampasgras'},
+        {name: 'Panicum'},
+        {name: 'Phlebodium'},
+        {name: 'Pistazie'},
+        {name: 'Polianthus'},
+        {name: 'Protea'},
+        {name: 'Ranunkeln'},
+        {name: 'Rosen'},
+        {name: 'Rosmarin'},
+        {name: 'Salal'},
+        {name: 'Schafgarbe'},
+        {name: 'Schleierkraut'},
+        {name: 'Spraynelken'},
+        {name: 'Statice'},
+        {name: 'Strandflieder'},
+        {name: 'Trockenblumen'},
+        {name: 'Tulpen'},
+        {name: 'Veronika'},
+        {name: 'Wachsflower'},
+        {name: 'Waldreben'},
+        {name: 'Weidenkätzchen'},
+        {name: 'verzweigte Rosen'},
+      ],
+      farben: [
+        {name: 'blau'},
+        {name: 'bunt'},
+        {name: 'gelb'},
+        {name: 'grün'},
+        {name: 'lila'},
+        {name: 'orange'},
+        {name: 'pink'},
+        {name: 'rosa'},
+        {name: 'rot'},
+        {name: 'weiss'},
+      ],
+      preisbereich: {
+        minPreis: {bruttoBetrag: 16.99, waehrung: 'EUR'},
+        maxPreis: {bruttoBetrag: 74.97, waehrung: 'EUR'},
+      },
+      klassifikationen: [
+        {name: 'Strauß', id: '11'},
+        {name: 'Marktware', id: '13'},
+        {
+          name: 'Blumenbund',
+          id: '24',
+        },
+        {name: 'Trockenblumen', id: '27'},
+      ],
+      liefertage: {verfuegbareLiefertage: ['2022-04-08', '2022-04-09']},
+    },
+  };
+
+  window.__INITIAL_STATE__ = {
+    PRODUKTLISTE__1: {
+      version: '1.0',
+      ProdukteState: {
+        produkte: data.produkte.map((produkt) => ({
+          ...produkt,
+          naechstmoeglicheVerfuegbarkeit: {
+            bestellschluss: new Date(produkt.naechstmoeglicheVerfuegbarkeit.bestellschluss),
+            liefertag: new Date(produkt.naechstmoeglicheVerfuegbarkeit.liefertag)
+          },
+          letztmoeglicheVerfuegbarkeit: {
+            bestellschluss: new Date(produkt.letztmoeglicheVerfuegbarkeit.bestellschluss),
+            liefertag: new Date(produkt.letztmoeglicheVerfuegbarkeit.liefertag)
+          }
+        })),
+      },
+      ProduktfilterState: {
+        cmsProdukteFilter: {
+          farben: [],
+          blumensorten: [],
+          klassifikation3: [],
+          produktNummern: [],
+          produktnummernVerwendung: null,
+          limit: null,
+          minPreis: null,
+          maxPreis: null,
+        },
+        sorten: new Map(),
+        farben: new Map(),
+        preisBereich: null,
+        klassifikationen: new Map(),
+        liefertage: new Map(),
+      },
+      EinstellungenState: {
+        einstellungen: {
+          id: 'b19af21a-cb02-45bc-bedd-d3baa0726bb2',
+          ueberschrift: 'Alle Blumen',
+          istHauptueberschrift: false,
+          alleAnzeigenLinkZiel: null,
+          trackingname: 'Produktliste_Blumen_Alle',
+          trackingnummer: 123456789012,
+          istFilterAusgeblendet: false,
+        },
+      },
+      FeatureState: {
+        features: [
+          {
+            feature: 'produktfilter_anzeigen',
+            active: true,
+          },
+        ],
+      },
+    },
+  };
+
+  data.verfuegbareFilterwerte.sorten.map((sorte) =>
+    window.__INITIAL_STATE__.PRODUKTLISTE__1.ProduktfilterState.sorten.set(sorte.name, {
+      name: sorte.name,
+      lesbarerName: sorte.name,
+      selected: false,
+      filtertyp: 'SORTE',
+    })
+  );
+  data.verfuegbareFilterwerte.farben.map((farbe) =>
+    window.__INITIAL_STATE__.PRODUKTLISTE__1.ProduktfilterState.farben.set(farbe.name, {
+      name: farbe.name,
+      lesbarerName: farbe.name,
+      selected: false,
+      filtertyp: 'FARBE',
+    })
+  );
+  window.__INITIAL_STATE__.PRODUKTLISTE__1.ProduktfilterState.preisBereich = data.verfuegbareFilterwerte.preisbereich;
+  data.verfuegbareFilterwerte.klassifikationen.map((klassifikation) =>
+    window.__INITIAL_STATE__.PRODUKTLISTE__1.ProduktfilterState.klassifikationen.set(klassifikation.id, {
+      name: klassifikation.name,
+      lesbarerName: klassifikation.name,
+      id: klassifikation.id,
+      selected: false,
+      filtertyp: 'PRODUKTART',
+    })
+  );
+  data.verfuegbareFilterwerte.liefertage.verfuegbareLiefertage.map((liefertag) =>
+    window.__INITIAL_STATE__.PRODUKTLISTE__1.ProduktfilterState.liefertage.set(liefertag, {
+      name: liefertag,
+      lesbarerName: liefertag,
+      selected: false,
+      filtertyp: 'VERFUEGBARKEIT',
+    })
+  );
+</script>
+<div id="app"></div>
+</body>
+</html>
