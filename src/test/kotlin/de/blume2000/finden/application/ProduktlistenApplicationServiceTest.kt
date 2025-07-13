@@ -12,7 +12,6 @@ import de.blume2000.finden.domain.model.produkte.VerfügbareFilterwerteRepositor
 import de.blume2000.finden.domain.model.produkte.produkt.Bestellschluss
 import de.blume2000.finden.domain.model.produkte.produkt.Liefertag
 import de.blume2000.finden.domain.model.produkte.produkt.Produktnummer
-import de.blume2000.finden.domain.service.featureToggles.FeatureToggleDomainService
 import de.blume2000.finden.testutils.erstelleProdukt
 import de.blume2000.finden.testutils.erstelleProduktVerfügbarkeit
 import de.blume2000.finden.testutils.erstelleVerfügbarkeiten
@@ -42,14 +41,8 @@ internal class ProduktlistenApplicationServiceTest {
   @Inject
   private lateinit var verfügbareFilterwerteRepository: VerfügbareFilterwerteRepository
 
-  private val mockedFeatureService: FeatureToggleDomainService = mockk()
-
   @Inject
   private lateinit var mongoClient: MongoClient
-
-  init {
-    every { mockedFeatureService.istFeatureToggleAktiv("produkte_sortieren") } returns true
-  }
 
   @BeforeEach
   fun cleanup() {
@@ -61,7 +54,7 @@ internal class ProduktlistenApplicationServiceTest {
   internal fun `Liefert keine Produkte, wenn das ProdukteRepository leer ist`() {
     // Given
     val applicationService =
-      ProduktlistenApplicationService(produktRepository, verfügbareFilterwerteRepository, mockedFeatureService)
+      ProduktlistenApplicationService(produktRepository, verfügbareFilterwerteRepository)
     val cmsProdukteFilter =
       CmsProdukteFilter(emptyList(), null, null, emptyList(), ProduktnummernVerwendung.SELEKTIONSBASIS, null)
     val leererSortierung = ProdukteSortierung()
@@ -77,7 +70,7 @@ internal class ProduktlistenApplicationServiceTest {
   internal fun `Liefert kein Produkt wenn Produktverfügbarkeit abgelaufen ist`() {
     // Given
     val applicationService =
-      ProduktlistenApplicationService(produktRepository, verfügbareFilterwerteRepository, mockedFeatureService)
+      ProduktlistenApplicationService(produktRepository, verfügbareFilterwerteRepository)
     val abgelaufeneVerfügbarkeit = erstelleProduktVerfügbarkeit(
       liefertag = Liefertag(LocalDate.now().minusDays(1)),
       bestellschluss = Bestellschluss(DateTimeUtil.erstelleUTCNow().minusDays(2))
@@ -99,7 +92,7 @@ internal class ProduktlistenApplicationServiceTest {
   internal fun `Liefert kein Produkt wenn keine Produktverfügbarkeit vorhanden ist`() {
     // Given
     val applicationService =
-      ProduktlistenApplicationService(produktRepository, verfügbareFilterwerteRepository, mockedFeatureService)
+      ProduktlistenApplicationService(produktRepository, verfügbareFilterwerteRepository)
     val produkt = erstelleProdukt()
     produktRepository.speicherProdukt(produkt)
     val cmsProdukteFilter =
@@ -118,7 +111,7 @@ internal class ProduktlistenApplicationServiceTest {
     // Given
 
     val applicationService =
-      ProduktlistenApplicationService(produktRepository, verfügbareFilterwerteRepository, mockedFeatureService)
+      ProduktlistenApplicationService(produktRepository, verfügbareFilterwerteRepository)
     val produktVerfügbarkeiten = listOf(erstelleProduktVerfügbarkeit())
     val produkt = erstelleProdukt(verfügbarkeiten = produktVerfügbarkeiten)
     val nichtVerfügbaresProdukt = erstelleProdukt(nummer = "NICHT_VERFUEGBAR")
@@ -148,7 +141,7 @@ internal class ProduktlistenApplicationServiceTest {
   internal fun `Liefert alle Produkte die verfügbar sind mit unterschiedlicher erster und letzter Verfügbarkeit`() {
     // Given
     val applicationService =
-      ProduktlistenApplicationService(produktRepository, verfügbareFilterwerteRepository, mockedFeatureService)
+      ProduktlistenApplicationService(produktRepository, verfügbareFilterwerteRepository)
     val nächstmöglicheVerfügbarkeit = erstelleProduktVerfügbarkeit(
       liefertag = Liefertag(LocalDate.now().plusDays(2)),
       bestellschluss = Bestellschluss(DateTimeUtil.erstelleUTCNow().plusDays(1))
@@ -187,7 +180,7 @@ internal class ProduktlistenApplicationServiceTest {
   internal fun `liefert sortierte produkte wenn cms filter produktnummernvervendung selektionsbasis ist und produktnummern ausgewählt sind`() {
     // Given
     val mockkRepository = mockk<ProduktRepository>()
-    val applicationService = ProduktlistenApplicationService(mockkRepository, mockk(), mockedFeatureService)
+    val applicationService = ProduktlistenApplicationService(mockkRepository, mockk())
     val produktNummernFilterUndSortierung = listOf("2", "31", "32", "3")
 
     every { mockkRepository.ladeVerfügbareProdukte(any(), any(), any()) } returns Produkte(
@@ -211,7 +204,7 @@ internal class ProduktlistenApplicationServiceTest {
   internal fun `Sortiertung nach Produktnummern und Limit Filter funktionieren in kombination`() {
     // Given
     val applicationService =
-      ProduktlistenApplicationService(produktRepository, verfügbareFilterwerteRepository, mockedFeatureService)
+      ProduktlistenApplicationService(produktRepository, verfügbareFilterwerteRepository)
     produktRepository.speicherProdukt(erstelleProdukt(nummer = "1", verfügbarkeiten = erstelleVerfügbarkeiten()))
     produktRepository.speicherProdukt(erstelleProdukt(nummer = "2", verfügbarkeiten = erstelleVerfügbarkeiten()))
     produktRepository.speicherProdukt(erstelleProdukt(nummer = "3", verfügbarkeiten = erstelleVerfügbarkeiten()))

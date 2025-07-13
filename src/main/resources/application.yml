@@ -1,46 +1,21 @@
 b2k:
   host: http://localhost:8081
-  # INFO zone property is set within gitlab pipeline and terraform script
   zone: local-zone
   team:
-    # INFO key property is set within gitlab pipeline and terraform script
     key: local-team-key
   gcp-project:
-    # INFO name property is set within gitlab pipeline and terraform script
     name: local-gcp-project-name
-    # INFO environment property is set within gitlab pipeline and terraform script
     environment: dev
-  unleash:
-    # INFO project-id property is set within gitlab pipeline and terraform script
-    project-id: unset
-    # INFO instance-id property is set within gitlab pipeline and terraform script
-    instance-id: unset
 
 quarkus:
   application:
-    # INFO name property is set within gitlab pipeline and terraform script
     name: finden-backend
-    # INFO version property is set within gitlab pipeline and terraform script
     version: local
   package:
-    type: fast-jar # could be removed, is default with quarkus 1.12.0...
+    type: fast-jar
   http:
     port: ${PORT:8081}
-    # TODO move to %dev when we have a frontend proxy for production
     cors: true
-  #    auth:
-  #      basic: true
-  #      policy:
-  #        admin-policy:
-  #          roles-allowed: admin
-  #      permission:
-  #        write-products:
-  #          paths: /produktKacheln/*
-  #          methods: POST
-  #          policy: admin-policy
-  #        read-products:
-  #          paths: /produktKacheln/*
-  #          policy: authenticated
   resteasy:
     gzip:
       enabled: true
@@ -78,59 +53,8 @@ quarkus:
       name: local-finden-backend
     devservices:
       enabled: false
-  kafka:
-    bootstrap:
-      servers: localhost:9092
-    schema:
-      registry:
-        url: http://localhost:8090
   mongodb:
     connection-string: mongodb://localhost:27017
-  mp:
-    messaging:
-      incoming:
-        produkte:
-          failure-strategy: dead-letter-queue
-          dead-letter-queue:
-            topic: produkte-dlq
-            value:
-              serializer: de.blume2000.finden.adapter.active.messaging.AvroJsonSerializer
-          group:
-            id: ${quarkus.application.name}
-          connector: smallrye-kafka
-          topic: produkte
-          value:
-            deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
-            subject:
-              name:
-                strategy: io.confluent.kafka.serializers.subject.TopicNameStrategy
-          value-deserialization-failure-handler: LoggingDeserializationFailureHandler
-          schema:
-            reflection: false
-          specific:
-            avro:
-              reader: true
-        verfuegbarkeiten:
-          failure-strategy: dead-letter-queue
-          dead-letter-queue:
-            topic: verfuegbarkeiten-dlq
-            value:
-              serializer: de.blume2000.finden.adapter.active.messaging.AvroJsonSerializer
-          group:
-            id: ${quarkus.application.name}
-          connector: smallrye-kafka
-          topic: verfuegbarkeiten
-          value:
-            deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
-            subject:
-              name:
-                strategy: io.confluent.kafka.serializers.subject.TopicNameStrategy
-          value-deserialization-failure-handler: LoggingDeserializationFailureHandler
-          schema:
-            reflection: false
-          specific:
-            avro:
-              reader: true
 
 "%test":
   b2k:
@@ -143,167 +67,5 @@ quarkus:
       version: test
     devservices:
       enabled: false
-    # INFO database connections are configured by using de.blume2000.TestContainers class
     mongodb:
       database: "finden-test"
-    # Einkommentieren um die queries zu loggen:
-#    log:
-#      category:
-#        "org.mongodb.driver":
-#          level: DEBUG
-  kafka:
-    schema:
-      registry:
-        url: http://localhost:8081
-#    group:
-#      id: ${quarkus.application.name}
-#  mp:
-#    messaging:
-#      outgoing:
-#        generierte-produkte:
-#          connector: smallrye-kafka
-#          topic: produkte
-#          value:
-#            serializer: io.quarkus.kafka.client.serialization.JsonbSerializer
-#      incoming:
-#        produkte:
-#          connector: smallrye-kafka
-#          topic: produkte
-#          value:
-#            deserializer: de.blume2000.kaufen.adapter.active.messaging.ProduktMessagePayloadSerDeserializer
-
-"%prod":
-  b2k:
-    host:
-    # INFO host is set within gitlab pipeline and terraform script
-  quarkus:
-    log:
-      console:
-        sentry:
-          ~: true
-          in-app-packages: de.blume2000
-        json:
-          ~: true
-    micrometer:
-      export:
-        stackdriver:
-          enabled: true
-    mongodb:
-      # INFO connection string is set within gitlab pipeline and terraform script
-      connection-string:
-      credentials:
-        # INFO username is set within gitlab pipeline and terraform script
-        username:
-        # INFO password is set within gitlab pipeline and terraform script
-        password:
-  mp:
-    messaging:
-      incoming:
-        produkte:
-          failure-strategy: dead-letter-queue
-          dead-letter-queue:
-            topic: produkte-dlq
-            value:
-              serializer: de.blume2000.finden.adapter.active.messaging.AvroJsonSerializer
-          max:
-            poll:
-              records: 1
-          throttled:
-            unprocessed-record-max-age:
-              ms: 900000
-          bootstrap:
-            # INFO servers property is set within gitlab pipeline and terraform script: KAFKA_BOOTSTRAP_SERVERS
-            servers:
-          group:
-            id: ${quarkus.application.name}-V1
-          auto:
-            offset:
-              reset: earliest
-          connector: smallrye-kafka
-          topic: produkte
-          value:
-            deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
-            subject:
-              name:
-                strategy: io.confluent.kafka.serializers.subject.TopicNameStrategy
-          value-deserialization-failure-handler: LoggingDeserializationFailureHandler
-          schema:
-            reflection: false
-          specific:
-            avro:
-              reader: true
-          basic:
-            auth:
-              credentials:
-                source: USER_INFO
-          security:
-            protocol: SSL
-          ssl:
-            keystore:
-              # INFO location property is set within gitlab pipeline and terraform script
-              location:
-              # INFO password property is set within gitlab pipeline and terraform script
-              password:
-            truststore:
-              # INFO location property is set within gitlab pipeline and terraform script
-              location:
-              # INFO password property is set within gitlab pipeline and terraform script
-              password:
-            endpoint:
-              identification:
-                algorithm:
-        verfuegbarkeiten:
-          failure-strategy: dead-letter-queue
-          dead-letter-queue:
-            topic: verfuegbarkeiten-dlq
-            value:
-              serializer: de.blume2000.finden.adapter.active.messaging.AvroJsonSerializer
-          max:
-            poll:
-              records: 1
-          throttled:
-            unprocessed-record-max-age:
-              ms: 900000
-          bootstrap:
-            # INFO servers property is set within gitlab pipeline and terraform script: KAFKA_BOOTSTRAP_SERVERS
-            servers:
-          group:
-            id: ${quarkus.application.name}-V1
-          connector: smallrye-kafka
-          topic: verfuegbarkeiten
-          value:
-            deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
-            subject:
-              name:
-                strategy: io.confluent.kafka.serializers.subject.TopicNameStrategy
-          value-deserialization-failure-handler: LoggingDeserializationFailureHandler
-          schema:
-            reflection: false
-          specific:
-            avro:
-              reader: true
-          basic:
-            auth:
-              credentials:
-                source: USER_INFO
-          security:
-            protocol: SSL
-          enable:
-            auto:
-              commit: false
-          client:
-            id: finden
-          ssl:
-            keystore:
-              # INFO location property is set within gitlab pipeline and terraform script
-              location:
-              # INFO password property is set within gitlab pipeline and terraform script
-              password:
-            truststore:
-              # INFO location property is set within gitlab pipeline and terraform script
-              location:
-              # INFO password property is set within gitlab pipeline and terraform script
-              password:
-            endpoint:
-              identification:
-                algorithm:

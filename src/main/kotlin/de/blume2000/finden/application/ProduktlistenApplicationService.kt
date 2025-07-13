@@ -11,14 +11,12 @@ import de.blume2000.finden.domain.model.produkte.ProduktnummernVerwendung
 import de.blume2000.finden.domain.model.produkte.UserProdukteFilter
 import de.blume2000.finden.domain.model.produkte.VerfügbareFilterwerteRepository
 import de.blume2000.finden.domain.model.produkte.produkt.ProduktComperatorByBaseListOccurence
-import de.blume2000.finden.domain.service.featureToggles.FeatureToggleDomainService
 import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class ProduktlistenApplicationService(
   private val produkteRepository: ProduktRepository,
-  private val verfügbareFilterwerteRepository: VerfügbareFilterwerteRepository,
-  private val featureToggleDomainService: FeatureToggleDomainService
+  private val verfügbareFilterwerteRepository: VerfügbareFilterwerteRepository
 ) {
 
   fun gebeMirAlleVerfuegbarenProdukte(cmsProdukteFilter: CmsProdukteFilter, produkteSortierung: ProdukteSortierung) =
@@ -33,9 +31,7 @@ class ProduktlistenApplicationService(
     userProdukteFilter: UserProdukteFilter,
     produkteSortierung: ProdukteSortierung
   ): List<ProduktDTO> {
-    val featureSortierenEnabled = featureToggleDomainService.istFeatureToggleAktiv("produkte_sortieren")
-    val inMemorySortierungNötig =
-      featureSortierenEnabled && cmsProdukteFilter.produktNummern.isNotEmpty() && cmsProdukteFilter.produktnummernVerwendung == ProduktnummernVerwendung.SELEKTIONSBASIS
+    val inMemorySortierungNötig = cmsProdukteFilter.produktNummern.isNotEmpty() && cmsProdukteFilter.produktnummernVerwendung == ProduktnummernVerwendung.SELEKTIONSBASIS
     val originalLimit = cmsProdukteFilter.getLimit()
 
     if (inMemorySortierungNötig) {
