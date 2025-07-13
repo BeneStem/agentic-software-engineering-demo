@@ -1,596 +1,1199 @@
 # Development Guide
 
-This guide outlines the development standards, coding conventions, and contribution guidelines for the Product API
-project.
+This guide outlines the development standards, coding conventions, and contribution guidelines for the Finden Backend (Product Search Service) built with Quarkus/Kotlin.
 
 ## Table of Contents
 
-- [Java Version Requirements](#java-version-requirements)
+- [Technology Stack](#technology-stack)
 - [Architecture and Domain Design](#architecture-and-domain-design)
-- [Modern Java Features](#modern-java-features)
-- [Functional Programming Patterns](#functional-programming-patterns)
+- [Security Requirements](#security-requirements)
+- [Performance Standards](#performance-standards)
+- [Kotlin Development Guidelines](#kotlin-development-guidelines)
 - [Testing Strategy](#testing-strategy)
-- [Code Style Guidelines](#code-style-guidelines)
-- [Documentation Standards](#documentation-standards)
-- [Quality Assurance](#quality-assurance)
+- [Code Quality Standards](#code-quality-standards)
+- [Development Process](#development-process)
+- [Context Engineering & Task Management](#context-engineering--task-management)
+- [Task Master Integration](#task-master-integration)
+- [AI Development Workflow](#ai-development-workflow)
 
-## Java Version Requirements
+## Technology Stack
 
-### Java Version
+### Core Technologies
 
-- **Required Version:** Java 24 (OpenJDK 24.0.1)
-- **Compatibility:** Java 24+ features are used
-- **Preview Features:** Usage recommended
+- **Language:** Kotlin 2.2.0 (kotlin-stdlib-jdk8:2.2.0 explicitly pinned, targeting JVM 22)
+- **Framework:** Quarkus 3.24.3 with BOM platform enforcement
+- **Build Tool:** Gradle 8.x with Kotlin DSL
+- **Database:** MongoDB with Panache Kotlin
+- **Dependency Injection:** Quarkus CDI (not Spring)
+- **Messaging:** Kafka with Avro serialization (Confluent 8.0.0)
+
+### Key Dependencies
+
+- **Domain Modeling:** jMolecules DDD 1.10.0
+- **Database:** MongoDB Panache Kotlin
+- **Testing:** JUnit 5, Mockk 1.14.4, Strikt 0.35.1, TestContainers 1.21.3
+- **Validation:** Hibernate Validator
+- **Monitoring:** Micrometer with Stackdriver 3.3.1, Prometheus
+- **Logging:** Kotlin Logging 3.0.5, JSON Logging 3.1.0
+- **Serialization:** Jackson with Kotlin module
+- **Security:** OWASP HTML Sanitizer 20240325.1, Dependency Check 12.1.3, Elytron Security
+- **Architecture Testing:** ArchUnit 1.4.1
+- **Build Plugins:** Quarkus Plugin 3.24.3, Detekt 1.23.8, Avro Plugin 1.9.1
+- **Feature Flags:** Unleash Client 4.4.1
+- **Reactive:** Smallrye Fault Tolerance, Reactive Messaging
+
+### Version Requirements
+
+- **Java Runtime:** JVM 22+ (currently targeting 22)
+- **Kotlin:** 2.2.0+ (prefer latest patch releases)
+- **Gradle:** 8.x+ with Kotlin DSL
 
 ## Architecture and Domain Design
 
-### Clean Architecture Principles
+### Onion Architecture Implementation
 
-- **Layered Architecture:** Clear separation between controller, service, and domain layers
-- **Dependency Inversion:** Higher layers depend on abstractions, not implementations
-- **Single Responsibility:** Each component has one reason to change
-- **Domain-Driven Design:** Business logic encapsulated in domain entities
+The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Architecture**:
 
-### Domain Driven Design
+```
+de.blume2000.finden/
+├── domain/                   # Core domain (innermost layer)
+│   ├── model/               # Domain entities, value objects, aggregates
+│   ├── service/             # Domain services  
+│   ├── repository/          # Repository interfaces (ports)
+│   └── exception/           # Domain exceptions
+├── application/             # Application layer (use cases)
+│   └── service/             # Application services
+└── adapter/                 # Adapters (outermost layer)
+    ├── active/              # Inbound adapters (driving)
+    │   ├── api/             # REST controllers
+    │   └── messaging/       # Message consumers
+    └── passive/             # Outbound adapters (driven)
+        ├── database/        # Repository implementations
+        └── messaging/       # External service clients
+```
 
-- **Rich Domain Entities:** Business logic lives in domain objects
-- **Value Objects:** Immutable objects representing concepts without identity
-- **Domain Services:** Complex business operations that don't belong to single entities
-- **Repository Pattern:** Abstract data access behind interfaces
+### Domain-Driven Design Principles (MANDATORY)
 
-### Service Layer Architecture
+#### Rich Domain Model
+- **Business logic MUST live in domain entities**, not services
+- **Value objects MUST be immutable** with proper validation
+- **Aggregates MUST enforce business invariants**
+- **Domain services for complex operations** spanning multiple entities
 
-- **Application Services:** Orchestrate domain operations and handle use cases
-- **Domain Services:** Implement complex business rules spanning multiple entities
-- **Infrastructure Services:** Handle external dependencies and technical concerns
-- **Transaction Management:** Ensure data consistency across operations
+#### Layer Dependencies (ENFORCED BY ARCHUNIT)
+- **Domain layer:** Zero outward dependencies
+- **Application layer:** Depends only on domain interfaces
+- **Adapter layer:** Implements domain interfaces
 
-### API Design Patterns
+#### Anti-Corruption Layer (MANDATORY)
+- **Domain MUST NOT reference DTOs** from adapter layer
+- **External data structures MUST be mapped** at adapter boundaries
+- **Domain model protected from external changes**
 
-- **RESTful Endpoints:** Follow REST conventions for resource management
-- **DTO Pattern:** Data Transfer Objects for API boundaries
-- **Request/Response Models:** Separate models for input validation and output formatting
-- **Error Handling:** Consistent error responses across all endpoints
+## Security Requirements
 
-### REST API Best Practices (MANDATORY)
+### Authentication & Authorization (CRITICAL - PRODUCTION BLOCKER)
 
-#### Resource Identification
+#### Current Status: NOT IMPLEMENTED ⚠️
+The application currently has **ZERO authentication/authorization**. This MUST be implemented before any production deployment.
 
-- **Path Parameters:** Use path parameters to identify resources (e.g., `/products/{id}`)
-- **ID Precedence:** Path parameter ID ALWAYS takes precedence over request body ID
-- **Consistent Endpoints:** Use consistent URL patterns across all resources
+#### Mandatory Security Implementation
 
-#### HTTP Methods and Semantics
+```kotlin
+// Required Quarkus 3.24.3 Security Dependencies
+implementation("io.quarkus:quarkus-security-jpa")
+implementation("io.quarkus:quarkus-oidc") // For OAuth2/JWT
+implementation("io.quarkus:quarkus-smallrye-jwt") // JWT processing
+implementation("io.quarkus:quarkus-security") // Core security
 
-- **GET:** Retrieve resources (idempotent, no side effects)
-- **POST:** Create new resources (non-idempotent)
-- **PUT:** Update existing resources (idempotent)
-- **DELETE:** Remove resources (idempotent)
+// All endpoints MUST be secured
+@RolesAllowed("USER", "ADMIN")
+@Path("/api/finden/produkte")
+class ProdukteResource {
+    
+    @GET
+    @RolesAllowed("USER") 
+    fun getProducts(@Context securityContext: SecurityContext): Response {
+        val principal = securityContext.userPrincipal
+        // Implementation with user context
+    }
+    
+    @POST
+    @RolesAllowed("ADMIN")
+    fun createProduct(product: ProduktDTO): Response {
+        // Admin-only functionality
+    }
+}
+```
 
-#### Request/Response Design
+#### Complete Security Configuration
 
-- **Validation:** Apply proper validation annotations on DTOs
-- **Error Responses:** Use consistent error response format
-- **Status Codes:** Return appropriate HTTP status codes
-  - 200 OK for successful updates
-  - 201 Created for successful creation
-  - 404 Not Found for non-existent resources
-  - 400 Bad Request for validation errors
-  - 409 Conflict for business rule violations
+```yaml
+# application.yml - Quarkus 3.24.3 Security Configuration
+quarkus:
+  oidc:
+    auth-server-url: ${AUTH_SERVER_URL:http://localhost:8080/auth/realms/finden}
+    client-id: finden-backend
+    client-secret: ${CLIENT_SECRET}
+    token:
+      issuer: ${TOKEN_ISSUER:http://localhost:8080/auth/realms/finden}
+      audience: finden-api
+    
+  smallrye-jwt:
+    enabled: true
+    
+  security:
+    jpa:
+      enabled: true
+      roles-mapping:
+        USER: users
+        ADMIN: administrators
+    
+  datasource:
+    # For JPA security if needed alongside MongoDB
+    security:
+      username: ${DB_SECURITY_USER}
+      password: ${DB_SECURITY_PASSWORD}
+```
 
-### Validation Strategy
+#### Security Standards (MANDATORY)
 
-- **Input Validation:** Jakarta Validation annotations on DTOs
-- **Business Validation:** Domain rules enforced in entities and services
-- **Cross-cutting Validation:** Global exception handling for consistent responses
+1. **Authentication Required:**
+   - JWT-based authentication for all API endpoints
+   - No public endpoints without explicit security review
+   - Proper session management
 
-## Modern Java Features
+2. **CORS Configuration:**
+   ```yaml
+   quarkus:
+     http:
+       cors:
+         ~: true  # Enable CORS
+         origins:
+           - https://finden.blume2000.de
+           - https://admin.blume2000.de
+         methods: 
+           - GET
+           - POST
+           - PUT
+           - DELETE
+           - OPTIONS
+         headers:
+           - Content-Type
+           - Authorization
+           - X-Requested-With
+         exposed-headers:
+           - Location
+           - X-Total-Count
+         access-control-max-age: 86400
+         access-control-allow-credentials: true
+   ```
 
-### Stable Features (Recommended)
+3. **Input Validation:**
+   - ALL inputs MUST be validated using Bean Validation
+   - HTML sanitization for user content (already implemented)
+   - SQL/NoSQL injection prevention
 
-#### Records (Java 17 LTS)
+4. **OWASP Top 10 Compliance:**
+   - Regular dependency vulnerability scans (OWASP dependency check configured)
+   - Secure headers implementation
+   - Error handling without information disclosure
 
-- **Immutable Data Carriers:** Use records for DTOs and value objects
-- **Automatic Generation:** Equals, hashCode, toString, and accessors generated automatically
-- **Compact Syntax:** Minimal boilerplate for data classes
-- **Validation:** Use compact constructors for input validation
+#### Security Review Checklist (MANDATORY)
 
-#### Text Blocks (Java 17 LTS)
+Before ANY production deployment:
+- [ ] Authentication system implemented
+- [ ] All endpoints secured with role-based access
+- [ ] CORS properly configured  
+- [ ] Input validation comprehensive
+- [ ] Error messages don't leak sensitive data
+- [ ] Dependencies scanned for vulnerabilities
+- [ ] Security headers configured
 
-- **Multi-line Strings:** Use for JSON templates, SQL queries, or configuration
-- **Better Readability:** Eliminates escape sequences for quotes
-- **String Formatting:** Combine with .formatted() for dynamic content
+#### Security Testing with TestContainers
 
-#### Local Variable Type Inference (Java 17 LTS)
+```kotlin
+@QuarkusTest
+@QuarkusTestResource(KeycloakTestResourceLifecycleManager::class)
+internal class SecurityIntegrationTest {
+    
+    @Test
+    fun `should reject unauthenticated requests`() {
+        given()
+            .`when`().get("/api/finden/produkte")
+            .then()
+            .statusCode(401)
+    }
+    
+    @Test
+    fun `should accept authenticated user requests`() {
+        val token = generateTestToken("USER")
+        given()
+            .auth().oauth2(token)
+            .`when`().get("/api/finden/produkte")
+            .then()
+            .statusCode(200)
+    }
+    
+    @Test
+    fun `should reject unauthorized admin operations`() {
+        val userToken = generateTestToken("USER")
+        given()
+            .auth().oauth2(userToken)
+            .contentType(ContentType.JSON)
+            .body(validProductDto())
+            .`when`().post("/api/finden/produkte")
+            .then()
+            .statusCode(403) // Forbidden
+    }
+}
 
-- **var keyword:** Use when type is obvious from context
-- **Improved Readability:** Reduces verbosity in complex generic types
-- **Guidelines:** Don't use when it reduces code clarity
+// Custom TestContainer for Keycloak
+class KeycloakTestResourceLifecycleManager : QuarkusTestResourceLifecycleManager {
+    private val keycloak = KeycloakContainer("quay.io/keycloak/keycloak:23.0")
+        .withRealmImportFile("/keycloak-realm.json")
+        
+    override fun start(): Map<String, String> {
+        keycloak.start()
+        return mapOf(
+            "quarkus.oidc.auth-server-url" to keycloak.authServerUrl + "/realms/finden",
+            "quarkus.oidc.client-id" to "finden-backend"
+        )
+    }
+}
+```
 
-### Advanced Features (Recommended)
+## Performance Standards
 
-#### Pattern Matching (Java 21+)
+### Critical Performance Requirements (MANDATORY)
 
-- **instanceof patterns:** Use for type checking and casting
-- **Switch expressions:** Modern alternative to traditional switch statements
-- **Caution:** Only use when providing clear benefit over traditional approaches
+#### Algorithm Complexity Standards
+- **NO O(n²) or higher complexity operations** in production code
+- **Database operations MUST use proper indexes**
+- **Collection operations MUST be optimized** for expected data sizes
+- **Memory usage MUST be bounded** - no unlimited data loading
 
-#### Sealed Classes (Java 21+)
+#### Database Performance (MANDATORY)
 
-- **Controlled Inheritance:** Restrict class hierarchies for domain modeling
-- **Use Case:** When you need exhaustive pattern matching
-- **Consideration:** Evaluate impact on extensibility
+1. **Query Optimization:**
+   ```javascript
+   // Required MongoDB indexes
+   db.products.createIndex({ 
+       "klassifikationId": 1, 
+       "verfuegbarkeiten.bestellschlussUTC": 1,
+       "verfuegbarkeiten.liefertag": 1 
+   })
+   ```
 
-### Preview Features (Evaluate Carefully)
+2. **Pagination Requirements:**
+   - ALL queries MUST support proper pagination
+   - NO full collection loading for sorting
+   - Database-level sorting preferred over in-memory
 
-- **Current Policy:** Use preview features only when they provide significant value
-- **Stability Risk:** Preview features may change or be removed
-- **Team Decision:** Discuss impact on maintainability and future upgrades
+3. **Connection Management:**
+   - Connection pooling properly configured
+   - Query timeout limits set
+   - Connection leak prevention
 
-### Lombok Usage Guidelines
+#### Memory Management (MANDATORY)
 
-- **Minimal Usage:** Only when Java language features are insufficient
-- **Constructor Injection:** Use @RequiredArgsConstructor for dependency injection
-- **Avoid Getters/Setters:** Prefer records for immutable data classes
-- **Utility Classes:** Use @UtilityClass only for static utility methods
-- **@Getter for Exceptions:** Use @Getter on exception classes that need field access
-- **@Getter vs Records:** Use @Getter when class cannot be a record (e.g., extends other class)
+1. **Object Lifecycle:**
+   - Prefer streaming over full collection materialization
+   - Immutable objects for value objects
+   - Proper resource cleanup
 
-#### When to Use @Getter
+2. **Collection Processing:**
+   - Avoid multiple intermediate collections
+   - Use sequence operations for large datasets
+   - Monitor heap usage in large operations
 
-**Use @Getter for:**
-- **Exception Classes:** Classes extending Exception/RuntimeException that need field access
-- **Inheritance Scenarios:** Classes that extend other classes (cannot be records)
-- **Framework Requirements:** Classes needing special constructor behavior that records can't provide
-- **Mutable State:** Classes that need setter methods alongside getters
+#### Performance Anti-Patterns (FORBIDDEN)
 
-**Don't Use @Getter for:**
-- **Immutable Data:** Use records instead for simple data carriers
-- **Value Objects:** Prefer records for domain value objects
-- **DTOs:** Use records for simple request/response objects
-- **Builder Pattern:** Combine with @Builder, use @Value instead
+```kotlin
+// ❌ FORBIDDEN: Disabling pagination for in-memory sorting
+if (inMemorySortierungNötig) {
+    cmsProdukteFilter.disableLimit() // CAUSES MEMORY EXHAUSTION
+}
 
-### Spring Annotations Policy (MANDATORY)
+// ❌ FORBIDDEN: O(n) operations in comparators
+val index = sortingBase.indexOf(element) // USE HASHMAP INSTEAD
 
-- **No @Bean:** Never use @Bean annotations for dependency configuration
-- **No @MockBean:** Never use @MockBean in tests - use @Mock and @InjectMocks instead
-- **Direct Annotations:** Use @Service, @Repository, @Component directly on classes
-- **Constructor Injection:** Use @RequiredArgsConstructor with final fields
-- **Auto-Configuration:** Rely on Spring's component scanning and auto-configuration
+// ❌ FORBIDDEN: Loading entire collections without limits
+return collection.findAll().toList() // USE PAGINATION
+```
 
-## Functional Programming Patterns
+#### Performance Monitoring (MANDATORY)
 
-### Immutability Principles
+- Response time P95 < 500ms for all endpoints
+- Memory usage < 80% heap under normal load
+- Database query time < 200ms average
+- No memory leaks in long-running operations
 
-- **Immutable Objects:** Use @Value and final fields where possible
-- **Immutable Collections:** Prefer List.of(), Set.of(), Map.of() for static collections
-- **Builder Pattern:** Use @Builder with @Value for immutable object construction
-- **Copy Methods:** Use @With for creating modified copies of immutable objects
+#### JVM 22 Performance Tuning (RECOMMENDED)
 
-### Stream API Usage
+```yaml
+# application.yml - Quarkus JVM optimization for Java 22
+quarkus:
+  native:
+    enabled: false  # Use JVM mode for development
+  
+  jib:
+    jvm-arguments:
+      - "-XX:+UseZGC"                    # ZGC for low-latency GC (Java 22)
+      - "-XX:+UnlockExperimentalVMOptions"
+      - "-XX:MaxGCPauseMillis=10"        # Target 10ms GC pauses
+      - "-Xms512m"                       # Initial heap size
+      - "-Xmx2g"                         # Maximum heap size
+      - "-XX:MetaspaceSize=128m"         # Metaspace for class loading
+      - "-XX:MaxMetaspaceSize=256m"
+      - "-XX:+UseStringDeduplication"    # String memory optimization
+      - "-XX:+UseCompressedOops"         # Compressed object pointers
+      - "-XX:+AlwaysPreTouch"            # Pre-touch heap pages
+      - "-Djava.net.useSystemProxies=true"
+      - "-Dquarkus.http.io-threads=8"    # Optimize for CPU cores
+```
 
-- **Data Transformation:** Use map() for transforming elements
-- **Filtering:** Apply filter() for conditional selection
-- **Reduction:** Use reduce(), collect(), and terminal operations
-- **Parallel Processing:** Consider parallelStream() for CPU-intensive operations
+```bash
+# Development JVM arguments for optimal performance
+export JAVA_TOOL_OPTIONS="-XX:+UseZGC -XX:MaxGCPauseMillis=10 -Xms512m -Xmx2g -XX:+UseStringDeduplication"
 
-### Optional Handling
+# Production deployment with Docker
+docker run -e JAVA_OPTS="-XX:+UseZGC -XX:MaxGCPauseMillis=10 -Xms1g -Xmx4g" finden-backend:latest
+```
 
-- **Null Safety:** Replace null checks with Optional
-- **Chaining Operations:** Use map(), flatMap(), filter() on Optional
-- **Default Values:** Apply orElse(), orElseGet(), orElseThrow()
-- **Conditional Execution:** Use ifPresent(), ifPresentOrElse()
+#### Quarkus 3.24.3 Specific Optimizations
 
-### Functional Interfaces
+```yaml
+# application.yml - Framework optimizations
+quarkus:
+  thread-pool:
+    core-threads: 8
+    max-threads: 64
+    queue-size: 1000
+    
+  http:
+    io-threads: 8              # Match CPU cores
+    worker-threads: 64         # For blocking operations
+    
+  mongodb:
+    connection-string: ${MONGODB_URI}
+    max-pool-size: 50          # Connection pool optimization
+    min-pool-size: 5
+    max-connection-idle-time: 300s
+    max-connection-life-time: 1800s
+    
+  kafka:
+    consumer:
+      fetch-min-bytes: 1024    # Batch processing optimization
+      max-poll-records: 500
+    producer:
+      batch-size: 16384
+      linger-ms: 5
+      
+  micrometer:
+    binder:
+      jvm: true                # Enable JVM metrics
+      system: true             # Enable system metrics
+```
 
-- **Lambda Expressions:** Use lambdas for short, single-use functions
-- **Method References:** Apply method references for existing methods
-- **Custom Functional Interfaces:** Create domain-specific functional interfaces
-- **Composition:** Combine functions using andThen(), compose()
+## Kotlin Development Guidelines
 
-### Error Handling Patterns
+### Language Standards
 
-- **Try-Catch Alternatives:** Use Optional for recoverable failures
-- **Result Types:** Consider Either pattern for success/failure scenarios
-- **Exception Transformation:** Convert checked exceptions to unchecked
-- **Functional Error Handling:** Chain operations with error propagation
+#### Immutability (MANDATORY)
+```kotlin
+// ✅ CORRECT: Immutable value objects
+data class Produktnummer(
+    private val value: String  // val, not var
+) {
+    init {
+        require(value.isNotBlank()) { "Product number cannot be blank" }
+    }
+}
+
+// ❌ FORBIDDEN: Mutable value objects
+data class Produktnummer(
+    private var value: String  // Breaks immutability
+)
+```
+
+#### Null Safety (MANDATORY)
+- Use Kotlin's null safety features properly
+- Prefer `?.let` over explicit null checks
+- Never use `!!` unless absolutely necessary with clear justification
+- Use `Optional` patterns for domain modeling
+
+#### Collection Operations
+```kotlin
+// ✅ PREFERRED: Functional collection operations
+products.filter { it.isAvailable() }
+    .map { it.toDTO() }
+    .take(limit)
+
+// ❌ AVOID: Imperative loops for simple transformations
+val result = mutableListOf<ProductDTO>()
+for (product in products) {
+    if (product.isAvailable()) {
+        result.add(product.toDTO())
+    }
+}
+```
+
+### Error Handling
+
+#### Domain Exceptions (MANDATORY)
+```kotlin
+// ✅ CORRECT: Specific domain exceptions
+class ProduktnummerIstLeerException(value: String) : ProdukteException(
+    "Product number cannot be empty: '$value'"
+)
+
+// ✅ CORRECT: Validation in value objects
+data class Preis(private val bruttoBetrag: BigDecimal) {
+    init {
+        require(bruttoBetrag >= BigDecimal.ZERO) { 
+            "Price cannot be negative: $bruttoBetrag" 
+        }
+    }
+}
+```
+
+#### Boundary Validation (CRITICAL)
+```kotlin
+// ✅ MANDATORY: Validate boundaries to prevent crashes
+fun begrenzeAufNEinträge(n: Int?): Produkte {
+    return when {
+        n == null || n < 0 -> this
+        n <= produkte.size -> Produkte(produkte.subList(0, n))
+        else -> this
+    }
+}
+
+// ❌ FORBIDDEN: No boundary checks (causes crashes)
+fun begrenzeAufNEinträge(n: Int?): Produkte {
+    return if (n != null && n <= produkte.size) {
+        Produkte(produkte.subList(0, n)) // Crashes with negative n
+    } else this
+}
+```
+
+### MongoDB Integration
+
+#### Repository Pattern (MANDATORY)
+```kotlin
+// ✅ Domain layer: Interface
+interface ProduktRepository {
+    fun ladeVerfügbareProdukte(filter: CmsProdukteFilter): Produkte
+    fun ladeProdukt(nummer: Produktnummer): Produkt?
+}
+
+// ✅ Adapter layer: Implementation
+@ApplicationScoped
+class ProduktMongoRepository : ProduktRepository, PanacheMongoRepository<MongoProdukt>
+```
+
+#### Entity Mapping (MANDATORY)
+- MongoDB entities in adapter layer only
+- Clean mapping between MongoProdukt ↔ Produkt
+- No MongoDB annotations in domain layer
 
 ## Testing Strategy
 
-### Test Structure
+### Testing Framework Stack
 
-- **Project Structure:** Test sources should mirror main source structure, following DDD pattern.
-- **Separate Packages:** Organize tests by layers: domain, application, infrastructure, presentation.
-- **Directory Consistency**: Ensure `src/test` mirrors `src/main` structure exactly.
+- **Unit Testing:** JUnit 5 Jupiter
+- **Mocking:** Mockk 1.14.4 (Kotlin-specific, not Mockito)
+- **Assertions:** Strikt 0.35.1 (Kotlin-specific)
+- **Integration:** @QuarkusTest with TestContainers 1.21.3 (MongoDB & Kafka)
+- **Architecture:** ArchUnit 1.4.1 for layer compliance
+- **REST Testing:** REST Assured with Kotlin extensions
 
-### Test Coverage Requirements
+### Test Structure (MANDATORY)
 
-- **Minimum Coverage:** 80% instruction coverage (enforced by JaCoCo)
-- **Service Layer:** 95%+ coverage for business logic
-- **Controller Layer:** 90%+ coverage for endpoint testing
-- **Model Layer:** 85%+ coverage for domain logic
+```
+src/test/kotlin/de/blume2000/finden/
+├── adapter/
+│   ├── active/api/          # REST endpoint tests
+│   └── passive/database/    # Repository implementation tests
+├── application/             # Application service tests  
+├── domain/                  # Domain logic tests
+└── testutils/               # Test helpers (separate from production)
+```
 
-### Testing Frameworks
+### Testing Patterns (MANDATORY)
 
-- **JUnit 5 Jupiter:** Primary testing framework
-- **Mockito:** Mocking dependencies in unit tests
-- **Hamcrest:** Fluent assertion library
-- **Spring Boot Test:** Integration testing with Spring context
-- **TestContainers:** Database integration testing (future)
+#### Unit Tests
+```kotlin
+@Test
+fun `should throw exception when product number is empty`() {
+    // Given-When-Then structure
+    expectThrows<ProduktnummerIstLeerException> {
+        Produktnummer("")
+    }
+}
+```
 
-### Testing Pyramid
+#### Integration Tests
+```kotlin
+@QuarkusTest
+@QuarkusTestResource(TestContainers::class)
+@Tag("integration")
+internal class ProduktlistenApplicationServiceTest {
+    
+    @Inject
+    lateinit var service: ProduktlistenApplicationService
+    
+    @Test
+    fun `should return available products with filters`() {
+        // Real database integration testing
+    }
+}
+```
 
-- **Unit Tests:** Majority of tests, fast feedback, isolated components
-- **Integration Tests:** Controller and service layer integration
-- **End-to-End Tests:** Few high-value complete application tests
+#### Architecture Tests (MANDATORY)
+```kotlin
+@Test
+fun `domain layer should not depend on adapters`() {
+    noClasses()
+        .that().resideInAPackage("..domain..")
+        .should().dependOnClassesThat()
+        .resideInAPackage("..adapter..")
+        .check(importedClasses)
+}
+```
 
-### Unit Testing Guidelines
+### Test Requirements (MANDATORY)
 
-#### Service Layer Testing
+1. **BDD Structure:** ALL tests MUST use Given-When-Then
+2. **Test Isolation:** Each test completely independent
+3. **Coverage:** 80% minimum, 95% for business logic
+4. **No Production Dependencies:** Test utils in test package only
+5. **Public Interface Testing:** No reflection or private method testing
 
-- **Mock Dependencies:** Use @Mock for external dependencies
-- **Inject Mocks:** Use @InjectMocks for service under test
-- **Given-When-Then:** Structure tests with clear phases
-- **Verify Interactions:** Assert both return values and method calls
-- **Exception Testing:** Test error scenarios with assertThrows
+## Code Quality Standards
 
-#### Controller Layer Testing
+### Critical Bug Prevention (MANDATORY)
 
-- **Standalone MockMvc:** Use MockMvcBuilders.standaloneSetup() to avoid @MockBean
-- **Mock Dependencies:** Always use @Mock and @InjectMocks, never @MockBean
-- **JSON Path:** Validate response structure and content
-- **Status Codes:** Assert correct HTTP status codes
+#### Boundary Conditions
+```kotlin
+// ✅ MANDATORY: Validate all boundary conditions
+fun parseLimit(value: String?): Int? {
+    return value?.let { 
+        try {
+            val parsed = it.toInt()
+            if (parsed < 0) null else parsed
+        } catch (e: NumberFormatException) {
+            throw IllegalArgumentException("Invalid limit: $value")
+        }
+    }
+}
+```
 
-### Integration Testing
+#### Price Comparison Logic
+```kotlin
+// ✅ CORRECT: Proper null handling in comparisons
+fun istGrößerAls(other: Preis?): Boolean {
+    return other != null && this.bruttoBetrag > other.bruttoBetrag
+}
 
-#### Full Stack Integration Tests
+// ❌ FORBIDDEN: Contradictory null logic
+fun istGrößerAls(other: Preis?): Boolean {
+    return other == null || this.bruttoBetrag > other.bruttoBetrag // Wrong!
+}
+```
 
-- **SpringBootTest:** Use full application context
-- **Random Port:** Use RANDOM_PORT for web environment
-- **TestRestTemplate:** Make real HTTP requests
-- **Database Testing:** Use in-memory database for isolation
-- **End-to-End Scenarios:** Test complete user workflows
+### Architecture Compliance (ENFORCED)
 
-### Test Development Workflow
+#### Layer Coupling (FORBIDDEN)
+```kotlin
+// ❌ FORBIDDEN: Domain referencing adapter DTOs
+class Produkte {
+    fun zuValideProduktDTOs(): List<ProduktDTO> // DTO in domain!
+}
 
-- **Behavior-Driven Development (BDD):** Structure tests with Given-When-Then phases.
-- **Test-Driven Development (TDD):** Red-Green-Refactor cycle with BDD.
-- **Small Commits:** Commit frequently, after each phase.
-- **Code Review:** Regularly ensure tests meet quality standards.
+// ✅ CORRECT: Domain only references domain types
+class Produkte {
+    fun toValidProducts(): List<Produkt>
+}
+```
 
-### Coverage Analysis
+### Quality Tools
 
-- **JaCoCo Reports:** Generate comprehensive coverage reports
-- **Coverage Goals:** Line coverage 80%, branch coverage 75%
-- **Quality Gates:** Fail build if coverage drops below threshold
-- **Coverage Review:** Analyze uncovered code for missing tests
+- **Static Analysis:** Detekt 1.23.8 for Kotlin
+- **Build Quality:** Gradle 8.x build verification with Kotlin DSL
+- **Dependency Check:** OWASP Dependency Check 12.1.3 for vulnerability scanning
+- **Version Management:** Gradle Versions Plugin 0.52.0 for dependency updates
+- **Coverage:** JaCoCo 0.8.7 with 80% minimum threshold
+- **Schema Management:** Avro Plugin 1.9.1 for Kafka schema handling
 
-### Refactoring and Cleanup
+### Build Verification (MANDATORY)
 
-- **Unused Code:** Routinely check and remove unused methods, classes, imports.
-- **Code Optimization:** Simplify complex methods and remove redundancies.
-- **Commit Clean Code:** Ensure all changes are clean and tested before committing.
-
-### Test Organization
-
-- **Package Structure:** Mirror main source package structure in test
-- **Test Naming:** Descriptive method names explaining behavior
-- **Test Categories:** Unit tests, integration tests, end-to-end tests
-- **Test Data:** Use builders or factories for consistent test data creation
+```bash
+# Required before any commit
+./gradlew clean build
+./gradlew detekt
+./gradlew test jacocoTestReport
+```
 
 ## Development Process
 
-### Guide Maintenance (MANDATORY)
+### AI-Assisted Development Integration (MANDATORY)
 
-- **Continuous Update:** Always check if the DEVELOPMENT_GUIDE.md needs updates based on any changes made
-- **Real-time Reflection:** Any new patterns, decisions, or practices must be immediately documented
-- **Guide-First Approach:** Update the guide before implementing new practices
-- **Review Before Commit:** Verify guide accuracy with every development session
+This project integrates TaskMaster AI for comprehensive development workflow management alongside traditional development practices.
 
-### Project Structure Requirements (MANDATORY)
+#### TaskMaster-First Development Approach
+- **PRD-Based Planning:** All major features start with Product Requirements Documents
+- **AI Task Generation:** Use `task-master parse-prd` to generate structured task lists
+- **Complexity Analysis:** Apply `task-master analyze-complexity --research` for informed planning
+- **Iterative Expansion:** Break complex tasks into manageable subtasks automatically
+- **Progress Tracking:** Maintain development context through task annotations
 
-- **DDD/Onion Architecture:** All code must follow proper Domain-Driven Design and Onion Architecture principles
-- **Package Organization:** Strict layered structure as follows:
-    - `domain/` - Core domain (innermost layer)
-        - `model/` - Domain entities and value objects
-        - `service/` - Domain services
-        - `repository/` - Repository interfaces (ports)
-        - `exception/` - Domain exceptions
-    - `application/` - Application layer
-        - `service/` - Application services (use cases)
-        - `dto/` - Data Transfer Objects
-    - `adapter/` - Adapters (outermost layer)
-        - `in/` - Inbound adapters (driving)
-            - `web/` - REST controllers and web exception handlers
-        - `out/` - Outbound adapters (driven)
-            - `persistence/` - Repository implementations
-- **Test Structure:** Test folder structure MUST mirror src folder structure exactly
-- **Layer Consistency:** Tests organized by same DDD/Onion layers as main source code
-- **Dependency Direction:** Dependencies flow inward (adapters → application → domain)
+### Enhanced TDD Workflow (MANDATORY)
 
-### Pre-Commit Checklist (MANDATORY)
+#### TaskMaster Integration Points
+1. **Task Selection:** `task-master next` → identify prioritized work
+2. **Context Review:** `task-master show <id>` → understand requirements
+3. **Status Update:** `task-master set-status --id=<id> --status=in-progress`
 
-- **Unused Code Cleanup:** Check and remove unused methods, classes, imports
-- **Code Optimization:** Look for classes that could be records, redundant code
-- **Import Organization:** Ensure all imports are used and properly ordered
-- **Architecture Compliance:** Verify all files are in correct DDD layer packages
-- **Test Coverage:** Ensure new code has appropriate test coverage
+#### Core TDD Cycle
+4. **RED:** Write failing BDD test aligned with task requirements
+5. **GREEN:** Minimal code to pass test
+6. **REFACTOR:** Improve while keeping tests green
+7. **CONTEXT:** `task-master update-subtask --id=<id> --prompt="implementation notes"`
+8. **COMMIT:** Atomic commit with task reference
+9. **COMPLETE:** `task-master set-status --id=<id> --status=done`
 
-### Commit Practices (MANDATORY)
+### Enhanced Pre-Commit Checklist (MANDATORY)
 
-- **Frequent Commits:** Commit regularly, not just at end of development session
-- **Conventional Commits:** Use conventional commit format (feat:, fix:, refactor:, etc.)
-- **Atomic Commits:** Each commit should represent a single logical change
-- **Meaningful Messages:** Clear description of what was changed and why
-- **Guide Updates:** Include guide updates in commits when applicable
+#### Analysis-Informed Quality Gates
+- [ ] **Security:** No endpoints without authentication (addresses critical analysis finding)
+- [ ] **Performance:** No O(n²) algorithms or unbounded operations (prevents identified bottlenecks)
+- [ ] **Architecture:** No layer coupling violations (maintains DDD boundaries)
+- [ ] **Quality:** All tests pass, coverage > 80%
+- [ ] **Boundaries:** All input validation implemented (prevents runtime crashes)
+- [ ] **Immutability:** Value objects properly immutable
 
-### Testing Methodology (MANDATORY)
+#### TaskMaster Integration Checks
+- [ ] **Task Context:** Implementation details logged via `task-master update-subtask`
+- [ ] **Status Management:** Task status properly updated
+- [ ] **Dependency Validation:** `task-master validate-dependencies` passes
+- [ ] **Analysis Alignment:** Changes align with comprehensive analysis recommendations
 
-- **BDD Structure:** ALL tests MUST use Given-When-Then structure
-- **Test Names:** Descriptive method names that read like specifications
-- **TDD Process:** MANDATORY Red-Green-Refactor cycle for all development
-- **Test First:** Write failing tests before implementing functionality
-- **Commit Pattern:** Commit after each TDD phase (Red, Green, Refactor)
-- **BDD Language:** Use domain terminology in test descriptions
-- **Single Behavior:** Each test must verify exactly one specific behavior
-- **Behavior Focus:** Tests MUST focus on observable behavior, not implementation details
-- **Public API Testing:** Test through public interfaces, avoid reflection-based tests
-- **Test Stability:** Tests should survive refactoring and internal changes
-- **Test Isolation:** MANDATORY - Each test must be completely isolated from others
+### Enhanced Git Workflow
 
-### Test Isolation (MANDATORY)
+#### TaskMaster-Informed Commits
+- **Conventional Commits:** `feat:`, `fix:`, `refactor:`, `security:`, `perf:`
+- **Task References:** Include task IDs in commit messages (e.g., "feat: implement JWT auth (task 1.2)")
+- **Analysis Context:** Reference analysis findings in commit descriptions
+- **Atomic Commits:** Single logical change per commit
+- **Branch Naming:** `feature/`, `bugfix/`, `security/`, `perf/`
 
-Test isolation is critical for reliable, maintainable tests. Each test must be completely independent of others.
-
-#### The Problem
-
-- **Shared State:** Tests that modify shared static state can contaminate other tests
-- **Test Order Dependency:** Tests pass/fail based on execution order
-- **Flaky Tests:** Intermittent failures that are hard to debug
-- **False Positives/Negatives:** Tests appear to pass but are actually broken
-
-#### Test Isolation Checklist
-
-- Each test can run independently in any order
-- No test depends on state left by previous tests
-- All shared state is reset before each test
-- Tests don't modify global/static state without cleanup
-- Database state is reset between integration tests
-- No hardcoded IDs that could conflict between tests
-
-#### Test Utilities (MANDATORY)
-
-- **Test Package Only:** All test-specific utilities must be in `src/test` package
-- **No Production Dependencies:** Production code must never depend on test utilities
-- **Separation of Concerns:** Keep test helpers separate from production logic
-- **Helper Classes:** Create dedicated test helper classes for complex test setup
-- **Naming Convention:** Use `*TestHelper` or `*TestUtil` for test utility classes
-- **Refactoring Opportunity:** Any method in production code only used for testing should be moved to test utilities
-- **Architecture Review:** Test-specific methods in production code indicate architectural issues
-- **No Reflection in Tests:** Avoid using reflection to access private fields or methods in tests
-- **Public Interface Testing:** Test through public APIs rather than manipulating internal state
-- **Instance State Over Static:** Prefer instance-based state management over static state for better testability
-- **Exception Testing Pattern:** For testing exception handlers that require complex parameter objects (like MethodArgumentNotValidException), use mock objects instead of reflection to create required dependencies
-
-### Test Isolation
-
-#### What Makes a Good Test
-
-- **Behavior-Driven:** Test what the code DOES, not how it's implemented
-- **Business Value:** Each test should verify a business requirement or use case
-- **Observable Outcomes:** Focus on inputs and outputs visible to clients
-- **Meaningful Assertions:** Verify results that matter to users/business
-- **Single Responsibility:** Each test validates one specific behavior
-
-#### Avoid These Anti-Patterns
-
-- **Implementation Testing:** Using reflection to check internal structure (constructors, fields, methods)
-- **White-box Testing:** Testing private methods or internal state directly
-- **Brittle Tests:** Tests that break when refactoring without changing behavior
-- **Structural Assertions:** Checking number of methods, constructors, or class hierarchy
-- **Mock Overuse:** Mocking value objects or simple data structures
-
-#### Test Through Public Interface
-
-- **Method Calls:** Test public methods with various inputs
-- **State Changes:** Verify observable state changes after operations
-- **Return Values:** Assert correct outputs for given inputs
-- **Side Effects:** Check interactions with dependencies (via mocks)
-- **Exception Behavior:** Verify correct exceptions are thrown
-
-### TDD Development Cycle (MANDATORY)
-
-1. **RED Phase:** Write a failing BDD-style test first
-2. **GREEN Phase:** Write minimal code to make test pass
-3. **REFACTOR Phase:** Improve code while keeping tests green
-4. **COMMIT:** Make atomic commit after each phase
-5. **REPEAT:** Continue cycle for all functionality
-
-### Development Workflow (MANDATORY)
-
-1. **Check Guide:** Review relevant sections before starting work
-2. **Plan Improvements:** Identify what guide updates might be needed
-3. **Plan Changes:** Separate changes into smaller tasks
-4. **Write Test (RED):** Create failing BDD test for the task first
-5. **Implement (GREEN):** Write minimal code to pass test
-6. **Write remaining tests:** Write remaining unit tests for the task
-7. **Refactor:** Improve code while maintaining green tests
-8. **Repeat:** Follow this TDD cycle for all tasks
-9. **Clean Up:** Run pre-commit checklist
-10. **Update Guide:** Add any new patterns or decisions to guide
-11. **Test:** Ensure all tests, linting and coverage pass
-12. **Commit:** Make atomic commits with proper TDD messages
-13. **Repeat:** Follow this Development Workflow for all changes
-
-## Code Style Guidelines
-
-### Checkstyle Configuration
-
-- **Style Guide:** Google Java Style Guide
-- **Configuration:** `google_checks.xml` (built-in Maven Checkstyle Plugin)
-- **Enforcement:** Fails build on violations (`failsOnError: true`)
-- **Console Output:** Enabled for immediate feedback
-- **Execution Phase:** Validate phase (runs early in build)
-
-### Google Java Style Key Rules
-
-- **Indentation:** 2 spaces (no tabs)
-- **Line Length:** 100 characters maximum
-- **Braces:** K&R style (opening brace on same line)
-- **Imports:** Organize imports, no wildcard imports
-- **Naming Conventions:**
-    - Classes: PascalCase
-    - Methods/Variables: camelCase
-    - Constants: UPPER_SNAKE_CASE
-    - Packages: lowercase
-
-### Code Quality Tools
-
-- **Checkstyle:** Style and convention validation
-- **SpotBugs:** Static analysis for bug detection
-- **JaCoCo:** Code coverage reporting
-
-## Dependency Management
-
-### Update Strategy
-
-- **Frequency:** Check for dependency updates monthly
-- **Tooling:** Use Maven's versions plugin to identify updates
-- **Validation:** Ensure updates do not break existing functionality
-- **Review:** Review changelogs for backward compatibility and new features
-- **Action:** Update to the latest version if compatible; commit updates as separate changes
-
-### Dependency Update Commands
-
-#### Check for Updates
-
+#### Analysis-Driven Branch Examples
 ```bash
-# Check for plugin updates
-mvn versions:display-plugin-updates
+# Security implementation branches (from analysis findings)
+git checkout -b security/implement-jwt-authentication
+git checkout -b security/fix-cors-configuration
 
-# Check for dependency updates
-mvn versions:display-dependency-updates
+# Performance optimization branches (from analysis findings)
+git checkout -b perf/optimize-sorting-algorithm
+git checkout -b perf/implement-database-indexes
 
-# Check for property updates (like Spring Boot version)
-mvn versions:display-property-updates
+# Architecture improvement branches
+git checkout -b refactor/remove-dto-coupling
+git checkout -b refactor/fix-value-object-mutability
 ```
-#### Update Dependencies
+
+### Critical Code Review Focus (Analysis-Enhanced)
+
+#### Priority 1: Security (Analysis Score: 3/10)
+1. **Authentication gaps** - ensure all endpoints secured
+2. **CORS misconfiguration** - validate origin restrictions
+3. **Input validation** - prevent injection attacks
+
+#### Priority 2: Performance (Analysis Score: 5/10)
+1. **O(n²) algorithms** - especially in sorting operations
+2. **Memory exhaustion patterns** - full dataset loading
+3. **Database query optimization** - prevent N+1 problems
+
+#### Priority 3: Architecture (Analysis Score: 8/10)
+1. **Layer coupling violations** - domain/DTO dependencies
+2. **Value object immutability** - prevent state corruption
+3. **Boundary condition handling** - negative values, null inputs
+
+### Workflow Integration Summary
+
+The enhanced development process integrates TaskMaster commands at key points in the traditional TDD cycle. Detailed workflows and examples are provided in the [AI Development Workflow](#ai-development-workflow) section.
+
+### Build Commands
 
 ```bash
-# Update to latest versions (interactive)
-mvn versions:use-latest-versions
+# Run tests
+./gradlew test integrationTest
 
-# Update specific dependency
-mvn versions:use-latest-versions -Dincludes=org.springframework.boot:*
+# Check code quality
+./gradlew detekt spotbugsMain
 
-# Update parent POM version
-mvn versions:update-parent
-```
-#### Validation Workflow
+# Generate coverage report
+./gradlew jacocoTestReport
 
-```bash
-# After updating dependencies
-mvn clean compile test
-mvn jacoco:report
-
-# Check for any issues
-mvn checkstyle:check spotbugs:check
-
-# Commit updates
-git add pom.xml
-git commit -m "chore: update dependencies to latest versions"
-```
-### Monthly Update Process
-
-1. **Check Updates:** Run dependency update commands
-2. **Review Changes:** Check changelogs for breaking changes
-3. **Update Incrementally:** Update one dependency group at a time
-4. **Test Thoroughly:** Run full test suite after each update
-5. **Commit Separately:** Each dependency update gets its own commit
-6. **Document Issues:** Note any compatibility problems in commit messages
-
-## Documentation Standards
-
-### No Code Documentation Policy
-
-- **Zero Documentation:** No comments, no inline documentation, no JavaDoc
-- **Self-Documenting Code:** Code must be self-explanatory through clear naming and structure
-- **Clean Code:** Use meaningful variable names, method names, and class names
-- **Intent-Revealing:** Code should communicate its purpose without any explanatory text
-- **No Exceptions:** This policy applies to all code: production, tests, configuration
-
-### Development Guide Guidelines
-
-- **No Code Examples:** Code examples must not be included in this guide to keep it focused and concise
-- **Principle-Based:** Focus on principles and rules rather than implementation details
-- **Living Document:** Update guide with lessons learned during development
-- **Mandatory Compliance:** All rules in this guide are mandatory unless explicitly marked otherwise
-
-## Refactoring and Code Quality
-
-### Continuous Improvement Principles
-
-- **Refactoring Mindset:** Always look for opportunities to improve code structure during development
-- **Clean Separation:** Production and test code must be strictly separated
-- **Architecture Hygiene:** Regularly review code placement and move misplaced functionality
-- **Boy Scout Rule:** Leave code cleaner than you found it
-
-### Code Placement Guidelines
-
-- **Production Purity:** Production code should only contain production logic
-- **Test Isolation:** Test utilities belong only in test packages
-- **Single Purpose:** Each class should have only one reason to exist
-- **Layer Respect:** Code must respect architectural layer boundaries
-
-### Refactoring Triggers
-
-- **Misplaced Methods:** Methods in production code only used by tests
-- **Test Dependencies:** Production code depending on test utilities
-- **Architectural Violations:** Code in wrong layers or packages
-- **Unnecessary Complexity:** Over-engineered solutions that can be simplified
-
-## Quality Assurance
-
-### Testing Requirements
-
-- **Unit Tests:** Mandatory for all service methods
-- **Integration Tests:** Required for controller endpoints
-- **Test Coverage:** Aim for 80%+ coverage
-
-### Testing Stack
-
-- **JUnit 5:** Jupiter for unit testing
-- **Mockito:** Mocking framework
-- **Hamcrest:** Assertion library
-- **Spring Boot Test:** Integration testing
-
-### Build Verification
-
-Before submitting code:
-
-```bash
-# Run all quality checks
-mvn clean compile
-mvn checkstyle:check
-mvn spotbugs:check
-mvn test
-mvn jacoco:report
+# Full build verification
+./gradlew clean build
 ```
 
 ## Additional Standards
 
-### Git Workflow
+### Dependency Management
 
-- **Branch Naming:** `feature/`, `bugfix/`, `hotfix/`
-- **Commit Messages:** Follow conventional commits format
-- **Pull Requests:** Must pass all quality checks
+- **Update Strategy:** Monthly dependency updates
+- **Security:** Automated vulnerability scanning
+- **Version Strategy:** Latest stable releases preferred
+- **Build Reproducibility:** Version locking in gradle.lockfile
 
-### Performance Considerations
+### Performance Monitoring
 
-- TODO
+- **Metrics:** Micrometer with Prometheus
+- **Response Times:** P95 < 500ms target
+- **Resource Usage:** Memory < 80% heap
+- **Database:** Query times < 200ms average
 
-### Security
+### Error Handling
 
-- Follow OWASP guidelines
-- Validate all inputs
-- Use proper exception handling to avoid information leakage
+- **Domain Exceptions:** Rich, specific exception types
+- **Boundary Validation:** ALL inputs validated
+- **Graceful Degradation:** Proper fallback mechanisms
+- **Logging:** Structured logging without sensitive data
+
+## Context Engineering & Task Management
+
+### Project Awareness & Context (MANDATORY)
+
+#### AI Behavior Rules
+- **Never assume missing context. Ask questions if uncertain.**
+- **Never hallucinate libraries or functions** – only use known, verified packages and APIs
+- **Always confirm file paths and class names** exist before referencing them in code or tests
+- **Maintain context continuity** across Claude sessions using TaskMaster and PRD references
+
+#### Context Engineering Workflow
+
+1. **PRD-Based Development:**
+   - Create detailed Product Requirements Documents in `.taskmaster/docs/`
+   - Use PRDs to generate structured task hierarchies
+   - Maintain traceability from requirements to implementation
+
+2. **Task-Driven Implementation:**
+   - Break complex features into manageable, testable subtasks
+   - Use TaskMaster for project planning and progress tracking
+   - Update task status and implementation notes throughout development
+
+3. **Context Handoff Patterns:**
+   - Document architectural decisions in task notes
+   - Reference specific files and line numbers in task updates
+   - Maintain implementation history for future sessions
+
+### Task Completion Standards (MANDATORY)
+
+- **Mark completed tasks immediately** after finishing implementation
+- **Add discovered sub-tasks** to TaskMaster during development
+- **Document blockers and solutions** in task notes for future reference
+- **Link tasks to commits** using conventional commit format with task IDs
+
+### PRD Integration with DDD Architecture
+
+#### Requirements Analysis
+- **Domain Modeling:** Extract aggregates, entities, and value objects from PRDs
+- **Use Case Identification:** Map PRD features to application services
+- **Architecture Impact:** Assess new requirements against existing Onion Architecture
+- **Performance Implications:** Analyze requirements for potential performance bottlenecks
+
+#### Context Engineering Best Practices
+- **Ubiquitous Language:** Ensure PRD terminology matches domain model
+- **Bounded Context Analysis:** Identify context boundaries from requirements
+- **Integration Points:** Plan adapter layer changes for new requirements
+- **Test Strategy:** Define acceptance criteria and test approaches in PRDs
+
+## Task Master Integration
+
+### Essential Commands
+
+#### Core Workflow Commands
+
+```bash
+# Project Setup
+task-master init                                    # Initialize Task Master in current project
+task-master parse-prd .taskmaster/docs/prd.txt      # Generate tasks from PRD document
+task-master models --setup                        # Configure AI models interactively
+
+# Daily Development Workflow
+task-master list                                   # Show all tasks with status
+task-master next                                   # Get next available task to work on
+task-master show <id>                             # View detailed task information (e.g., task-master show 1.2)
+task-master set-status --id=<id> --status=done    # Mark task complete
+
+# Task Management
+task-master add-task --prompt="description" --research        # Add new task with AI assistance
+task-master expand --id=<id> --research --force              # Break task into subtasks
+task-master update-task --id=<id> --prompt="changes"         # Update specific task
+task-master update --from=<id> --prompt="changes"            # Update multiple tasks from ID onwards
+task-master update-subtask --id=<id> --prompt="notes"        # Add implementation notes to subtask
+
+# Analysis & Planning
+task-master analyze-complexity --research          # Analyze task complexity
+task-master complexity-report                      # View complexity analysis
+task-master expand --all --research               # Expand all eligible tasks
+
+# Dependencies & Organization
+task-master add-dependency --id=<id> --depends-on=<id>       # Add task dependency
+task-master move --from=<id> --to=<id>                       # Reorganize task hierarchy
+task-master validate-dependencies                            # Check for dependency issues
+task-master generate                                         # Update task markdown files (usually auto-called)
+```
+
+### Project Structure Integration
+
+#### Core Files
+- `.taskmaster/tasks/tasks.json` - Main task data file (auto-managed)
+- `.taskmaster/config.json` - AI model configuration (use `task-master models` to modify)
+- `.taskmaster/docs/prd.txt` - Product Requirements Document for parsing
+- `.taskmaster/tasks/*.txt` - Individual task files (auto-generated from tasks.json)
+- `.env` - API keys for CLI usage
+
+#### Claude Code Integration Files
+- `CLAUDE.md` - Auto-loaded context for Claude Code (this file)
+- `.claude/settings.json` - Claude Code tool allowlist and preferences
+- `.claude/commands/` - Custom slash commands for repeated workflows
+- `.mcp.json` - MCP server configuration (project-specific)
+
+#### Integration with Existing Structure
+```
+project/
+├── .taskmaster/
+│   ├── tasks/              # Task files directory
+│   │   ├── tasks.json      # Main task database
+│   │   ├── task-1.md      # Individual task files
+│   │   └── task-2.md
+│   ├── docs/              # Documentation directory
+│   │   ├── prd.txt        # Product requirements
+│   ├── reports/           # Analysis reports directory
+│   │   └── task-complexity-report.json
+│   ├── templates/         # Template files
+│   │   └── example_prd.txt  # Example PRD template
+│   └── config.json        # AI models & settings
+├── .claude/
+│   ├── settings.json      # Claude Code configuration
+│   └── commands/         # Custom slash commands
+├── PRPs/                 # Context engineering patterns (existing)
+├── doc/                  # Technical documentation (existing)
+├── src/                  # Source code (existing)
+├── .env                  # API keys
+├── .mcp.json            # MCP configuration
+└── CLAUDE.md            # This file - auto-loaded by Claude Code
+```
+
+### Task Structure & Management
+
+#### Task ID Format
+- Main tasks: `1`, `2`, `3`, etc.
+- Subtasks: `1.1`, `1.2`, `2.1`, etc.
+- Sub-subtasks: `1.1.1`, `1.1.2`, etc.
+
+#### Task Status Values
+- `pending` - Ready to work on
+- `in-progress` - Currently being worked on
+- `done` - Completed and verified
+- `deferred` - Postponed
+- `cancelled` - No longer needed
+- `blocked` - Waiting on external factors
+
+#### Task Integration with Development Standards
+
+```json
+{
+  "id": "1.2",
+  "title": "Implement JWT authentication system",
+  "description": "Add secure authentication to resolve critical security gap",
+  "status": "pending",
+  "priority": "high",
+  "dependencies": ["1.1"],
+  "details": "Must address critical security requirements from analysis. Use Quarkus Security with JWT tokens. Ensure all endpoints protected.",
+  "testStrategy": "Unit tests for auth functions, integration tests for login flow, security penetration testing",
+  "subtasks": []
+}
+```
+
+### Gradle Integration
+
+TaskMaster works seamlessly with existing Gradle workflow:
+
+```bash
+# Run TaskMaster commands alongside Gradle
+task-master next                    # Get next task
+./gradlew test                     # Run tests for current task
+task-master update-subtask --id=1.2 --prompt="Tests passing, ready for implementation"
+./gradlew clean build              # Full build verification
+task-master set-status --id=1.2 --status=done  # Mark complete
+```
+
+### Git Integration Patterns
+
+```bash
+# Reference tasks in commits
+git commit -m "feat: implement JWT auth system (task 1.2)
+
+- Add Quarkus Security dependencies
+- Implement authentication endpoints
+- Add security configuration
+- Tests: AuthenticationServiceTest passes
+
+Addresses critical security gap identified in comprehensive analysis.
+
+Resolves: task 1.2"
+
+# Create PR for completed task
+gh pr create --title "Complete task 1.2: JWT authentication" \
+  --body "Implements secure authentication system as specified in task 1.2
+
+**Changes:**
+- JWT-based authentication
+- Security configuration 
+- All endpoints protected
+- Comprehensive test coverage
+
+**Security Review:**
+- [ ] Authentication system implemented ✅
+- [ ] All endpoints secured ✅  
+- [ ] CORS properly configured ✅
+- [ ] Input validation comprehensive ✅
+
+Closes: task 1.2"
+```
+
+## AI Development Workflow
+
+### Standard Development Workflow
+
+#### 1. Project Initialization
+```bash
+# Initialize Task Master for existing project
+task-master init
+
+# Create or obtain PRD, then parse it
+# PRDs can reference existing analysis documents
+task-master parse-prd .taskmaster/docs/security-implementation-prd.txt
+
+# Analyze complexity and expand tasks
+task-master analyze-complexity --research
+task-master expand --all --research
+```
+
+#### 2. AI-Assisted Planning Phase
+```bash
+# Generate tasks from PRDs that reference analysis findings
+task-master parse-prd .taskmaster/docs/performance-optimization-prd.txt --append
+
+# Use research mode for complex technical decisions
+task-master expand --id=1 --research --num=5
+
+# Validate task dependencies align with architecture
+task-master validate-dependencies
+```
+
+#### 3. Daily Development Loop
+```bash
+# Start each development session
+task-master next                           # Find next available task
+task-master show <id>                     # Review task details and acceptance criteria
+
+# During implementation (following existing TDD workflow)
+# RED Phase
+task-master set-status --id=<id> --status=in-progress
+task-master update-subtask --id=<id> --prompt="Starting TDD - writing failing test for [feature]"
+
+# GREEN Phase  
+task-master update-subtask --id=<id> --prompt="Test passing with minimal implementation"
+
+# REFACTOR Phase
+task-master update-subtask --id=<id> --prompt="Refactored for performance/quality, all tests green"
+
+# Complete tasks
+task-master set-status --id=<id> --status=done
+```
+
+#### 4. Multi-Claude Session Coordination
+
+For complex projects requiring parallel development:
+
+```bash
+# Terminal 1: Main implementation (security features)
+cd project && claude
+task-master show 1.2  # JWT authentication implementation
+
+# Terminal 2: Performance optimization (separate branch)  
+cd project && git checkout -b perf/optimization
+claude
+task-master show 3.1  # Database index optimization
+
+# Terminal 3: Testing and validation
+cd project && claude  
+task-master show 2.1  # Integration test development
+```
+
+### Context Engineering Patterns
+
+#### PRD Creation from Analysis Findings
+
+Transform analysis findings into actionable PRDs:
+
+```markdown
+# Security Implementation PRD
+
+## Background
+Comprehensive analysis identified critical security gaps requiring immediate attention.
+
+## Requirements
+
+### R1: Authentication System (CRITICAL)
+- Implement JWT-based authentication for all API endpoints
+- Use Quarkus Security with role-based access control
+- Priority: CRITICAL (production blocker)
+- References: COMPREHENSIVE_ANALYSIS_REPORT.md Section 4.1
+
+### R2: CORS Configuration (HIGH)  
+- Replace permissive CORS with restrictive policy
+- Configure domain-specific origins
+- Priority: HIGH
+- References: COMPREHENSIVE_ANALYSIS_REPORT.md Section 4.5
+
+## Architecture Impact
+- Add security layer to existing Onion Architecture
+- Integrate with existing Quarkus CDI patterns
+- Maintain performance standards (P95 < 500ms)
+```
+
+#### Task Generation Workflow
+
+```bash
+# 1. Create PRD based on analysis findings
+echo "# Performance Optimization PRD..." > .taskmaster/docs/performance-prd.txt
+
+# 2. Parse PRD to generate structured tasks
+task-master parse-prd .taskmaster/docs/performance-prd.txt --append
+
+# 3. Analyze and expand critical tasks
+task-master analyze-complexity --from=10 --to=15 --research
+task-master expand --id=11 --research --force  # Critical O(n²) algorithm fix
+
+# 4. Validate against architecture standards
+task-master validate-dependencies
+```
+
+### Complex Workflow Integration
+
+#### Performance Optimization Example
+
+```bash
+# 1. Generate tasks from performance analysis
+task-master parse-prd .taskmaster/docs/performance-optimization-prd.txt --append
+
+# 2. Expand critical performance tasks
+task-master expand --id=11 --research --num=4  # O(n²) algorithm fix
+task-master expand --id=12 --research --num=3  # Database index optimization
+
+# 3. Work through systematically with TDD
+task-master next                # Get: 11.1 - Fix sorting algorithm complexity
+task-master show 11.1          # Review: Implement HashMap-based lookup
+task-master set-status --id=11.1 --status=in-progress
+
+# TDD Implementation with context tracking
+task-master update-subtask --id=11.1 --prompt="RED: Added failing test for O(1) product lookup in comparator"
+# ... implement solution ...
+task-master update-subtask --id=11.1 --prompt="GREEN: HashMap lookup implementation passes tests, O(n²) → O(n log n)"
+# ... refactor ...
+task-master update-subtask --id=11.1 --prompt="REFACTOR: Clean code, performance tests confirm 70% improvement"
+
+task-master set-status --id=11.1 --status=done
+```
+
+#### Security Implementation Example
+
+```bash
+# 1. Address critical security findings
+task-master add-task --prompt="Implement JWT authentication system to resolve critical security gap identified in comprehensive analysis" --research
+
+# 2. Expand into implementation subtasks
+task-master expand --id=20 --research --num=6
+
+# 3. Follow security-first development
+task-master show 20.1  # Add Quarkus Security dependencies
+task-master show 20.2  # Implement authentication endpoints
+task-master show 20.3  # Configure CORS restrictions
+task-master show 20.4  # Add role-based access control
+task-master show 20.5  # Security integration tests
+task-master show 20.6  # Security penetration testing
+
+# 4. Track security compliance
+task-master update-subtask --id=20.3 --prompt="CORS configured per security analysis recommendations, restricted to specific domains"
+```
+
+### Integration with Existing Development Standards
+
+#### Combining AI Workflow with Existing Standards
+
+The TaskMaster workflow integrates seamlessly with existing development standards:
+
+1. **Security Standards Integration:**
+   - TaskMaster tasks reference security checklist items
+   - PRDs map to OWASP Top 10 compliance requirements
+   - Task completion tied to security review completion
+
+2. **Performance Standards Integration:**
+   - Tasks include performance criteria (P95 < 500ms)
+   - Complexity analysis prevents O(n²) implementations
+   - Performance testing integrated into task completion
+
+3. **Architecture Standards Integration:**
+   - Tasks validate against Onion Architecture principles
+   - PRDs ensure DDD pattern compliance
+   - Task updates reference specific architectural layers
+
+4. **Quality Standards Integration:**
+   - TDD workflow tracked through TaskMaster updates
+   - Coverage requirements tied to task completion
+   - Code review checklist integrated with task validation
+
+---
+
+## Summary
+
+This guide integrates **AI-assisted development workflow** with comprehensive codebase analysis findings to establish a complete development ecosystem for the Finden Backend.
+
+### Technology Foundation
+- **Runtime:** Kotlin 2.2.0 targeting JVM 22
+- **Framework:** Quarkus 3.24.3 
+- **Build System:** Gradle 8.x with Kotlin DSL
+- **Architecture:** Domain-Driven Design with Onion/Hexagonal pattern
+- **AI Integration:** TaskMaster with Claude Code for context-driven development
+
+### Workflow Integration
+- **Context Engineering:** PRD-based task generation and management
+- **Task Master AI:** Automated complexity analysis and task expansion
+- **Claude Code:** Real-time development assistance with project context
+- **Analysis-Driven Development:** Quality gates based on comprehensive security and performance analysis
+
+### Critical Security & Performance Gates
+Based on comprehensive analysis findings (System Health Score: 6.2/10):
+
+**PRODUCTION BLOCKERS:**
+- ⚠️ **NO DEPLOYMENT** without JWT authentication system (Security Score: 3/10)
+- ⚠️ **NO O(n²) ALGORITHMS** especially in sorting operations (Performance Score: 5/10)
+- ⚠️ **NO MEMORY EXHAUSTION** patterns from full dataset loading
+- ⚠️ **NO LAYER COUPLING** violations (enforced by ArchUnit)
+
+**QUALITY STANDARDS:**
+- 🛡️ **All endpoints secured** with role-based authentication
+- ⚡ **Database operations optimized** with proper indexing
+- 🏗️ **Architecture compliance** maintained through testing
+- 🧪 **80%+ test coverage** with BDD structure
+- 🔍 **Input validation comprehensive** at all boundaries
+
+### Development Workflow Summary
+The integrated AI-assisted workflow combines traditional DDD/TDD practices with TaskMaster for **production-ready code quality** and **enhanced developer velocity** through automated planning, context preservation, and analysis-driven quality gates.
