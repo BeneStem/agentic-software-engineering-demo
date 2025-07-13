@@ -104,8 +104,8 @@ dependencies {
     description =
       "JavaClass now provides generic type information, i.e. there is now JavaClass.getTypeParameters() (see #398). Furthermore JavaClass now reports type parameter bounds as Dependencies (see #484)"
   }
-  testImplementation("org.testcontainers:mongodb")
-  testImplementation("org.testcontainers:kafka")
+  testImplementation("org.testcontainers:mongodb:1.21.3")
+  testImplementation("org.testcontainers:kafka:1.21.3")
   testImplementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
   detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.20.0")

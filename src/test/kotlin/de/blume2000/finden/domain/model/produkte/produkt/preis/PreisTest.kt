@@ -44,7 +44,7 @@ internal class PreisTest {
     val währung = Currency.getInstance(Locale.CHINA)
 
     // Then
-    expectThrows<UnerwarteteWährungException> {
+    expectThrows<UnerwarteteWaehrungException> {
       Preis(betrag, währung)
     }
   }

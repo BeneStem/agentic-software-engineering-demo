@@ -16,7 +16,7 @@ data class Preis(
       throw NegativerPreisException(bruttoBetrag.toString())
     }
     if (währung != Currency.getInstance(Locale.GERMANY)) {
-      throw UnerwarteteWährungException(währung.displayName)
+      throw UnerwarteteWaehrungException(währung.displayName)
     }
   }
 
