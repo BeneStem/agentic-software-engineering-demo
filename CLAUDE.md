@@ -8,10 +8,8 @@ This guide outlines the development standards, coding conventions, and contribut
 - [Technology Constraints](#technology-constraints)
 - [Architecture Standards](#architecture-standards)
 - [Security Requirements](#security-requirements)
-- [Red Flag Standards](#red-flag-standards)
 - [Quality Standards](#quality-standards)
 - [Development Workflow](#development-workflow)
-- [Context & Task Management](#context--task-management)
 
 ## System Overview & Architecture
 
@@ -22,11 +20,10 @@ The Finden application is designed as a **Self-Contained System (SCS)** - an aut
 **SCS Implementation Principles:**
 
 - **UI Ownership**: Each SCS MUST include its own web interface, NO shared UI components between SCS boundaries
-- **Data Autonomy**: Dedicated database per SCS, NO direct database access between systems
+- **Data Autonomy**: Dedicated database per SCS, NO direct database access between systems or shared schemas
 - **Communication Boundaries**: Asynchronous communication only via Kafka with Avro (NOT direct API calls)
 - **Deployment Independence**: Each SCS deployed as complete unit, NO deployment coordination required
 - **Security Model**: Authentication and authorization handled by infrastructure
-- **Data Isolation**: NO direct database access between SCS instances, NO shared database schemas
 
 **Architecture Pattern:** Onion/Hexagonal with Domain-Driven Design (DDD) principles
 
@@ -108,7 +105,7 @@ The Finden application is designed as a **Self-Contained System (SCS)** - an aut
 - **Null Safety:** Use safe operators (`?.`, `?:`), avoid force unwrapping unless justified, Optional patterns for domain modeling
 - **Collections:** Functional operations (`map`, `filter`, `fold`, `reduce`), chain transformations, avoid imperative loops
 - **Error Handling:** Specific exceptions with context, inherit from base domain exception class
-- **Input Validation:** Validate all inputs, check nulls/negatives, use when expressions for conditions
+- **Input Validation:** Follow security requirements for input validation and error handling
 - **Pure Functions:** Domain logic as pure functions with no side effects, push side effects to adapter layer
 - **Fail Fast:** Validate early and fail fast with clear error messages
 - **Resource Management:** Close all connections properly to avoid resource leaks
@@ -131,6 +128,11 @@ The Finden application is designed as a **Self-Contained System (SCS)** - an aut
 - Exception handling for expected business scenarios
 - Options API, untyped props/events, Vue 2 patterns
 - Business logic in components or adapters
+- Code structure follows execution order - organize by information hiding, not execution order
+- Design decisions scattered across modules - encapsulate each decision in one place
+- Common operations require advanced knowledge - provide reasonable defaults
+- Interface complexity matches implementation - interfaces MUST be simpler than implementations
+- Code behavior requires extensive comments - code should clearly express intent
 
 ## Security Requirements (MANDATORY)
 
@@ -150,28 +152,9 @@ The Finden application is designed as a **Self-Contained System (SCS)** - an aut
 
 - **Domain Layer Purity:** NO framework annotations in domain layer, NO infrastructure concerns in domain layer
 - **Injection Prevention:** NO SQL injection patterns - use parameterized queries (no string concatenation for database operations)
-- **SCS Isolation:** NO direct database access between SCS instances
+- **SCS Isolation:** Enforce SCS boundaries as defined in System Overview
 - **Schema Separation:** NO shared database schemas between SCS boundaries
 - **Consistency Model:** MANDATORY eventual consistency for cross-SCS data synchronization
-
-### Red Flag Standards (MANDATORY)
-
-**Red Flag Checklist for Code Review:**
-
-- [ ] **Shallow Module (#1):** Interface complexity matches implementation - interfaces MUST be simpler than implementations
-- [ ] **Information Leakage (#2):** Design decisions scattered across modules - encapsulate each decision in one place
-- [ ] **Temporal Decomposition (#3):** Code structure follows execution order - organize by information hiding, not execution order
-- [ ] **Overexposure (#4):** Common operations require advanced knowledge - provide reasonable defaults
-- [ ] **Pass-Through Method (#5):** Methods only delegate without value - every method must add meaningful functionality
-- [ ] **Repetition (#6):** Nontrivial code duplicated >3% - immediately extract duplicated code
-- [ ] **Special-General Mixture (#7):** Business logic mixed with utilities - separate domain-specific from general-purpose
-- [ ] **Conjoined Methods (#8):** Methods require deep understanding of each other - each method should be independently understandable
-- [ ] **Comment Repeats Code (#9):** Comments state what code does - comments must explain WHY, not WHAT
-- [ ] **Implementation Contamination (#10):** Interface docs reveal implementation - describe WHAT and WHY, not HOW
-- [ ] **Vague Name (#11):** Names like "data", "info", "manager" - use clear business domain terminology
-- [ ] **Hard to Pick Name (#12):** Multiple responsibilities make naming difficult - hard-to-name entities should trigger design review
-- [ ] **Hard to Describe (#13):** Incomplete documentation requiring guesswork - document all public methods including edge cases
-- [ ] **Nonobvious Code (#14):** Code behavior requires extensive comments - code should clearly express intent
 
 ## Quality Standards (MANDATORY)
 
@@ -192,7 +175,7 @@ The Finden application is designed as a **Self-Contained System (SCS)** - an aut
 **Testing Standards:**
 
 - **Structure**: BDD (Given-When-Then) format for all tests
-- **Coverage**: Minimum 80% code coverage for unit/integration tests (architecture tests validate layer compliance)
+- **Coverage**: Minimum 80% code coverage for unit/integration tests + architecture compliance validation
 - **Isolation**: Complete test isolation, no production dependencies
 - **Types**: Unit (fast, isolated), Integration (TestContainers), E2E (user journeys), Architecture (layer validation)
 
@@ -225,12 +208,6 @@ The Finden application is designed as a **Self-Contained System (SCS)** - an aut
 - Route-level code splitting
 - Composition API for better performance vs Options API
 
-**Resource Management:**
-
-- Close all connections properly to avoid resource leaks
-- Proper memory management to avoid memory leaks
-- Efficient collection operations with chaining
-
 ### Quality Gates & Code Review
 
 **Quality Gates (3-Stage Process):**
@@ -253,16 +230,15 @@ The Finden application is designed as a **Self-Contained System (SCS)** - an aut
 - Architecture layer compliance (domain/application/adapter boundaries)
 - Performance standards compliance (P95 < 300ms, proper indexing)
 - Security requirements compliance (input validation, parameterized queries)
-- Use Red Flag Checklist (complete 14-point checklist)
+- Ensure to avoid all Anti-Patterns
 - Ensure all quality gates pass before approval
 
 ## Development Workflow (MANDATORY)
 
 ### SuperClaude v3 Integration
 
-**Available Personas:** Architect, Frontend, Backend, Security, QA, Performance - auto-activate based on file patterns and task context.
-**Auto-Activation Rules:** Frontend files → Frontend | API/server/database files → Backend | Test files → QA | Architecture/design → Architect | Input validation → Security | Optimization → Performance
-**SuperClaude v3 Integration**: Use persona flags, MCP servers, and thinking modes as needed for development tasks.
+**Personas:** Architect, Frontend, Backend, Security, QA, Performance - auto-activate based on file patterns and task context.
+**Auto-Activation:** Frontend files → Frontend | API/server/database files → Backend | Test files → QA | Architecture/design → Architect | Input validation → Security | Optimization → Performance
 
 ### Daily Development Loop (TDD with Task-Master)
 
@@ -288,11 +264,13 @@ b. **GREEN:** Minimal code to pass test with persona-guided implementation:
 c. **REFACTOR:** Improve code (auto-quality analysis with refactorer persona)
 d. **DOCUMENT:** `task-master update-subtask --id=<task-id>.<subtask-id> --prompt="notes"`
 e. **COMMIT:** Atomic commit with pre-commit validation (security, performance, architecture)
+f. **MEMORY:** Capture patterns, problems, solutions in development episode
 
 **3. Task Completion:**
 
 - Integration testing across subtasks
 - Final refactoring for consistency
+- Store completion insights and learnings
 - `task-master set-status --id=<task-id> --status=done`
 
 **4. Commit & Push:**
@@ -312,6 +290,24 @@ e. **COMMIT:** Atomic commit with pre-commit validation (security, performance, 
 - Leverage `--persona-scribe` for professional commit messages
 - Apply `--seq` for complex merge conflict resolution
 
+### Self-Learning Cycle
+
+**Memory Capture:**
+- Store development episodes with patterns, problems, solutions
+- Capture anti-patterns encountered and prevention methods
+- Record performance metrics and architectural decisions
+
+**CLAUDE.md Evolution:**
+- Weekly analysis of memory patterns (>3 occurrences)
+- Auto-update FORBIDDEN Anti-Patterns based on real issues
+- Refine standards based on proven practices
+- Generate PR for team review of memory-driven improvements
+
+**Memory Commands:**
+- `mcp__graphiti-memory__add_episode` - Store learning episodes
+- `mcp__graphiti-memory__search_nodes` - Find recurring patterns
+- `mcp__graphiti-memory__search_facts` - Retrieve specific learnings
+
 ### AI Behavior & Context Management
 
 **AI Behavior Rules:** Never assume missing context - ask questions if uncertain. Never hallucinate libraries or functions - only use known, verified packages and APIs. Always confirm file paths and class names exist before referencing them.
@@ -321,6 +317,8 @@ e. **COMMIT:** Atomic commit with pre-commit validation (security, performance, 
 **PRD Integration:** Extract domain entities from PRDs, map features to application services, assess architecture impact, ensure PRD terminology matches domain model, identify bounded context boundaries.
 
 **Context Optimization:** Use `--uc` for token optimization when context usage >75%, apply `--delegate` for large codebase analysis (>50 files), use `--wave-mode` for complex multi-stage operations, leverage `--seq` for systematic analysis and debugging, use `--c7` for documentation and framework pattern lookups.
+
+**Self-Learning:** Capture development patterns in memory episodes. Use `mcp__graphiti-memory__add_episode` for lessons learned, `mcp__graphiti-memory__search_nodes` for pattern analysis. Update CLAUDE.md based on recurring patterns (>3 occurrences).
 
 ---
 
