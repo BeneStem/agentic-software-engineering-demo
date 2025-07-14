@@ -57,13 +57,6 @@ The Finden application is designed as a **Self-Contained System (SCS)** - an aut
 - **Build**: Vue CLI with Webpack
 - **HTTP**: Axios (NOT fetch API)
 
-**FORBIDDEN Technologies:**
-
-- Spring Framework (use Quarkus)
-- Vue.js Options API (use Composition API)
-- Direct MongoDB drivers (use Panache)
-- fetch API (use Axios)
-
 ## Architecture Standards (MANDATORY)
 
 **Onion/Hexagonal Architecture Layers:**
@@ -75,12 +68,12 @@ The Finden application is designed as a **Self-Contained System (SCS)** - an aut
 
 - **Application Layer:** Application services implementing use cases, DTOs for data contracts, mappers at boundaries, coordination services
   - **Rules:** Use cases orchestrate domain, DTOs for external contracts, depends only on domain interfaces
-  - **FORBIDDEN:** Business logic in application services, direct database access
+  - **FORBIDDEN:** Direct database access
   - **Code Organization:** usecase/ (business operations), dto/ (data contracts), mapper/ (DTO↔domain), service/ (coordination)
 
 - **Adapter Layer (Outer):** REST controllers, database adapters, message consumers, external service clients
   - **Rules:** Controllers delegate to application layer, repository implementations use specific tech, implement domain interfaces
-  - **FORBIDDEN:** Business logic in adapters, domain contamination
+  - **FORBIDDEN:** Domain contamination
   - **Code Organization:** web/ (REST controllers), persistence/ (database adapters), messaging/ (events), external/ (clients)
 
 **Frontend Architecture (Vue.js 3-Layer):**
@@ -89,7 +82,7 @@ The Finden application is designed as a **Self-Contained System (SCS)** - an aut
 - **Business Logic Layer:** Composables for reactive business logic and state management
 - **Data Access Layer:** HTTP clients, API abstractions, data transformation
 - **Dependencies:** Presentation → Composables → API (strict layer dependency)
-- **FORBIDDEN:** Business logic in components, direct API calls from components, Options API patterns
+- **FORBIDDEN:** Direct API calls from components, Options API patterns
 - **Code Organization:** apps/ (entry points), shared/ (components), api/ (backend communication), composables/ (business logic), store/ (Vuex state)
 
 **File Naming Standards:**
@@ -121,18 +114,14 @@ The Finden application is designed as a **Self-Contained System (SCS)** - an aut
 
 **FORBIDDEN Anti-Patterns:**
 
-- Mutable global state or shared mutable objects
-- Functions with side effects mixed with business logic
-- Imperative loops when functional alternatives exist
-- Null checks that can be replaced with safe operators
-- Exception handling for expected business scenarios
-- Options API, untyped props/events, Vue 2 patterns
-- Business logic in components or adapters
-- Code structure follows execution order - organize by information hiding, not execution order
-- Design decisions scattered across modules - encapsulate each decision in one place
-- Common operations require advanced knowledge - provide reasonable defaults
-- Interface complexity matches implementation - interfaces MUST be simpler than implementations
-- Code behavior requires extensive comments - code should clearly express intent
+- **Business Logic Separation:** Business logic in components, adapters, or application services
+- **Mutable State:** Mutable global state or shared mutable objects
+- **Side Effects:** Functions with side effects mixed with business logic
+- **Imperative Code:** Imperative loops when functional alternatives exist
+- **Poor Error Handling:** Null checks that can be replaced with safe operators, exception handling for expected business scenarios
+- **Code Organization:** Code structure follows execution order, design decisions scattered across modules
+- **Interface Design:** Interface complexity matches implementation, common operations require advanced knowledge
+- **Documentation:** Code behavior requires extensive comments
 
 ## Security Requirements (MANDATORY)
 
@@ -190,7 +179,7 @@ The Finden application is designed as a **Self-Contained System (SCS)** - an aut
 
 **Database Performance:**
 
-- All queries must use proper indexes (klassifikationId+active, price+currency, availability fields, text search)
+- All queries must use proper indexes (see System Overview for required indexes)
 - NO queries without indexes
 
 **API Performance:**
@@ -221,17 +210,9 @@ The Finden application is designed as a **Self-Contained System (SCS)** - an aut
 **Code Review Priorities:**
 
 1. **Architecture** - Layer coupling, value object immutability, boundary conditions
-2. **Performance** - Algorithm complexity, memory patterns, database optimization
-3. **Code Quality** - Complexity analysis, duplication elimination, test coverage
-4. **Security** - Input validation, data protection, parameterized queries, resource management
-
-**Review Focus Areas:**
-
-- Architecture layer compliance (domain/application/adapter boundaries)
-- Performance standards compliance (P95 < 300ms, proper indexing)
-- Security requirements compliance (input validation, parameterized queries)
-- Ensure to avoid all Anti-Patterns
-- Ensure all quality gates pass before approval
+2. **Performance** - Algorithm complexity, memory patterns, database optimization (P95 < 300ms, proper indexing)
+3. **Security** - Input validation, data protection, parameterized queries, resource management
+4. **Code Quality** - Complexity analysis, duplication elimination, test coverage, Anti-Pattern avoidance
 
 ## Development Workflow (MANDATORY)
 
@@ -240,7 +221,7 @@ The Finden application is designed as a **Self-Contained System (SCS)** - an aut
 **Personas:** Architect, Frontend, Backend, Security, QA, Performance - auto-activate based on file patterns and task context.
 **Auto-Activation:** Frontend files → Frontend | API/server/database files → Backend | Test files → QA | Architecture/design → Architect | Input validation → Security | Optimization → Performance
 
-### Daily Development Loop (TDD with Task-Master)
+### Daily Development Loop (TDD with task-master)
 
 #### Core TDD Cycle with Intelligent Persona Activation
 
@@ -263,7 +244,7 @@ a. **RED:** Write failing BDD test (QA persona auto-enhances test strategy)
 b. **GREEN:** Minimal code to pass test with persona-guided implementation:
 c. **REFACTOR:** Improve code (auto-quality analysis with refactorer persona)
 d. **DOCUMENT:** `task-master update-subtask --id=<task-id>.<subtask-id> --prompt="notes"`
-e. **COMMIT:** Atomic commit with pre-commit validation (security, performance, architecture)
+e. **COMMIT:** Atomic commit with pre-commit validation
 f. **MEMORY:** Capture patterns, problems, solutions in development episode
 
 **3. Task Completion:**
@@ -275,10 +256,8 @@ f. **MEMORY:** Capture patterns, problems, solutions in development episode
 
 **4. Commit & Push:**
 
-- Final commit with pre-commit validation (security, performance, architecture)
-- Push changes
-
-**Pre-Push Validation:** Follow Quality Gates (pre-commit, pre-merge, pre-deploy)
+- Final commit and push changes
+- Follow Quality Gates (pre-commit, pre-merge, pre-deploy)
 
 ### Git Workflow
 
@@ -292,33 +271,17 @@ f. **MEMORY:** Capture patterns, problems, solutions in development episode
 
 ### Self-Learning Cycle
 
-**Memory Capture:**
-- Store development episodes with patterns, problems, solutions
-- Capture anti-patterns encountered and prevention methods
-- Record performance metrics and architectural decisions
+**Memory Capture:** Store development episodes with patterns, problems, solutions. Capture anti-patterns encountered and prevention methods. Record performance metrics and architectural decisions.
 
-**CLAUDE.md Evolution:**
-- Weekly analysis of memory patterns (>3 occurrences)
-- Auto-update FORBIDDEN Anti-Patterns based on real issues
-- Refine standards based on proven practices
-- Generate PR for team review of memory-driven improvements
-
-**Memory Commands:**
-- `mcp__graphiti-memory__add_episode` - Store learning episodes
-- `mcp__graphiti-memory__search_nodes` - Find recurring patterns
-- `mcp__graphiti-memory__search_facts` - Retrieve specific learnings
+**CLAUDE.md Evolution:** Weekly analysis of memory patterns (>3 occurrences). Auto-update FORBIDDEN Anti-Patterns based on real issues. Refine standards based on proven practices.
 
 ### AI Behavior & Context Management
 
 **AI Behavior Rules:** Never assume missing context - ask questions if uncertain. Never hallucinate libraries or functions - only use known, verified packages and APIs. Always confirm file paths and class names exist before referencing them.
 
-**Task Completion Standards:** Mark completed tasks immediately after finishing implementation. Add discovered sub-tasks to TaskMaster during development. Document blockers and solutions in task notes.
-
-**PRD Integration:** Extract domain entities from PRDs, map features to application services, assess architecture impact, ensure PRD terminology matches domain model, identify bounded context boundaries.
+**Task Completion Standards:** Mark completed tasks immediately after finishing implementation. Add discovered sub-tasks to task-master during development. Document blockers and solutions in task notes.
 
 **Context Optimization:** Use `--uc` for token optimization when context usage >75%, apply `--delegate` for large codebase analysis (>50 files), use `--wave-mode` for complex multi-stage operations, leverage `--seq` for systematic analysis and debugging, use `--c7` for documentation and framework pattern lookups.
-
-**Self-Learning:** Capture development patterns in memory episodes. Use `mcp__graphiti-memory__add_episode` for lessons learned, `mcp__graphiti-memory__search_nodes` for pattern analysis. Update CLAUDE.md based on recurring patterns (>3 occurrences).
 
 ---
 
