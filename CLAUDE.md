@@ -4,16 +4,16 @@ This guide outlines the development standards, coding conventions, and contribut
 
 ## Table of Contents
 
-- [System Architecture](#system-architecture)
-- [Technology Stack](#technology-stack)
-- [Architecture & Code Standards](#architecture--code-standards)
+- [System Overview & Architecture](#system-overview--architecture)
+- [Technology Constraints](#technology-constraints)
+- [Architecture Standards](#architecture-standards)
 - [Security Requirements](#security-requirements)
 - [Red Flag Standards](#red-flag-standards)
 - [Quality Standards](#quality-standards)
 - [Development Workflow](#development-workflow)
 - [Context & Task Management](#context--task-management)
 
-## System Architecture
+## System Overview & Architecture
 
 ### Self-Contained Systems (SCS) Principles
 
@@ -23,34 +23,25 @@ The Finden application is designed as a **Self-Contained System (SCS)** - an aut
 
 - **UI Ownership**: Each SCS MUST include its own web interface, NO shared UI components between SCS boundaries
 - **Data Autonomy**: Dedicated database per SCS, NO direct database access between systems
-- **Communication Boundaries**: Asynchronous communication only (see "Architecture & Code Standards" section)
+- **Communication Boundaries**: Asynchronous communication only via Kafka with Avro (NOT direct API calls)
 - **Deployment Independence**: Each SCS deployed as complete unit, NO deployment coordination required
-- **Security Model**: Authentication and authorization handled by infrastructure (see "Security Requirements" section)
+- **Security Model**: Authentication and authorization handled by infrastructure
+- **Data Isolation**: NO direct database access between SCS instances, NO shared database schemas
 
-### Onion/Hexagonal Architecture (MANDATORY)
+**Architecture Pattern:** Onion/Hexagonal with Domain-Driven Design (DDD) principles
 
-The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Architecture**.
-
-**Implementation Details:** Complete layer structure, dependencies, and SCS communication patterns defined in "Architecture & Code Standards" section.
-
-### Essential Infrastructure
-
-**SCS Boundaries:**
+**System Components:**
 
 - **Finden Search SCS**: Product search, classification, filtering with MongoDB and Kafka events
-- **Adjacent Systems**: User Management, Order Processing, Product Management (communicate via Kafka only)
-
-**Infrastructure Components:**
-
-- **Database**: MongoDB collections - products, classifications, search_analytics, availability_cache
-- **Required Indexes**: klassifikationId+active, price+currency, availability fields, text search
+- **Adjacent Systems**: User Management, Order Processing, Product Management
+- **Database**: Collections (products, classifications, search_analytics, availability_cache)
 - **API**: Base `/api/v1/search`, JSON envelope responses, OpenAPI docs at `/api/docs`
 - **Events**: Kafka topics - product.updated, pricing.changed, availability.changed, search.performed
 - **Caching**: Application (classification hierarchy), Database (WiredTiger), CDN (static assets)
 
-## Technology Stack
+**Required Indexes**: klassifikationId+active, price+currency, availability fields, text search
 
-### Core Technology Stack (MANDATORY)
+## Technology Constraints (MANDATORY)
 
 **Backend Stack:**
 
@@ -69,27 +60,14 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 - **Build**: Vue CLI with Webpack
 - **HTTP**: Axios (NOT fetch API)
 
-**Integration Stack:**
-
-- **Cross-SCS Communication**: Kafka with Avro (NOT direct API calls)
-- **Architecture**: Onion/Hexagonal with DDD principles, Self-Contained System approach
-
-**Technology Constraints (FORBIDDEN):**
+**FORBIDDEN Technologies:**
 
 - Spring Framework (use Quarkus)
 - Vue.js Options API (use Composition API)
 - Direct MongoDB drivers (use Panache)
 - fetch API (use Axios)
-- Synchronous cross-SCS communication (use Kafka)
-- Direct cross-SCS database access
 
-## Platform Principles Compliance (MANDATORY)
-
-**12-Factor App Compliance:** Environment-based configuration, stateless processes, explicit dependencies, structured logging, horizontal scaling, dev/prod parity, graceful shutdown, port binding, immutable builds.
-
-**Reactive Manifesto Compliance:** Responsive (P95 < 300ms), resilient (isolated failure handling), elastic (horizontal scaling), message-driven (Kafka-based async processing).
-
-### Architecture & Code Standards (MANDATORY)
+## Architecture Standards (MANDATORY)
 
 **Onion/Hexagonal Architecture Layers:**
 
@@ -108,22 +86,6 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
   - **FORBIDDEN:** Business logic in adapters, domain contamination
   - **Code Organization:** web/ (REST controllers), persistence/ (database adapters), messaging/ (events), external/ (clients)
 
-**Layer Dependencies & Boundaries:**
-
-- Domain has zero outward dependencies
-- Application depends only on domain
-- Adapters implement domain interfaces
-- NO cross-layer dependencies
-- NO business logic in controllers or adapters
-
-**SCS Communication Patterns:**
-
-- NO synchronous cross-SCS calls (use Kafka with Avro)
-- NO direct cross-SCS database access
-- MANDATORY asynchronous communication for all cross-SCS interactions
-- NO shared business logic modules between SCS boundaries
-- **Adjacent Systems:** User Management, Order Processing, Product Management (Kafka-only communication)
-
 **Frontend Architecture (Vue.js 3-Layer):**
 
 - **Presentation Layer:** Vue components, templates, styles - UI rendering only
@@ -132,22 +94,33 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 - **Dependencies:** Presentation → Composables → API (strict layer dependency)
 - **FORBIDDEN:** Business logic in components, direct API calls from components, Options API patterns
 - **Code Organization:** apps/ (entry points), shared/ (components), api/ (backend communication), composables/ (business logic), store/ (Vuex state)
-- **Rules:** Apps contain config, shared provides reusable UI, API abstracts backend, composables contain reactive logic
 
 **File Naming Standards:**
 
-- **Backend:** PascalCase with suffixes, lowercase packages
-- **Frontend:** PascalCase components, camelCase composables with prefix, lowercase directories with hyphens
+- **Backend:** PascalCase with suffixes (e.g., `UserService`, `ProductRepository`), lowercase packages
+- **Frontend:** PascalCase components (e.g., `ProductCard.vue`), camelCase composables with `use` prefix (e.g., `useProductSearch`), lowercase directories with hyphens
 
-**Kotlin Development Standards & Functional Programming:**
+**Development Standards:**
+
+**Kotlin/Backend:**
 
 - **Immutability:** Use `val` over `var` (MANDATORY), immutable data classes with `val` properties and `copy()` method
 - **Null Safety:** Use safe operators (`?.`, `?:`), avoid force unwrapping unless justified, Optional patterns for domain modeling
 - **Collections:** Functional operations (`map`, `filter`, `fold`, `reduce`), chain transformations, avoid imperative loops
 - **Error Handling:** Specific exceptions with context, inherit from base domain exception class
-- **Boundary Validation:** Validate all inputs, check nulls/negatives, use when expressions for conditions
+- **Input Validation:** Validate all inputs, check nulls/negatives, use when expressions for conditions
 - **Pure Functions:** Domain logic as pure functions with no side effects, push side effects to adapter layer
 - **Fail Fast:** Validate early and fail fast with clear error messages
+- **Resource Management:** Close all connections properly to avoid resource leaks
+
+**Vue.js/Frontend:**
+
+- **Composition API Only:** Use Composition API syntax with reactive functions, TypeScript interfaces for all Props and Emits
+- **Component Architecture:** Base components (reusable UI), Layout components (structure), Business components (domain-specific)
+- **Single Responsibility:** Single responsibility per component, business logic in composables
+- **Styling:** Semantic HTML, BEM methodology, scoped styling
+- **State Management:** Vuex with TypeScript typing, namespaced modules, composables for reactive business logic
+- **Error Handling:** Centralized error handling with try-catch patterns
 
 **FORBIDDEN Anti-Patterns:**
 
@@ -156,14 +129,10 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 - Imperative loops when functional alternatives exist
 - Null checks that can be replaced with safe operators
 - Exception handling for expected business scenarios
+- Options API, untyped props/events, Vue 2 patterns
+- Business logic in components or adapters
 
-**MongoDB Integration:**
-
-- **Repository Pattern:** Domain interfaces with domain types, adapter implementations with MongoDB classes
-- **Entity Mapping:** MongoDB entities in adapter layer only, clean mapping between layers
-- **Configuration:** ApplicationScoped CDI, PanacheMongoRepository inheritance, no MongoDB annotations in domain
-
-### Security Requirements (MANDATORY)
+## Security Requirements (MANDATORY)
 
 **Security Scope & Boundaries:**
 
@@ -174,143 +143,39 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 
 - **GDPR Compliance:** NO personal data storage - search operates on anonymous basis only
 - **Data Minimization:** Right to be forgotten, minimal data collection
-- **Secure Queries:** Parameterized queries - no string concatenation for database operations
-- **Input Validation:** Validate all boundaries and user inputs
+- **Input Validation:** Validate all boundaries and user inputs with proper error handling
 - **NO Sensitive Logging:** NO logging of sensitive data
 
 **System Security Patterns:**
 
 - **Domain Layer Purity:** NO framework annotations in domain layer, NO infrastructure concerns in domain layer
-- **Injection Prevention:** NO SQL injection patterns - use parameterized queries
-- **Resource Management:** Close all connections properly to avoid resource leaks
-
-**Data Consistency & Isolation:**
-
+- **Injection Prevention:** NO SQL injection patterns - use parameterized queries (no string concatenation for database operations)
 - **SCS Isolation:** NO direct database access between SCS instances
 - **Schema Separation:** NO shared database schemas between SCS boundaries
 - **Consistency Model:** MANDATORY eventual consistency for cross-SCS data synchronization
 
-**Vue.js Development Standards:**
-
-- **Composition API Only:** Use Composition API syntax with reactive functions, TypeScript interfaces for all Props and Emits
-- **Component Architecture:** Base components (reusable UI), Layout components (structure), Business components (domain-specific)
-- **Single Responsibility:** Single responsibility per component, business logic in composables
-- **Styling:** Semantic HTML, BEM methodology, scoped styling
-- **State Management:** Vuex with TypeScript typing, namespaced modules, composables for reactive business logic
-- **Error Handling:** Centralized error handling with try-catch patterns
-- **FORBIDDEN:** Options API, untyped props/events, Vue 2 patterns
-
-**Project Structure:**
-
-- **Standard SCS layout:** backend/ (Quarkus/Kotlin), frontend/ (Vue.js), infrastructure/, docs/, .taskmaster/
-
 ### Red Flag Standards (MANDATORY)
-
-**Design & Architecture Red Flags:**
-
-**Red Flag #1: Shallow Module** - Interface complexity matches implementation complexity
-
-- Interface simplicity: Module interfaces MUST be significantly simpler than implementations
-- Implementation hiding: Public APIs MUST hide internal complexity from callers
-- Minimal surface area: Expose only essential methods and properties
-
-**Red Flag #2: Information Leakage** - Design decisions scattered across multiple modules
-
-- Centralized decisions: Each design decision should be encapsulated in one place
-- Clear ownership: Modules should own their internal design choices
-
-**Red Flag #3: Temporal Decomposition** - Code structure follows execution order instead of information hiding
-
-- Information-based structure: Organize by what information is hidden, not execution order
-- Logical grouping: Group related functionality together regardless of when it executes
-
-**Red Flag #4: Overexposure** - Common operations require knowledge of advanced features
-
-- Progressive disclosure: Common use cases should not require advanced feature knowledge
-- Sensible defaults: Provide reasonable defaults to minimize configuration
-
-**Red Flag #7: Special-General Mixture** - Business logic mixed with general-purpose utilities
-
-- Clear boundaries: Separate domain-specific logic from general-purpose utilities
-- Dependency direction: Special-purpose code should depend on general-purpose, not vice versa
-
-**Method & Interface Red Flags:**
-
-**Red Flag #5: Pass-Through Method** - Methods that only delegate without adding value
-
-- Value-adding methods: Every method must add meaningful functionality beyond delegation
-- Justified abstraction: Only create wrapper methods with clear abstraction benefits
-
-**Red Flag #8: Conjoined Methods** - Methods requiring deep understanding of each other
-
-- Self-contained methods: Each method should be understandable without deep knowledge of others
-- Minimal dependencies: Reduce coupling between methods within the same class
-
-**Red Flag #10: Implementation Contamination** - Interface documentation reveals implementation details
-
-- User-focused documentation: Interface docs describe WHAT and WHY, not HOW
-- Behavioral contracts: Document expected behavior, preconditions, and postconditions
-
-**Code Quality Red Flags:**
-
-**Red Flag #6: Repetition** - Nontrivial code duplicated beyond 3% threshold
-
-- Extract common logic: Immediately extract any duplicated nontrivial code
-- Shared utilities: Create utility functions for common operations
-
-**Red Flag #9: Comment Repeats Code** - Comments state what code obviously does
-
-- Value-adding comments: Comments must explain WHY, not WHAT the code does
-- Context provision: Explain reasoning behind design decisions
-
-**Red Flag #11: Vague Name** - Names like "data", "info", "manager", "handler"
-
-- Descriptive names: Names must clearly indicate purpose and scope
-- Domain language: Use terminology from business domain, not technical jargon
-
-**Red Flag #12: Hard to Pick Name** - Multiple responsibilities making naming difficult
-
-- Single responsibility: Hard-to-name entities often have multiple responsibilities
-- Refactoring trigger: Naming difficulty should trigger design review
-
-**Red Flag #13: Hard to Describe** - Incomplete documentation requiring guesswork
-
-- Complete behavioral description: All public methods must have complete documentation
-- Edge case coverage: Document all important edge cases and error conditions
-
-**Red Flag #14: Nonobvious Code** - Code behavior cannot be understood without extensive comments
-
-- Expressive code: Code should clearly express its intent without requiring comments
-- Readable algorithms: Complex algorithms should be broken down into understandable steps
 
 **Red Flag Checklist for Code Review:**
 
-- [ ] **Shallow Module (#1):** Interface complexity matches implementation complexity
-- [ ] **Information Leakage (#2):** Design decisions scattered across multiple modules
-- [ ] **Temporal Decomposition (#3):** Code structure follows execution order instead of information hiding
-- [ ] **Overexposure (#4):** Common operations require knowledge of advanced features
-- [ ] **Pass-Through Method (#5):** Methods that only delegate without adding value
-- [ ] **Repetition (#6):** Nontrivial code duplicated beyond 3% threshold
-- [ ] **Special-General Mixture (#7):** Business logic mixed with general-purpose utilities
-- [ ] **Conjoined Methods (#8):** Methods requiring deep understanding of each other
-- [ ] **Comment Repeats Code (#9):** Comments state what code obviously does
-- [ ] **Implementation Contamination (#10):** Interface documentation reveals implementation details
-- [ ] **Vague Name (#11):** Names like "data", "info", "manager", "handler"
-- [ ] **Hard to Pick Name (#12):** Multiple responsibilities making naming difficult
-- [ ] **Hard to Describe (#13):** Incomplete documentation requiring guesswork
-- [ ] **Nonobvious Code (#14):** Code behavior cannot be understood without extensive comments
+- [ ] **Shallow Module (#1):** Interface complexity matches implementation - interfaces MUST be simpler than implementations
+- [ ] **Information Leakage (#2):** Design decisions scattered across modules - encapsulate each decision in one place
+- [ ] **Temporal Decomposition (#3):** Code structure follows execution order - organize by information hiding, not execution order
+- [ ] **Overexposure (#4):** Common operations require advanced knowledge - provide reasonable defaults
+- [ ] **Pass-Through Method (#5):** Methods only delegate without value - every method must add meaningful functionality
+- [ ] **Repetition (#6):** Nontrivial code duplicated >3% - immediately extract duplicated code
+- [ ] **Special-General Mixture (#7):** Business logic mixed with utilities - separate domain-specific from general-purpose
+- [ ] **Conjoined Methods (#8):** Methods require deep understanding of each other - each method should be independently understandable
+- [ ] **Comment Repeats Code (#9):** Comments state what code does - comments must explain WHY, not WHAT
+- [ ] **Implementation Contamination (#10):** Interface docs reveal implementation - describe WHAT and WHY, not HOW
+- [ ] **Vague Name (#11):** Names like "data", "info", "manager" - use clear business domain terminology
+- [ ] **Hard to Pick Name (#12):** Multiple responsibilities make naming difficult - hard-to-name entities should trigger design review
+- [ ] **Hard to Describe (#13):** Incomplete documentation requiring guesswork - document all public methods including edge cases
+- [ ] **Nonobvious Code (#14):** Code behavior requires extensive comments - code should clearly express intent
 
-**Red Flag Resolution Process:**
+## Quality Standards (MANDATORY)
 
-1. **Immediate Flag:** Stop review if critical red flags found
-2. **Root Cause Analysis:** Identify why the red flag exists
-3. **Refactoring Plan:** Create specific plan to address the anti-pattern
-4. **Test Coverage:** Ensure tests exist before refactoring
-5. **Incremental Fix:** Address in small, testable increments
-
-## Quality Standards
-
-### Testing Strategy (MANDATORY)
+### Testing Strategy
 
 **Backend Testing Stack:**
 
@@ -327,11 +192,11 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 **Testing Standards:**
 
 - **Structure**: BDD (Given-When-Then) format for all tests
-- **Coverage**: Minimum 80% code coverage across all layers
+- **Coverage**: Minimum 80% code coverage for unit/integration tests (architecture tests validate layer compliance)
 - **Isolation**: Complete test isolation, no production dependencies
 - **Types**: Unit (fast, isolated), Integration (TestContainers), E2E (user journeys), Architecture (layer validation)
 
-### Performance Standards (MANDATORY)
+### Performance Standards
 
 **Algorithm Complexity:**
 
@@ -342,14 +207,12 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 
 **Database Performance:**
 
-- All queries must use proper indexes
-- Required indexes: klassifikationId+active, price+currency, availability fields, text search
+- All queries must use proper indexes (klassifikationId+active, price+currency, availability fields, text search)
 - NO queries without indexes
-- Use parameterized queries to prevent injection and improve performance
 
 **API Performance:**
 
-- API response times P95 < 300ms for all queries
+- API response times P95 < 300ms for all queries (including input validation overhead)
 - Bounded data loading to prevent memory issues
 - Proper object lifecycle management
 - JSON envelope responses for consistency
@@ -358,7 +221,7 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 
 - Optimize for Core Web Vitals (FCP, LCP, CLS, FID)
 - Lazy loading for heavy components
-- Shallow references for large arrays, non-reactive objects for performance
+- Shallow references for large arrays, non-reactive objects for performance (balance with immutability requirements)
 - Route-level code splitting
 - Composition API for better performance vs Options API
 
@@ -367,43 +230,41 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 - Close all connections properly to avoid resource leaks
 - Proper memory management to avoid memory leaks
 - Efficient collection operations with chaining
-- Proper MongoDB connection lifecycle management
 
-### Quality Gates (MANDATORY)
+### Quality Gates & Code Review
 
-**Pre-Commit Gates (Local Development):**
+**Quality Gates (3-Stage Process):**
 
-- **Backend**: Run `unitTest`, `integrationTest`, `detekt`, `dependencyCheckAnalyze`, `build`
-- **Frontend**: Run `install`, `lint`, `unitTest`, `build`
+1. **Local Development**: Unit tests, lint, build (Backend: `unitTest`, `integrationTest`, `detekt`, `build` | Frontend: `install`, `lint`, `unitTest`, `build`)
 
-**Pre-Merge Gates (GitLab CI Pipeline):**
+2. **Pre-Merge (GitLab CI)**: Integration tests with TestContainers, architecture compliance validation, code review approval, SCS communication pattern compliance
 
-- Integration tests with TestContainers
-- Architecture compliance (layer coupling validation)
-- Code review approval
-- SCS communication pattern compliance
-- All GitLab CI pipeline jobs pass:
-  - Backend: Build, Lint, Unit Test, Integration Test
-  - Frontend: Install dependencies, Lint, Unit Test
-  - Infrastructure: Terraform validation
+3. **Pre-Deploy (GitLab CI)**: E2E tests with Playwright, performance tests under load, security validation, Docker image build and push, Kubernetes deployment validation
 
-**Pre-Deploy Gates (GitLab CI Pipeline):**
+**Code Review Priorities:**
 
-- E2E tests with Playwright
-- Performance tests under load
-- Security validation
-- Database index optimization verification
-- Docker image build and push
-- Kubernetes deployment validation
+1. **Architecture** - Layer coupling, value object immutability, boundary conditions
+2. **Performance** - Algorithm complexity, memory patterns, database optimization
+3. **Code Quality** - Complexity analysis, duplication elimination, test coverage
+4. **Security** - Input validation, data protection, parameterized queries, resource management
+
+**Review Focus Areas:**
+
+- Architecture layer compliance (domain/application/adapter boundaries)
+- Performance standards compliance (P95 < 300ms, proper indexing)
+- Security requirements compliance (input validation, parameterized queries)
+- Use Red Flag Checklist (complete 14-point checklist)
+- Ensure all quality gates pass before approval
 
 ## Development Workflow (MANDATORY)
 
-### SuperClaude Development Workflow
+### SuperClaude v3 Integration
 
 **Available Personas:** Architect, Frontend, Backend, Security, QA, Performance - auto-activate based on file patterns and task context.
 **Auto-Activation Rules:** Frontend files → Frontend | API/server/database files → Backend | Test files → QA | Architecture/design → Architect | Input validation → Security | Optimization → Performance
+**SuperClaude v3 Integration**: Use persona flags, MCP servers, and thinking modes as needed for development tasks.
 
-### Daily Development Loop (AUTOMATED with SuperClaude Personas)
+### Daily Development Loop (TDD with Task-Master)
 
 #### Core TDD Cycle with Intelligent Persona Activation
 
@@ -424,13 +285,9 @@ For each subtask (`<task-id>.1`, `<task-id>.2`, etc.):
 
 a. **RED:** Write failing BDD test (QA persona auto-enhances test strategy)
 b. **GREEN:** Minimal code to pass test with persona-guided implementation:
-
-- Frontend subtasks → `--persona-frontend --magic`
-- Backend subtasks → `--persona-backend --c7`
-- Security subtasks → `--persona-security --strict`
-  c. **REFACTOR:** Improve code (auto-quality analysis with refactorer persona)
-  d. **DOCUMENT:** `task-master update-subtask --id=<task-id>.<subtask-id> --prompt="notes"`
-  e. **COMMIT:** Atomic commit with pre-commit validation (security, performance, architecture)
+c. **REFACTOR:** Improve code (auto-quality analysis with refactorer persona)
+d. **DOCUMENT:** `task-master update-subtask --id=<task-id>.<subtask-id> --prompt="notes"`
+e. **COMMIT:** Atomic commit with pre-commit validation (security, performance, architecture)
 
 **3. Task Completion:**
 
@@ -443,70 +300,19 @@ b. **GREEN:** Minimal code to pass test with persona-guided implementation:
 - Final commit with pre-commit validation (security, performance, architecture)
 - Push changes
 
-**Pre-Push Validation Checklist (MANDATORY):**
+**Pre-Push Validation:** Follow Quality Gates (pre-commit, pre-merge, pre-deploy)
 
-- [ ] Backend: All `./gradlew` commands pass locally (`build`)
-- [ ] Frontend: All `npm run` commands pass locally (`lint`, `unitTest`, `build`)
-- [ ] Testing requirements met (see Testing Strategy section)
-- [ ] Functional programming standards validated (immutability, pure functions)
-- [ ] 12-Factor App compliance verified (config, dependencies, logs)
-- [ ] Reactive principles maintained (responsive, resilient, elastic, message-driven)
-
-### Git Workflow & Critical Review Priorities
+### Git Workflow
 
 **Git Workflow:** Conventional Commits (`feat:`, `fix:`, `refactor:`, `security:`, `perf:` with task IDs), Atomic Commits (single logical change per commit), Branch Naming (`feature/`, `bugfix/`, `security/`, `perf/`)
 
-### Code Review Standards (MANDATORY)
+**SuperClaude v3 Git Integration:**
 
-**Critical Review Priorities:**
+- Use `/git` commands for commit message generation
+- Leverage `--persona-scribe` for professional commit messages
+- Apply `--seq` for complex merge conflict resolution
 
-1. **Architecture** - Layer coupling, value object immutability, boundary conditions
-2. **Performance** - Algorithm complexity, memory patterns, database optimization
-3. **Code Quality** - Complexity analysis, duplication elimination, test coverage
-4. **Security** - Input validation, data protection (see Security Requirements section)
-
-**Review Focus Areas:**
-
-- Architecture layer compliance (domain/application/adapter boundaries)
-- SCS communication patterns (Kafka-only, no direct calls)
-- Performance standards compliance (see Performance Standards section)
-- Security requirements compliance (see Security Requirements section)
-
-**Platform Principles Compliance Validation:**
-
-- [ ] **12-Factor App Compliance**:
-  - [ ] Configuration stored in environment variables (Factor 3)
-  - [ ] Dependencies explicitly declared in build files (Factor 2)
-  - [ ] Stateless processes implementation (Factor 6)
-  - [ ] Structured logging to stdout (Factor 11)
-  - [ ] Build/release/run separation (Factor 5)
-
-- [ ] **Reactive Manifesto Adherence**:
-  - [ ] Responsive: API response times within limits (see Performance Standards)
-  - [ ] Resilient: Proper error handling and isolation
-  - [ ] Elastic: Supports horizontal scaling patterns
-  - [ ] Message-driven: Asynchronous Kafka communication
-
-- [ ] **Functional Programming Standards**:
-  - [ ] Immutability: `val` over `var`, immutable data classes
-  - [ ] Pure functions: Domain logic without side effects
-  - [ ] Functional collections: `map`, `filter`, `fold` over loops
-  - [ ] Side-effect isolation: I/O operations in adapter layer
-  - [ ] Null safety: Elvis operator and safe calls used
-
-- [ ] **GitLab CI Pipeline Integration**:
-  - [ ] All pre-commit commands documented and tested
-  - [ ] Quality gates align with CI pipeline jobs
-  - [ ] Security requirements compliance verified
-
-**Red Flag Review Process:**
-
-- Use Red Flag Checklist (see "Red Flag Standards" section for complete 14-point checklist)
-- Apply Red Flag Resolution Process for any identified issues
-- Ensure all quality gates pass before approval
-- Validate platform principles compliance before merge
-
-## Context & Task Management
+### AI Behavior & Context Management
 
 **AI Behavior Rules:** Never assume missing context - ask questions if uncertain. Never hallucinate libraries or functions - only use known, verified packages and APIs. Always confirm file paths and class names exist before referencing them.
 
@@ -514,6 +320,8 @@ b. **GREEN:** Minimal code to pass test with persona-guided implementation:
 
 **PRD Integration:** Extract domain entities from PRDs, map features to application services, assess architecture impact, ensure PRD terminology matches domain model, identify bounded context boundaries.
 
+**Context Optimization:** Use `--uc` for token optimization when context usage >75%, apply `--delegate` for large codebase analysis (>50 files), use `--wave-mode` for complex multi-stage operations, leverage `--seq` for systematic analysis and debugging, use `--c7` for documentation and framework pattern lookups.
+
 ---
 
-*Finden Development Guide v2.0 | Self-Contained System | Specific implementation guidelines | Evidence-based practices*
+*Finden Development Guide v3.0 | Self-Contained System | Specific implementation guidelines | Evidence-based practices*
