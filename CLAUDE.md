@@ -681,27 +681,229 @@ The project uses sophisticated annotation processing for framework integration:
 
 ## Development Workflow (MANDATORY)
 
-### Core TDD Cycle with TaskMaster Integration
+### SuperClaude Persona Integration
 
-#### Daily Development Loop
-1. **Task Selection:** `task-master next` → identify prioritized work
-2. **Context Review:** `task-master show <id>` → understand requirements
-3. **Status Update:** `task-master set-status --id=<id> --status=in-progress`
-4. **RED:** Write failing BDD test aligned with task requirements
-5. **GREEN:** Minimal code to pass test
-6. **REFACTOR:** Improve while keeping tests green
-7. **CONTEXT:** `task-master update-subtask --id=<id> --prompt="implementation notes"`
-8. **COMMIT:** Atomic commit with task reference
-9. **COMPLETE:** `task-master set-status --id=<id> --status=done`
+The development workflow leverages **SuperClaude personas** for specialized expertise and intelligent command selection based on context and task requirements.
+
+#### Available Personas
+
+**Architect Persona (`--persona-architect`)**
+- **Core Belief:** "Systems evolve, design for change"
+- **Primary Question:** "How will this scale & evolve?"
+- **Auto-Flags:** `--think-hard`, `--arch`, `--validate`
+- **Commands:** `/analyze --arch`, `/design --api --ddd`, `/build --tdd`
+
+**Frontend Persona (`--persona-frontend`)**
+- **Core Belief:** "UX determines product success"
+- **Primary Question:** "How does this feel to user?"
+- **Auto-Flags:** `--react`, `--interactive`, `--visual`
+- **Commands:** `/build --react --magic`, `/test --e2e --pup`, `/analyze --perf`
+
+**Backend Persona (`--persona-backend`)**
+- **Core Belief:** "Reliability & perf enable everything else"
+- **Primary Question:** "Will this handle high scalability?"
+- **Auto-Flags:** `--api`, `--profile`, `--security`
+- **Commands:** `/build --api --c7`, `/analyze --perf --profile`, `/scan --security`
+
+**Security Persona (`--persona-security`)**
+- **Core Belief:** "Threats exist everywhere, trust must be earned"
+- **Primary Question:** "What could go wrong?"
+- **Auto-Flags:** `--security`, `--validate`, `--strict`
+- **Commands:** `/scan --security --owasp`, `/analyze --security`, `/build --security`
+
+**QA Persona (`--persona-qa`)**
+- **Core Belief:** "Quality cannot be tested in, must be built in"
+- **Primary Question:** "How could this break?"
+- **Auto-Flags:** `--coverage`, `--validate`, `--strict`
+- **Commands:** `/test --coverage --e2e`, `/analyze --quality`, `/scan --validate`
+
+**Performance Persona (`--persona-performance`)**
+- **Core Belief:** "Speed is a feature, slowness kills adoption"
+- **Primary Question:** "Where is the bottleneck?"
+- **Auto-Flags:** `--profile`, `--watch-perf`, `--iterate`
+- **Commands:** `/analyze --profile --pup`, `/improve --perf --iterate`, `/test --benchmark`
+
+#### Persona Auto-Activation Rules
+
+**File-Based Activation:**
+- `*.tsx|*.jsx|*.css` → Frontend Persona
+- `*api*|*server*|*db*` → Backend Persona
+- `*.test.*|*.spec.*` → QA Persona
+- `*security*|*auth*` → Security Persona
+- `*perf*|*benchmark*` → Performance Persona
+
+**Context-Based Activation:**
+- Architecture/design tasks → Architect Persona
+- Security/vulnerability tasks → Security Persona
+- Performance/optimization tasks → Performance Persona
+- UI/UX development → Frontend Persona
+
+### Enhanced Development Loop with SuperClaude Commands
+
+#### 1. **Context & Analysis Phase**
+```
+/load --context → Load project context
+/analyze --code|arch --persona-{domain} --think → Domain-specific analysis
+task-master next → Identify prioritized work
+task-master show <id> → Understand requirements
+```
+
+#### 2. **Design Phase**  
+```
+/design --api|ddd --persona-architect --think-hard → System design
+task-master set-status --id=<id> --status=in-progress → Update status
+```
+
+#### 3. **Implementation Phase (Persona-Specific)**
+
+**Frontend Development:**
+```
+/build --react --magic --persona-frontend → UI component development
+/test --e2e --pup → Interactive testing
+```
+
+**Backend Development:**
+```
+/build --api --tdd --persona-backend --c7 → API implementation with library docs
+/test --coverage → Comprehensive backend testing
+```
+
+**Security Implementation:**
+```
+/scan --security --persona-security → Security analysis
+/build --security --validate → Secure implementation
+```
+
+#### 4. **Quality Assurance Phase**
+```
+/test --coverage --persona-qa → Comprehensive testing
+/scan --validate --security → Security validation
+/improve --quality --iterate → Quality improvements
+```
+
+#### 5. **Performance Optimization Phase**
+```
+/analyze --profile --persona-performance → Performance analysis
+/improve --perf --iterate --threshold 95% → Performance optimization
+/test --benchmark → Performance validation
+```
+
+#### 6. **Documentation & Context Phase**
+```
+/document --api|user --persona-mentor → Context-aware documentation
+task-master update-subtask --id=<id> --prompt="implementation notes" → Context capture
+```
+
+#### 7. **Deployment Phase**
+```
+/deploy --env staging --plan --validate → Safe staging deployment
+/test --e2e → End-to-end validation
+/deploy --env prod --think-hard → Production deployment
+```
+
+#### 8. **Completion Phase**
+```
+/git --commit → Atomic commit with task reference
+task-master set-status --id=<id> --status=done → Complete task
+```
+
+### Advanced Workflow Patterns
+
+#### Feature Development Workflow
+```
+# Complete feature implementation with persona switching
+/load → /analyze --arch --persona-architect --think-hard →
+/design --api --ddd --persona-architect →
+/build --tdd --persona-{domain} --magic|c7 →
+/test --coverage --persona-qa →
+/scan --security --persona-security →
+/deploy --env staging --plan
+```
+
+#### Security Hardening Workflow  
+```
+# Comprehensive security implementation
+/scan --security --owasp --persona-security --think-hard →
+/analyze --security --threats --persona-security →
+/improve --security --validate --persona-security →
+/scan --validate --strict →
+/test --security --coverage
+```
+
+#### Performance Optimization Workflow
+```
+# Performance-focused development cycle
+/analyze --profile --persona-performance --pup --seq →
+/improve --perf --iterate --threshold 95% --persona-performance →
+/test --benchmark --profile →
+/analyze --profile --validate →
+/deploy --env staging --watch-perf
+```
+
+#### Bug Investigation & Resolution
+```
+# Systematic debugging with analyzer persona
+/troubleshoot --investigate --persona-analyzer --ultrathink --seq →
+/troubleshoot --fix --persona-{domain} →
+/test --regression --persona-qa →
+/git --commit
+```
+
+#### Architecture Review & Refactoring
+```
+# System-wide architecture improvements
+/analyze --arch --persona-architect --ultrathink --seq →
+/design --system --ddd --persona-architect --think-hard →
+/improve --architecture --persona-refactorer --iterate →
+/scan --validate --architecture →
+/document --arch --persona-mentor
+```
+
+### SuperClaude Command Flag Combinations
+
+#### Power User Patterns
+```yaml
+Deep_Analysis: "/analyze --architecture --seq --think-hard --persona-architect"
+UI_Development: "/build --react --magic --pup --watch --persona-frontend"
+Production_Deploy: "/scan --validate --seq → /deploy --env prod --think-hard"
+Emergency_Debug: "/troubleshoot --prod --ultrathink --seq --persona-analyzer"
+```
+
+#### Research & Learning Patterns
+```yaml
+Library_Study: "/explain --c7 --seq --depth expert --persona-mentor"
+Architecture_Design: "/design --ddd --seq --think-hard --persona-architect"
+Performance_Analysis: "/analyze --profile --seq --persona-performance"
+Security_Audit: "/scan --security --owasp --seq --persona-security"
+```
+
+#### Quality Assurance Patterns
+```yaml
+Comprehensive_Testing: "/test --coverage --e2e --persona-qa --strict"
+Code_Quality_Review: "/analyze --code --persona-refactorer → /improve --quality"
+Security_Validation: "/scan --security --validate --persona-security --strict"
+Performance_Validation: "/test --benchmark --profile --persona-performance"
+```
+
+#### Context-Aware Development
+```yaml
+Frontend_Feature: "Auto-detect .tsx → --persona-frontend --magic --pup"
+API_Development: "Auto-detect *api* → --persona-backend --c7 --api"
+Security_Task: "Auto-detect *auth* → --persona-security --security --strict"
+Performance_Task: "Auto-detect *perf* → --persona-performance --profile"
+```
 
 ### Quality Gates (MANDATORY)
 
-#### Pre-Commit Checklist
-- [ ] **Performance:** No O(n²) algorithms or unbounded operations
-- [ ] **Architecture:** No layer coupling violations (DDD boundaries)
-- [ ] **Quality:** All tests pass, coverage > 80%
-- [ ] **Boundaries:** All input validation implemented
-- [ ] **Immutability:** Value objects properly immutable
+#### Persona-Enhanced Pre-Commit Checklist
+- [ ] **Performance:** No O(n²) algorithms (`/analyze --profile --persona-performance`)
+- [ ] **Architecture:** No layer coupling violations (`/scan --validate --arch --persona-architect`)
+- [ ] **Security:** All vulnerabilities addressed (`/scan --security --persona-security`)
+- [ ] **Quality:** All tests pass, coverage > 80% (`/test --coverage --persona-qa`)
+- [ ] **Boundaries:** All input validation implemented (`/scan --validate --strict`)
+- [ ] **Immutability:** Value objects properly immutable (`/analyze --code --persona-refactorer`)
+- [ ] **Frontend:** UI/UX standards met (`/test --e2e --persona-frontend --pup`)
+- [ ] **Backend:** API reliability validated (`/test --api --persona-backend`)
 - [ ] **Task Context:** Implementation details logged via `task-master update-subtask`
 - [ ] **Status Management:** Task status properly updated
 
@@ -713,20 +915,30 @@ The project uses sophisticated annotation processing for framework integration:
 - **Atomic Commits:** Single logical change per commit
 - **Branch Naming:** `feature/`, `bugfix/`, `security/`, `perf/`
 
-### Critical Review Focus
+### Critical Review Focus with Persona Guidance
 
-#### Priority 1: Security
-1. **Input validation** - prevent injection attacks
+#### Priority 1: Security (`--persona-security`)
+1. **Input validation** - `/scan --security --validate` prevent injection attacks
+2. **Authentication & Authorization** - `/analyze --security --auth` verify access controls
+3. **Data protection** - `/scan --security --data` prevent data exposure
 
-#### Priority 2: Performance
-1. **O(n²) algorithms** - especially in sorting operations
-2. **Memory exhaustion patterns** - full dataset loading
-3. **Database query optimization** - prevent N+1 problems
+#### Priority 2: Performance (`--persona-performance`)
+1. **Algorithm complexity** - `/analyze --profile --complexity` prevent O(n²) operations
+2. **Memory patterns** - `/analyze --profile --memory` prevent exhaustion
+3. **Database optimization** - `/analyze --profile --db` prevent N+1 problems
+4. **Frontend performance** - `/test --benchmark --persona-frontend` validate UI metrics
 
-#### Priority 3: Architecture
-1. **Layer coupling violations** - domain/DTO dependencies
-2. **Value object immutability** - prevent state corruption
-3. **Boundary condition handling** - negative values, null inputs
+#### Priority 3: Architecture (`--persona-architect`)
+1. **Layer coupling** - `/scan --validate --arch` prevent domain/DTO dependencies
+2. **Value object immutability** - `/analyze --code --immutable` prevent state corruption
+3. **Boundary conditions** - `/test --edge-cases --persona-qa` validate inputs
+4. **System scalability** - `/design --scalability --think-hard` ensure future-proofing
+
+#### Priority 4: Code Quality (`--persona-refactorer`)
+1. **Code complexity** - `/analyze --code --complexity` identify refactoring opportunities
+2. **Duplication elimination** - `/improve --quality --iterate` reduce code debt
+3. **Test coverage** - `/test --coverage --persona-qa` ensure comprehensive testing
+4. **Documentation quality** - `/document --api --persona-mentor` maintain clarity
 
 ### Essential TaskMaster Commands
 
