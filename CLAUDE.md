@@ -69,7 +69,7 @@ This guide outlines the development standards, coding conventions, and contribut
 ### Testing Strategy
 
 **📊 Testing Stack:** Backend: JUnit 5 + Mockk | TestContainers for DB & external service integration | ArchUnit for layer val & dependency compliance | Frontend: Jest + Vue Test Utils | Playwright for user journey testing | Vue Test Utils w/ TypeScript support
-**📊 Testing Standards:** BDD (Given-When-Then) format | Min 80% code coverage for unit/integration tests + arch compliance val | Complete test isolation, no production deps | Unit (fast, isolated), Integration (TestContainers), E2E (user journeys), Architecture (layer val)
+**📊 Testing Standards:** ATDD & BDD (Given-When-Then) format | Min 80% code coverage for unit/integration tests + arch compliance val | Complete test isolation, no production deps | Unit (fast, isolated), Integration (TestContainers), E2E (user journeys), Architecture (layer val)
 
 ### Performance Standards
 
