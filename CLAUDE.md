@@ -96,154 +96,31 @@ This architectural approach enables the development practices outlined in subseq
 
 ### System Boundaries & Core Constraints
 
-Key constraints that define system boundaries:
-
 #### Security Boundaries
-
-**SCS Security Responsibilities:**
 
 - **Authentication/Authorization**: Handled by infrastructure - SCS MUST NEVER implement
 - **SCS Responsibility**: Input validation, data protection, business logic security only
 - **FORBIDDEN**: User authentication, session management, role-based access control
-
-**Data Protection Requirements:**
-
 - **NO personal data storage** - search operates on anonymous basis only
-- **NO cross-SCS personal data sharing** - maintain data privacy boundaries
-- **MANDATORY GDPR compliance** - right to be forgotten, data minimization, automated user rights fulfillment
-- **FORBIDDEN**: Personal data collection without legal basis, indefinite data retention
+- **MANDATORY GDPR compliance** - right to be forgotten, data minimization
 
 #### Data Consistency Boundaries
-
-**SCS Data Autonomy:**
 
 - **NO direct database access** between SCS instances
 - **NO shared database schemas** between SCS boundaries
 - **NO synchronous cross-SCS data dependencies** for core operations
 - **MANDATORY eventual consistency** for cross-SCS data synchronization
-- **FORBIDDEN**: Cross-SCS transactions, shared data stores, real-time cross-SCS data requirements
-
-**Data Integrity Requirements:**
-
 - **Product data consistency** - prices and availability must be real-time accurate
 - **Search index consistency** - search results must reflect current product state
-- **Event ordering** - maintain causality in event streams
-- **Schema evolution** - backward compatibility required for all data changes
 
 #### Architecture Boundaries
-
-**Layer Coupling Constraints:**
 
 - **Domain layer MUST NEVER reference** adapter DTOs or external data structures
 - **Application layer MUST ONLY depend** on domain interfaces
 - **Adapter layer MUST implement** domain interfaces without domain contamination
-- **FORBIDDEN**: Cross-layer dependencies, domain logic in adapters, DTO usage in domain
-
-**SCS Integration Constraints:**
-
 - **NO synchronous dependencies** on other SCS for core functionality
 - **NO shared UI components** between SCS boundaries (each SCS owns complete UI)
-- **NO deployment coordination** required between SCS instances
 - **MANDATORY asynchronous communication** for all cross-SCS interactions
-- **FORBIDDEN**: Runtime dependencies on external SCS, shared deployment artifacts
-
-### Breaking Change Policies
-
-#### API Breaking Change Policy
-
-**API Versioning Rules:**
-
-- **NO breaking changes** to existing API endpoints without versioning
-- **Minimum 6-month deprecation period** for API version retirement
-- **Backward compatibility** required for at least 2 API versions
-- **MANDATORY API contract validation** before deployment
-
-**Breaking Change Examples:**
-
-- **FORBIDDEN**: Removing API fields, changing field types, removing endpoints
-- **REQUIRED**: New endpoints for new functionality, additive field changes only
-- **MANDATORY**: Version negotiation for clients, graceful degradation
-
-#### Cross-SCS Contract Policy
-
-**Event Schema Changes:**
-
-- **NO breaking changes** to published event schemas without coordination
-- **Avro schema evolution** required for all event modifications
-- **Event versioning** mandatory for schema changes
-- **Cross-SCS coordination** required for major event changes
-
-**Integration Contract Policy:**
-
-- **NO changes to event ordering guarantees** without coordination
-- **NO changes to event payload structure** without backward compatibility
-- **MANDATORY**: Schema registry validation, consumer impact assessment
-
-### Resource & Operational Limits
-
-#### Infrastructure Resource Limits
-
-**Memory Limits:**
-
-- **Maximum heap size**: 2GB per instance under normal load
-- **Memory leak detection**: Automatic alerts at 85% usage
-- **Garbage collection**: Maximum 100ms pause times
-- **FORBIDDEN**: Memory-intensive operations without streaming, unlimited object creation
-
-**Network Limits:**
-
-- **Request timeouts**: 30 seconds maximum for any single request
-- **Rate limiting**: 1000 requests per minute per client
-- **FORBIDDEN**: Unlimited connection creation, blocking network operations
-
-#### Database Operational Limits
-
-**Query Performance Limits:**
-
-- **Index requirements**: ALL production queries MUST use proper indexes
-- **Query timeout**: 2 seconds maximum for any single query
-- **FORBIDDEN**: Full table scans, queries without WHERE clauses on large collections
-
-**Data Size Limits:**
-
-- **Document size**: Maximum 16MB per MongoDB document
-- **Collection size**: Maximum 10M documents before partitioning required
-- **Index size**: Maximum 500MB per index
-- **FORBIDDEN**: Unbounded document growth, missing data archival strategies
-
-#### Deployment & Environment Constraints
-
-**Deployment Safety Rules:**
-
-- **Zero-downtime deployments** required for production
-- **Rollback capability** required within 5 minutes
-- **Health check endpoints** mandatory for all deployments
-- **FORBIDDEN**: Production deployments without testing, deployments during business hours without approval
-
-**Environment Isolation:**
-
-- **NO production data** in development/staging environments
-- **NO shared credentials** between environments
-- **NO cross-environment communication** except for monitoring
-- **MANDATORY**: Environment-specific configurations, secrets management
-
-### Compliance & Regulatory Constraints
-
-#### Regional Compliance
-
-**Data Residency Rules (ABSOLUTE):**
-
-- **EU data** must remain within EU boundaries
-- **Cross-border transfers** require adequate protection
-- **Local law compliance** for all operating regions
-- **FORBIDDEN**: Unauthorized data transfers, non-compliant data storage
-
-**Business Compliance (CRITICAL):**
-
-- **Price accuracy** - all displayed prices must be authoritative
-- **Availability accuracy** - availability information must be real-time
-- **Regional restrictions** - respect local business hour and delivery constraints
-- **MANDATORY**: Regular compliance audits, violation reporting
 
 ## Architecture and Domain Design
 
@@ -256,7 +133,6 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 - **Domain layer (core):** Contains model entities, value objects, aggregates, domain services, repository interfaces, and domain exceptions
 - **Application layer:** Contains application services implementing use cases
 - **Adapter layer (outer):** Contains active adapters (REST controllers, message consumers) and passive adapters (database implementations, external service clients)
-- **Dependencies:** Domain has zero outward dependencies, application depends only on domain, adapters implement domain interfaces
 
 ### Domain-Driven Design Principles (MANDATORY)
 
@@ -326,24 +202,6 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 
 **Core Entities:** Produkt (product), Klassifikation (category), Verfügbarkeit (availability with order deadlines and delivery dates)
 **Technical Integration:** API-Gateway, Event-Stream (Kafka), Search indexes, Caching layer
-
-### Compliance & Regulatory Rules (MANDATORY)
-
-#### Business Rules Validation
-
-**Critical Business Rules:**
-
-- **Price accuracy** - all prices must be validated against authoritative source
-- **Availability accuracy** - real-time availability checks required
-- **Regional compliance** - respect regional restrictions and regulations
-- **Business hours** - consider business operating hours for delivery calculations
-
-**Validation Implementation:**
-
-- **Input validation** - all search parameters validated at API boundary
-- **Business rule enforcement** - domain entities enforce business invariants
-- **Audit trails** - maintain audit logs for critical business operations
-- **Error handling** - graceful degradation when business rules fail
 
 ## Frontend Architecture
 
@@ -444,7 +302,6 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 
 **Backend:** PascalCase with suffixes (.kt, Service, Repository, Controller, Request/Response), lowercase packages
 **Frontend:** PascalCase components (.vue), camelCase composables (use prefix), lowercase directories with hyphens
-**Dependencies:** Domain→Application→Adapter (strict hierarchy), no circular dependencies, no cross-SCS runtime dependencies
 **FORBIDDEN:** Cross-layer dependencies, shared business logic modules
 
 ## Frontend-Backend Integration
@@ -537,54 +394,15 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 
 - **NO O(n²) or higher complexity operations** in production code
 - **Database operations MUST use proper indexes**
-- **Collection operations MUST be optimized** for expected data sizes
+- **Required MongoDB indexes**: klassifikationId, verfuegbarkeiten.bestellschlussUTC, verfuegbarkeiten.liefertag
 - **Memory usage MUST be bounded** - no unlimited data loading
-
-#### Database Performance
-
-1. **Query Optimization:**
-
-- **Required MongoDB indexes**: Create indexes on klassifikationId, verfuegbarkeiten.bestellschlussUTC, and verfuegbarkeiten.liefertag for optimal query performance
-
-2. **Pagination Requirements:**
-
-- ALL queries MUST support proper pagination
-- NO full collection loading for sorting
-- Database-level sorting preferred over in-memory
-
-3. **Connection Management:**
-
-- Connection pooling properly configured
-- Query timeout limits set
-- Connection leak prevention
-
-#### Memory Management
-
-1. **Object Lifecycle:**
-
-- Prefer streaming over full collection materialization
-- Immutable objects for value objects
-- Proper resource cleanup
-
-2. **Collection Processing:**
-
-- Avoid multiple intermediate collections
-- Use sequence operations for large datasets
-- Monitor heap usage in large operations
 
 #### Performance Anti-Patterns (FORBIDDEN)
 
-- **Memory exhaustion patterns**: Full dataset loading, disabled pagination, unbounded collection loading
-- **Inefficient algorithms**: O(n²) operations in production, O(n) operations in comparators (use HashMap lookups)
+- **Memory exhaustion**: Full dataset loading, disabled pagination, unbounded collection loading
+- **Inefficient algorithms**: O(n²) operations in production, O(n) operations in comparators
 - **Resource leaks**: Unclosed connections, unmanaged object lifecycles
-- **Blocking operations**: Synchronous calls that block event loops
 - **Poor database patterns**: Queries without proper indexes, full table scans
-
-#### Performance Monitoring
-
-- **Metrics**: Micrometer with Prometheus for application monitoring
-- **Alerting**: Memory usage > 85%, response times > thresholds
-- **Profiling**: Regular performance analysis of critical paths
 
 ## Kotlin Development Guidelines
 
@@ -607,45 +425,22 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 **Entity Mapping:** MongoDB entities in adapter layer only, clean MongoProdukt ↔ Produkt mapping
 **Configuration:** ApplicationScoped CDI, PanacheMongoRepository inheritance, no MongoDB annotations in domain
 
-### Annotation Processing (MANDATORY)
-
-**AllOpen/NoArg Configuration:** CDI annotations, JAX-RS endpoints, persistence entities, QuarkusTest compatibility
-**Custom NoArg Annotation:** CLASS target, RUNTIME retention, framework compatibility for domain entities
-**Benefits:** Seamless CDI/JAX-RS integration, JPA/MongoDB support, clean domain code
-
 ## Code Quality Standards
 
 ### Critical Bug Prevention (MANDATORY)
 
-#### Boundary Conditions
-
-- **MANDATORY**: Validate all boundary conditions to prevent crashes
+- **Validate all boundary conditions** to prevent crashes
 - **Use null-safe operators** (?.let) for safe value processing
 - **Implement try-catch blocks** for parsing operations that may fail
 - **Return null for invalid values** rather than throwing exceptions for negative numbers
-- **Throw meaningful exceptions** with context for parsing failures
-
-#### Price Comparison Logic
-
 - **Use proper null handling** with null-checks before value comparisons
-- **Avoid contradictory null logic** that returns true for null values in greater-than comparisons
-- **Implement consistent comparison logic** that handles nullable parameters correctly
 
 ### Quality Tools
 
 - **Static Analysis:** Detekt for Kotlin code quality
-- **Build Quality:** Gradle build verification with Kotlin DSL
-- **Dependency Check:** OWASP Dependency Check for vulnerability scanning
 - **Coverage:** JaCoCo with 80% minimum threshold
+- **Dependency Check:** OWASP Dependency Check for vulnerability scanning
 - **Schema Management:** Avro Plugin for Kafka schema handling
-
-### Build Verification (MANDATORY)
-
-**Build verification requirements:**
-
-- Run clean build to ensure compilation success
-- Execute Detekt static analysis for code quality
-- Run all tests with coverage reporting before any commit
 
 ## Development Workflow (MANDATORY)
 
@@ -703,7 +498,6 @@ b. **GREEN:** Minimal code to pass test with persona-guided implementation:
 - Data Security: Input validation & data protection
 - Performance: No O(n²) algorithms, memory patterns
 - Architecture: Layer coupling compliance
-- Testing: 80% coverage minimum
 
 ### Git Workflow
 
@@ -762,7 +556,6 @@ b. **GREEN:** Minimal code to pass test with persona-guided implementation:
 **Security Requirements:**
 
 - Input validation at all boundaries
-- No user auth implementation in SCS (handled by infrastructure)
 - Parameterized queries (no string concatenation)
 - GDPR compliance: data minimization and user rights support
 
@@ -777,27 +570,7 @@ b. **GREEN:** Minimal code to pass test with persona-guided implementation:
 - **Always confirm file paths and class names** exist before referencing them in code or tests
 - **Maintain context continuity** across Claude sessions using TaskMaster and PRD references
 
-#### Context Engineering Workflow
-
-1. **PRD-Based Development:**
-
-- Create detailed Product Requirements Documents in `.taskmaster/docs/`
-- Use PRDs to generate structured task hierarchies
-- Maintain traceability from requirements to implementation
-
-2. **Task-Driven Implementation:**
-
-- Break complex features into manageable, testable subtasks
-- Use TaskMaster for project planning and progress tracking
-- Update task status and implementation notes throughout development
-
-3. **Context Handoff Patterns:**
-
-- Document architectural decisions in task notes
-- Reference specific files and line numbers in task updates
-- Maintain implementation history for future sessions
-
-### Task Completion Standards (MANDATORY)
+#### Task Completion Standards
 
 - **Mark completed tasks immediately** after finishing implementation
 - **Add discovered sub-tasks** to TaskMaster during development
