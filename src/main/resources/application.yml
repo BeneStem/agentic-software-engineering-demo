@@ -12,7 +12,9 @@ quarkus:
     name: finden-backend
     version: local
   package:
-    type: fast-jar
+    jar:
+      enabled: true
+      type: fast-jar
   http:
     port: ${PORT:8081}
     cors: true

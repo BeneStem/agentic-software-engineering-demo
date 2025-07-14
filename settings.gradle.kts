@@ -2,7 +2,7 @@ pluginManagement {
   plugins {
     id("com.gradle.enterprise") version "3.10.2"
 
-    id("io.quarkus") version "2.6.3.Final"
+    id("io.quarkus") version "3.24.3"
   }
 }
 
