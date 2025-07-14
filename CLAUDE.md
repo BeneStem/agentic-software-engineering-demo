@@ -7,20 +7,17 @@ This guide outlines the development standards, coding conventions, and contribut
 - [Self-Contained Systems Architecture](#self-contained-systems-architecture)
 - [Technology Stack](#technology-stack)
 - [Architecture and Domain Design](#architecture-and-domain-design)
-- [Frontend Technology Stack](#frontend-technology-stack)
 - [Frontend Development Guidelines](#frontend-development-guidelines)
 - [Frontend-Backend Integration](#frontend-backend-integration)
-- [Frontend Testing Strategy](#frontend-testing-strategy)
+- [Testing Strategy (MANDATORY)](#testing-strategy-mandatory)
 - [Frontend Build & Deployment](#frontend-build--deployment)
 - [Frontend Performance & Security](#frontend-performance--security)
 - [Performance Standards](#performance-standards)
 - [Kotlin Development Guidelines](#kotlin-development-guidelines)
-- [Testing Strategy](#testing-strategy)
 - [Code Quality Standards](#code-quality-standards)
-- [Development Process](#development-process)
+- [Development Workflow (MANDATORY)](#development-workflow-mandatory)
+- [Additional Standards](#additional-standards)
 - [Context Engineering & Task Management](#context-engineering--task-management)
-- [Task Master Integration](#task-master-integration)
-- [AI Development Workflow](#ai-development-workflow)
 
 ## Self-Contained Systems Architecture
 
@@ -110,342 +107,27 @@ This architectural approach enables the development practices outlined in subseq
 
 ## Technology Stack
 
-### Core Technologies
-
-- **Language:** Kotlin 2.2.0 (kotlin-stdlib-jdk8:2.2.0 explicitly pinned, targeting JVM 22)
-- **Framework:** Quarkus 3.24.3 with BOM platform enforcement
-- **Build Tool:** Gradle 8.x with Kotlin DSL
+### Backend Stack
+- **Language:** Kotlin 2.2.0 (targeting JVM 22)
+- **Framework:** Quarkus 3.24.3 (not Spring)
 - **Database:** MongoDB with Panache Kotlin
-- **Dependency Injection:** Quarkus CDI (not Spring)
-- **Messaging:** Kafka with Avro serialization (Confluent 8.0.0)
-
-### Key Dependencies
-
-#### Core Framework & Language
-- **Domain Modeling:** jMolecules DDD 1.10.0
-- **Database:** MongoDB Panache Kotlin
-- **Dependency Injection:** Quarkus CDI (Arc)
-- **Serialization:** Jackson with Kotlin module 2.13.3
-
-#### Testing & Quality Assurance
-- **Testing:** JUnit 5, Mockk 1.14.4, Strikt 0.35.1, TestContainers 1.21.3
-- **Validation:** Hibernate Validator
-- **Architecture Testing:** ArchUnit 1.4.1
-- **Build Plugins:** Quarkus Plugin 3.24.3, Detekt 1.23.8, Avro Plugin 1.9.1
-
-#### Monitoring & Observability
-- **Monitoring:** Micrometer with Stackdriver 3.3.1, Prometheus
-- **Logging:** Kotlin Logging 3.0.5, JSON Logging 3.1.0
-- **Error Tracking:** Sentry 2.5.4.Final for centralized error monitoring
-
-#### Security & Validation
-- **Security:** OWASP HTML Sanitizer 20240325.1, Dependency Check 12.1.3, Elytron Security
-- **Input Sanitization:** Unbescape 1.1.6.RELEASE for additional string processing
-
-#### Messaging & Integration
-- **Reactive:** Smallrye Fault Tolerance, Reactive Messaging
-- **Kafka:** Confluent Kafka Avro Serializer 8.0.0, Apache Avro 1.11.0
-- **Feature Flags:** Unleash Client 4.4.1
-
-#### Utility Libraries
-- **File Operations:** FileSeek 0.1.3 for file processing utilities
-- **Text Processing:** Slugify 3.0.7 for URL-friendly string generation
-- **Date/Time Testing:** Jackson Datatype JSR310 for test serialization
-
-### Version Requirements
-
-- **Java Runtime:** JVM 22+ (currently targeting 22)
-- **Kotlin:** 2.2.0+ (prefer latest patch releases)
-- **Gradle:** 8.x+ with Kotlin DSL
-
-## Frontend Technology Stack
-
-### Core Frontend Technologies
-
-- **Language:** TypeScript 4.7.3 (strict type checking enabled)
-- **Framework:** Vue.js 3.2.37 with Composition API
-- **Router:** Vue Router 4.0.16 for single-page application navigation
-- **State Management:** Vuex 4.0.2 for centralized application state
-- **Server-Side Rendering:** Fastify 4.2.0 with Vue Server Renderer
-- **Build Tool:** Vue CLI 5.0.4 with Webpack 5.x
-- **HTTP Client:** Axios 0.27.2 for backend API communication
-
-### Frontend Dependencies
-
-#### Core Framework & UI
-- **Vue.js Ecosystem:** Vue 3.2.37, Vue Router 4.0.16, Vuex 4.0.2
-- **UI Utilities:** @vueuse/core 8.6.0 for Vue composition utilities
-- **Design System:** @blume2000/design-system for consistent UI components
-- **Date Handling:** date-fns 2.28.0 for date manipulation and formatting
-
-#### SSR Server & Infrastructure
-- **Web Server:** Fastify 4.2.0 with static file serving (@fastify/static 6.4.0)
-- **Environment Config:** @fastify/env 4.0.0 for configuration management
-- **Process Management:** nodemon 2.0.16 for development server automation
-- **Serialization:** serialize-javascript 6.0.0 for SSR data transfer
-
-#### Monitoring & Observability
-- **Telemetry:** @opentelemetry/api 1.0.4 for distributed tracing
-- **Cloud Monitoring:** @google-cloud/opentelemetry-cloud-monitoring-exporter 0.14.0
-- **Metrics:** @opentelemetry/sdk-metrics-base 0.27.0 for application metrics
-- **Logging:** Pino 8.0.0 for structured JSON logging
-- **Performance:** fastify-metrics 9.0.0 for server performance monitoring
-
-#### Development & Build Tools
-- **TypeScript:** TypeScript 4.7.3 with strict configuration
-- **Linting:** ESLint 8.18.0 with Vue.js and Prettier integration
-- **Styling:** Sass 1.52.3 with stylelint 14.9.1 for CSS quality
-- **Testing:** Jest 28.1.1 with Vue Test Utils and TypeScript support
-- **Build Optimization:** webpack-bundle-analyzer for bundle size analysis
-
-### Frontend Architecture Overview
-
-The frontend follows a well-organized structure with clear separation of concerns:
-
-**Main Application Code** (`app/` directory):
-- Main product listing application and administrative tool application as separate Vue.js apps
-- HTTP client and API layer for backend communication
-- Reusable Vue.js components organized by functionality
-- Vue 3 composition functions for business logic reuse
-- TypeScript data models matching backend domain objects
-- Vuex state management with modular store organization
-- Vue Router configuration for single-page application navigation
-- Page-level Vue components for major application views
-
-**SSR Server** (`ssrServer/` directory):
-- Fastify server implementation for server-side rendering
-- Request handlers and controllers for SSR endpoints
-- Server utilities including logging and monitoring integration
-- Helper functions for server-side operations
-
-**Application Entry Points**:
-- Client-side application entry for browser execution
-- Server-side rendering entry for SSR execution
-- Separate tool application entry for administrative interface
-
-### Multi-Application Architecture
-
-The frontend supports multiple applications within the same codebase:
-
-#### 1. **Produktliste Application**
-- **Purpose:** Main product search and listing interface for end users
-- **Entry Points:** Separate client-side (SPA) and server-side (SSR) entry points
-- **Components:** Product grids, filters, search functionality, mini product displays
-- **Build Target:** Environment variable controlled build process for produktliste application
-
-#### 2. **Tool Application**
-- **Purpose:** Administrative interface for product management
-- **Entry Point:** Dedicated tool application entry point
-- **Build Target:** Environment variable controlled build process for tool application
-
-#### 3. **SSR Server**
-- **Purpose:** Server-side rendering for SEO and performance optimization
-- **Technology:** Fastify server with Vue Server Renderer integration
-- **Features:** Health checks, monitoring, static file serving, API proxying
-- **Deployment:** Node.js production server with compiled TypeScript
-
-### TypeScript Integration
-
-#### Strict Type Safety Configuration
-The frontend enforces strict TypeScript configuration with the following requirements:
-- Strict mode enabled for all compilation options
-- No implicit any types allowed
-- Strict null checks enforced
-- No implicit returns required for functions
-- Full type safety across the entire frontend codebase
-
-#### Frontend Type Definitions
-- **Component Props:** Strict typing required for all Vue component properties
-- **API Responses:** Type-safe HTTP client with backend data models
-- **State Management:** Typed Vuex modules and actions with proper interfaces
-- **Composables:** Type-safe composition functions with proper return types
-
-### Build & Development Configuration
-
-#### Development Mode
-**Development server with hot reload:**
-- Start development server for produktliste application with live reload
-- Watch mode for SSR server with TypeScript compilation
-- Nodemon auto-restart for server development
-
-#### Production Build
-**Multi-target production build process:**
-- Comprehensive build process for all applications (client, server, tool, and SSR server)
-- Individual build targets for SPA bundle, SSR bundle, tool application, and SSR server compilation
-- Environment-specific optimization and bundling
-
-### Version Requirements
-
-- **Node.js:** 16.x+ (recommended: 18.x+ for optimal performance)
-- **Vue.js:** 3.2.37+ (Composition API required)
-- **TypeScript:** 4.7.3+ (strict mode enabled)
-- **Vue CLI:** 5.0.4+ with Webpack 5.x support
-
-### Frontend Performance Monitoring
-
-#### OpenTelemetry Integration
-- **Distributed Tracing:** Full request tracking from frontend through backend
-- **Custom Metrics:** Application-specific performance measurements
-- **Cloud Monitoring:** Google Cloud integration for production observability
-- **Real User Monitoring:** Client-side performance tracking
-
-#### Performance Standards
-- **Bundle Size:** < 1MB gzipped for main application bundle
-- **First Paint:** < 1.5s on 3G networks
-- **Lighthouse Score:** > 90 for Performance, Accessibility, Best Practices
-- **SSR Response Time:** < 200ms for server-side rendered pages
-
-## B2K Platform Configuration
-
-### Core Configuration Block (MANDATORY)
-
-The application requires a comprehensive b2k configuration block for platform integration:
-
-**B2K platform configuration requirements:**
-- Configure service host endpoint for internal service discovery
-- Set deployment zone identifier for service mesh routing
-- Define team key for monitoring and access control
-- Configure GCP project settings for cloud resource access
-- Use environment variables for different deployment environments
-
-### Configuration Properties
-
-#### Host Configuration
-- **Purpose**: Defines the service endpoint for internal service discovery
-- **Default**: `http://localhost:8081` for local development
-- **Production**: Set via `SERVICE_HOST` environment variable
-
-#### Zone & Team Configuration
-- **Zone**: Deployment zone identifier for service mesh routing
-- **Team Key**: Team identification for monitoring and access control
-- **Usage**: Internal platform coordination and resource allocation
-
-#### GCP Project Integration
-- **Project Name**: GCP project identifier for cloud resource access
-- **Environment**: Deployment environment (dev, staging, prod)
-- **Integration**: Used by Stackdriver monitoring and logging
-
-### Stackdriver Integration
-
-The b2k configuration integrates directly with monitoring:
-
-**Stackdriver integration requirements:**
-- Enable Stackdriver monitoring with environment variable control
-- Reference b2k GCP project configuration for proper integration
-- Configure resource type for metrics categorization
-
-### Environment-Specific Overrides
-
-Different environments require specific b2k configurations:
-
-**Development environment configuration:**
-- Configure local host settings for development
-- Use local zone identifier for development routing
-- Set development-specific GCP project environment
-
-**Test environment configuration:**
-- Enable custom TestContainer integration for testing
-- Configure test-specific GCP project environment
-- Support integration testing with proper container management
-
-### Required Environment Variables
-
-For production deployment, ensure these environment variables are set:
-
-**Required production environment variables:**
-- SERVICE_HOST: Production service endpoint URL
-- DEPLOYMENT_ZONE: Production deployment zone identifier
-- TEAM_KEY: Production team identification key
-- GCP_PROJECT: Production GCP project identifier
-- ENVIRONMENT: Environment stage indicator (prod)
-- STACKDRIVER_ENABLED: Monitoring enablement flag
-
-### Validation & Troubleshooting
-
-Common configuration issues:
-
-1. **Missing GCP Project**: Stackdriver metrics fail if `b2k.gcp-project.name` is undefined
-2. **Invalid Zone**: Service mesh routing issues if zone doesn't match deployment
-3. **Team Key Mismatch**: Access control failures with incorrect team identification
-
-## Environment Profiles Configuration
-
-### Profile-Based Configuration Strategy
-
-The application uses Quarkus profile-based configuration to handle different deployment environments with specific requirements for each stage.
-
-### Development Profile (`%dev`)
-
-Development environment configuration for local development:
-
-Development profile configuration includes environment-specific application naming, disabled DevServices for explicit control, direct local MongoDB connections, and local B2K platform settings.
-
-#### Development Profile Features:
-- **Local MongoDB**: Direct connection to local MongoDB instance
-- **DevServices Disabled**: Explicit MongoDB configuration instead of auto-provisioned containers
-- **Local B2K Config**: Development-specific platform settings
-- **Application Naming**: `local-finden-backend` for environment identification
-
-### Test Profile (`%test`)
-
-Test environment configuration for automated testing:
-
-Test profile configuration enables custom TestContainer integration, provides test-specific application identity with distinct naming and versioning, maintains explicit container control, and uses a separate test database for isolation.
-
-#### Test Profile Features:
-- **TestContainer Integration**: Custom b2k TestContainer management
-- **Isolated Database**: Separate `finden-test` database for test isolation
-- **Test Application Identity**: Distinct naming and versioning for tests
-- **Explicit Container Control**: Custom TestContainer lifecycle management
-
-### Production Profile (Default)
-
-Production configuration uses base configuration with environment variables:
-
-Production configuration uses environment variables for all sensitive values including service host, deployment zone, team keys, GCP project settings, MongoDB connections, and Stackdriver monitoring integration.
-
-### Profile Activation
-
-#### Local Development
-Development profile activates automatically in Quarkus development mode or can be explicitly specified using Gradle properties.
-
-#### Testing
-Test profile activates automatically during test execution or can be explicitly specified using test-specific Gradle properties.
-
-#### Production Deployment
-**Production deployment:**
-- Run Quarkus application JAR with default profile using environment variables
-- Optionally specify explicit production profile using system properties
-
-### Configuration Best Practices
-
-#### Environment Variable Strategy
-- **Development**: Minimal environment variables, sensible defaults
-- **Testing**: Isolated resources, deterministic configuration
-- **Production**: All sensitive values via environment variables
-
-#### Application Naming Convention
-- **local-finden-backend**: Development environment
-- **test-finden-backend**: Test environment
-- **finden-backend**: Production environment
-
-#### Database Isolation
-- **Development**: Local MongoDB instance
-- **Testing**: Separate `finden-test` database
-- **Production**: Dedicated production MongoDB cluster
-
-### Troubleshooting Profile Issues
-
-#### Common Profile Problems:
-1. **Wrong Profile Active**: Check `quarkus.profile` property
-2. **Missing Environment Variables**: Verify production environment setup
-3. **TestContainer Issues**: Ensure Docker daemon running for test profile
-4. **Database Connection**: Verify MongoDB connectivity per environment
-
-#### Profile Verification:
-**Profile verification:**
-- Check active profile using application info endpoint
-- Verify application name and profile configuration through HTTP requests
+- **Build Tool:** Gradle with Kotlin DSL
+- **Testing:** JUnit 5, Mockk, Strikt, TestContainers, ArchUnit
+- **Messaging:** Kafka with Avro serialization
+
+### Frontend Stack
+- **Language:** TypeScript 4.7.3 (strict mode)
+- **Framework:** Vue.js 3.2.37 with Composition API (not Options API)
+- **State Management:** Vuex 4.0.2
+- **SSR Server:** Fastify 4.2.0
+- **Build Tool:** Vue CLI 5.0.4 with Webpack
+- **HTTP Client:** Axios for backend communication
+- **Testing:** Jest with Vue Test Utils, Playwright for E2E
+
+### Key Constraints
+- **Backend:** Use Quarkus CDI (not Spring), MongoDB with Panache (not direct drivers)
+- **Frontend:** Vue.js 3 Composition API (not Options API), TypeScript strict mode
+- **Architecture:** Onion/Hexagonal with DDD principles, Self-Contained System approach
 
 ## Architecture and Domain Design
 
@@ -685,71 +367,58 @@ Browser Request → Fastify Server → Vue SSR → API Call → Quarkus Backend 
 - Integrate with notification systems for user feedback
 - Use proper TypeScript typing for error handling patterns
 
-## Frontend Testing Strategy
+## Testing Strategy (MANDATORY)
 
-### Testing Framework Configuration
+### Framework Stack
 
-#### Jest Configuration
-**Jest configuration requirements:**
-- Use Vue.js preset with TypeScript and Babel support
-- Configure JSDOM test environment for DOM testing
-- Set up proper transform rules for Vue and TypeScript files
-- Configure module name mapping for alias resolution
-- Set up test environment with setup files
-- Define coverage collection patterns excluding configuration files
-- Enforce minimum coverage thresholds (80% for branches, functions, lines, and statements)
+#### Frontend Testing
+- **Framework:** Jest 28.1.1 with Vue Test Utils and TypeScript support
+- **Component Testing:** Vue Test Utils for component mounting and interaction
+- **API Mocking:** Mock Service Worker (MSW) for API integration testing
+- **E2E Testing:** Playwright for comprehensive user flow testing
 
-### Component Testing Patterns
+#### Backend Testing
+- **Unit Testing:** JUnit 5 Jupiter with Kotlin support
+- **Mocking:** Mockk 1.14.4 (Kotlin-specific)
+- **Assertions:** Strikt 0.35.1 (Kotlin-specific)
+- **Integration:** @QuarkusTest with TestContainers 1.21.3 (MongoDB & Kafka)
+- **Architecture:** ArchUnit 1.4.1 for layer compliance
+- **REST Testing:** REST Assured with Kotlin extensions
 
-#### Vue Component Testing
-**Vue component testing requirements:**
-- Use Vue Test Utils for component mounting and interaction
-- Create mock stores for Vuex integration testing
-- Define proper TypeScript interfaces for test data
-- Implement comprehensive test data structures with all required properties
-- Create wrapper functions for component mounting with mock stores
-- Configure namespaced Vuex modules with mock mutations for testing
-- Mount components with proper props and global plugin configuration
-- Test component rendering with proper DOM element selection and assertion
-- Verify text content, attributes, and component behavior through expect statements
-- Test event emission with wrapper.emitted() for component interactions
-- Test loading states with conditional prop testing
-- Use proper Jest expect matchers for component state verification
+### Test Organization & Execution
 
-#### Composables Testing
-- Test initial filter state with default values
-- Test filter application with partial updates
-- Test filter clearing functionality
-- Use proper Jest expect matchers for equality testing
-- Import and test composables in isolation
-- Verify reactive state management and function behavior
+#### Test Structure (Tag-Based)
+- **Unit Tests:** `@Tag("unit")` - Fast, isolated tests with no external dependencies
+- **Integration Tests:** `@Tag("integration")` - Tests requiring TestContainers, databases, or external services
+- **E2E Tests:** Complete user journeys from frontend to backend
+- **Architecture Tests:** ArchUnit validation of layer dependencies
 
-### Integration Testing
+#### Test Execution Strategy
+- **Fast Feedback:** `unitTest` gradle task for isolated tests only
+- **Comprehensive Testing:** `integrationTest` task for external dependency tests
+- **Complete Suite:** `test` task for all tests
+- **E2E Testing:** Playwright tests for full user journeys
 
-#### API Integration Testing
-**API integration testing requirements:**
-- Use Mock Service Worker (MSW) for API mocking
-- Set up test server with proper request handlers
-- Implement proper test lifecycle with beforeAll/afterEach/afterAll
-- Test successful API responses with proper data structures
-- Test error handling scenarios with different HTTP status codes
-- Use async/await patterns for promise-based testing
+### Testing Requirements (MANDATORY)
 
-### E2E Testing Considerations
+#### Universal Standards
+1. **BDD Structure:** ALL tests MUST use Given-When-Then
+2. **Test Isolation:** Each test completely independent
+3. **Coverage:** 80% minimum, 95% for business logic
+4. **No Production Dependencies:** Test utils in test package only
+5. **Public Interface Testing:** No reflection or private method testing
 
-#### Test Structure for SCS
-**E2E testing requirements:**
-- Use Playwright for comprehensive user flow testing
-- Test complete user journeys from navigation to action completion
-- Verify initial page loads and element visibility
-- Test filter interactions with data-testid selectors
-- Verify result updates after user actions
-- Test product selection and navigation flows
-- Use page.locator() with data-testid selectors for element verification
-- Test SSR functionality by disabling JavaScript
-- Verify server-rendered content visibility
-- Test product grid and card elements presence
-- Complete test suites with proper assertions
+#### Frontend Testing Patterns
+- **Component Testing:** Mount components with proper props and mock stores
+- **API Integration:** Use MSW for API mocking with proper request handlers
+- **Composables Testing:** Test reactive state management and function behavior
+- **E2E Testing:** Use data-testid selectors and test complete user flows
+
+#### Backend Testing Patterns
+- **Unit Tests:** Use @Test annotation with descriptive function names in backticks
+- **Integration Tests:** Use @QuarkusTest annotation for full application context
+- **Architecture Tests:** Use ArchUnit for layer dependency validation
+- **TestContainers:** Real database integration with external services
 
 ## Frontend Build & Deployment
 
@@ -884,59 +553,11 @@ Browser Request → Fastify Server → Vue SSR → API Call → Quarkus Backend 
 
 #### Performance Monitoring (MANDATORY)
 
-- Response time P95 < 500ms for all endpoints
-- Memory usage < 80% heap under normal load
-- Database query time < 200ms average
-- No memory leaks in long-running operations
-
-#### JVM 22 Performance Tuning (RECOMMENDED)
-
-**JVM 22 performance tuning requirements:**
-- Disable native mode for development, use JVM mode
-- Configure ZGC for low-latency garbage collection
-- Set maximum GC pause target to 10ms
-- Configure heap sizes (512m initial, 2g maximum for development; 1g-4g for production)
-- Set metaspace sizes for class loading optimization
-- Enable string deduplication and compressed object pointers
-- Pre-touch heap pages and configure system proxy usage
-- Optimize HTTP I/O threads for CPU cores
-- Enable adaptive heap sizing and transparent huge pages
-- Use environment variables for development and Docker deployment settings
-
-#### Quarkus 3.24.3 Specific Optimizations
-
-**Quarkus framework optimization requirements:**
-- Configure thread pools with appropriate core threads, max threads, and queue size
-- Set HTTP I/O threads to match CPU cores and worker threads for blocking operations
-- Configure MongoDB with proper database name, timeouts, and authentication settings
-- Optimize MongoDB connection pools for production with appropriate pool sizes and timeouts
-- Configure Kafka consumer and producer settings for batch processing optimization
-- Enable Micrometer bindings for JVM and system metrics monitoring
-- Configure logging with JSON formatting control and field selection for different environments
-
-### Logging Configuration Patterns
-
-The application uses sophisticated JSON logging configuration for different environments:
-
-#### Development Logging
-**Development logging configuration:**
-- Disable JSON logging for human-readable console output during development
-
-#### Production Logging
-**Production logging configuration:**
-- Enable JSON logging for structured log aggregation
-- Include essential fields: timestamp, level, message, logger name
-- Enable Mapped Diagnostic Context (MDC) for request correlation
-
-#### Custom Log Field Management
-The application allows granular control over JSON log fields:
-
-**Fine-grained logging field control requirements:**
-- Configure individual JSON log field enablement through console.json.fields
-- Enable level, message, timestamp fields for essential logging information
-- Disable logger-name and logger-class-name to reduce log verbosity
-- Enable thread-name, hostname, process-name, process-id for system identification
-- Disable thread-id to minimize log size while maintaining debugging capability
+- **API Endpoints:** P95 < 300ms for standard operations, P95 < 500ms for complex queries
+- **SSR Pages:** < 200ms response time for server-side rendered pages
+- **Database Queries:** < 200ms average, with proper indexing on search fields
+- **Memory Usage:** < 80% heap under normal load
+- **No memory leaks** in long-running operations
 
 ## Kotlin Development Guidelines
 
@@ -1018,72 +639,6 @@ The project uses sophisticated annotation processing for framework integration:
 - **Testing Support**: QuarkusTest classes get proper initialization
 - **Domain Model**: Custom NoArg annotation for clean domain code
 
-## Testing Strategy
-
-### Testing Framework Stack
-
-- **Unit Testing:** JUnit 5 Jupiter
-- **Mocking:** Mockk 1.14.4 (Kotlin-specific, not Mockito)
-- **Assertions:** Strikt 0.35.1 (Kotlin-specific)
-- **Integration:** @QuarkusTest with TestContainers 1.21.3 (MongoDB & Kafka)
-- **Architecture:** ArchUnit 1.4.1 for layer compliance
-- **REST Testing:** REST Assured with Kotlin extensions
-
-### Test Structure & Organization Strategy
-
-The project uses **tag-based test organization** alongside traditional package structure:
-
-#### Physical Test Structure
-**Test package structure requirements:**
-- Organize tests by architectural layer (adapter, application, domain)
-- Separate active adapters (REST endpoints) from passive adapters (database)
-- Use integration tags for external dependency tests
-- Use unit tags for isolated domain logic tests
-- Keep test utilities separate from production code
-
-#### Tag-Based Test Execution
-Tests are organized using JUnit5 tags for precise execution control:
-
-**Tag-based test organization requirements:**
-- Use unit tags for fast, isolated tests with no external dependencies
-- Use integration tags for tests requiring TestContainers, databases, or external services
-- Support combined tags for tests that can run in multiple contexts
-- Implement precise test execution control through JUnit5 tag filtering
-- Follow descriptive test naming conventions with backticks
-
-#### Test Execution Strategy
-- **Fast feedback**: Use unitTest gradle task for @Tag("unit") tests only
-- **Comprehensive testing**: Use integrationTest gradle task for @Tag("integration") tests
-- **Complete test suite**: Use test gradle task to execute all tests
-
-### Testing Patterns (MANDATORY)
-
-#### Unit Tests
-- **Use @Test annotation** with descriptive function names in backticks
-- **Follow Given-When-Then structure** for clear test organization
-- **Use expectThrows** for exception testing with specific exception types
-
-#### Integration Tests
-- **Use @QuarkusTest annotation** for full application context testing
-- **Add @QuarkusTestResource** with TestContainers for external service integration
-- **Apply @Tag("integration")** for proper test categorization
-- **Use @Inject** for dependency injection in test classes
-- **Test real database integration** with actual external services
-
-#### Architecture Tests (MANDATORY)
-- **Use ArchUnit for layer dependency validation**
-- **Test domain layer isolation** - no dependencies on adapter packages
-- **Validate package structure** with noClasses() and resideInAPackage() rules
-- **Check dependency violations** against imported class definitions
-
-### Test Requirements (MANDATORY)
-
-1. **BDD Structure:** ALL tests MUST use Given-When-Then
-2. **Test Isolation:** Each test completely independent
-3. **Coverage:** 80% minimum, 95% for business logic
-4. **No Production Dependencies:** Test utils in test package only
-5. **Public Interface Testing:** No reflection or private method testing
-
 ## Code Quality Standards
 
 ### Critical Bug Prevention (MANDATORY)
@@ -1124,147 +679,14 @@ Tests are organized using JUnit5 tags for precise execution control:
 - Execute Detekt static analysis for code quality
 - Run all tests with coverage reporting before any commit
 
-## Build Tasks & Schema Management
+## Development Workflow (MANDATORY)
 
-### Custom Gradle Tasks
+### Core TDD Cycle with TaskMaster Integration
 
-The project includes several custom Gradle tasks for specialized build operations:
-
-#### Schema Download Task
-
-Automated download of Kafka Avro schemas from schema registry:
-
-**Schema download task requirements:**
-- Create custom Gradle task for automated Avro schema downloading
-- Use environment variables for schema registry authentication
-- Download latest versions of required schemas (produkte-value, verfuegbarkeiten-value)
-- Implement proper authentication with Basic Auth header encoding
-- Parse JSON responses and extract schema content
-- Create target directories and write schema files to appropriate locations
-
-**Usage:**
-**Schema download usage requirements:**
-- Set required environment variables for schema registry URL, user, and password
-- Execute downloadSchemas Gradle task with proper authentication credentials
-- Ensure schema registry access and proper network connectivity
-
-#### Separated Test Tasks
-
-Distinct test execution for different test types:
-
-**Unit test task requirements:**
-- Create separate Gradle test task for unit tests only
-- Use JUnit Platform with tag-based filtering for unit tests
-- Organize tasks in verification group for build lifecycle integration
-- Finalize unit tests with JaCoCo coverage reporting
-- Configure integration test task with proper logging manager
-- Use JUnit Platform with integration tag filtering
-- Organize in verification group with coverage reporting
-
-**Usage:**
-**Test execution usage:**
-- Run unit tests only with unitTest task
-- Run integration tests (including TestContainers) with integrationTest task
-- Run all tests with standard test task
-
-#### JaCoCo Coverage Report
-
-Automated coverage report generation:
-
-**JaCoCo coverage configuration requirements:**
-- Configure JaCoCo tool version for compatibility
-- Set execution data from build directory with proper file patterns
-- Enable XML reports for CI/CD integration
-- Enable HTML reports for local development viewing
-
-#### Dependency Update Management
-
-Automated dependency update checking with stability rules:
-
-**Dependency update management requirements:**
-- Configure dependency updates task with stability checking
-- Define stable version patterns (RELEASE, FINAL, GA keywords)
-- Use regex patterns for version validation
-- Reject unstable versions when current version is stable
-- Configure output formatting with plain text reporter
-- Fail build when dependency updates are available for CI/CD integration
-
-**Usage:**
-**Dependency update usage:**
-- Execute dependencyUpdates task to check for available updates
-- Task will fail build if updates are available for CI/CD integration
-
-#### OWASP Dependency Check
-
-Security vulnerability scanning with custom configuration:
-
-- **Disable .NET assembly analyzer** for Java-only projects
-- **Fail build on medium+ vulnerabilities** (CVSS 5.0+)
-- **Enable build failure on scan errors** for reliable security gates
-- **Use custom suppression file** for managing false positives
-
-**Suppression File Configuration:**
-- **Create gradle/config/suppressions.xml** for dependency check configuration
-- **Use suppress elements** to ignore false positive vulnerabilities
-- **Include descriptive notes** explaining why vulnerabilities are suppressed
-- **Use regex patterns** for package URL matching when appropriate
-
-### Build Verification Workflow
-
-**Complete build verification process:**
-1. **Clean and compile**: Run clean, compileKotlin, and compileTestKotlin tasks
-2. **Static analysis**: Execute detekt for code quality scanning
-3. **Security scanning**: Run dependencyCheckAnalyze for vulnerability detection
-4. **Unit tests**: Run unit tests with coverage reporting
-5. **Integration tests**: Execute integration tests with TestContainers
-6. **Full build verification**: Perform complete clean build
-7. **Dependency updates**: Check for available dependency updates
-
-### CI/CD Integration
-
-Gradle tasks designed for CI/CD pipeline integration:
-
-**CI/CD pipeline integration requirements:**
-- Run tests with coverage reporting using Gradle tasks
-- Execute security scans with dependency vulnerability checking
-- Check for dependency updates with error handling for non-blocking updates
-- Upload coverage reports to external services with proper file paths
-- Use appropriate CI/CD action versions and configuration
-
-### Schema Management Strategy
-
-#### Avro Schema Versioning
-- **Development**: Download latest schemas from registry
-- **Production**: Pin schema versions for stability
-- **Testing**: Use schema evolution testing patterns
-
-#### Schema Evolution Guidelines
-1. **Backward Compatibility**: Always maintain backward compatibility
-2. **Version Control**: Store schemas in version control alongside code
-3. **Testing**: Validate schema changes with existing data
-4. **Documentation**: Document schema changes in release notes
-
-## Development Process
-
-### AI-Assisted Development Integration (MANDATORY)
-
-This project integrates TaskMaster AI for comprehensive development workflow management alongside traditional development practices.
-
-#### TaskMaster-First Development Approach
-- **PRD-Based Planning:** All major features start with Product Requirements Documents
-- **AI Task Generation:** Use `task-master parse-prd` to generate structured task lists
-- **Complexity Analysis:** Apply `task-master analyze-complexity --research` for informed planning
-- **Iterative Expansion:** Break complex tasks into manageable subtasks automatically
-- **Progress Tracking:** Maintain development context through task annotations
-
-### Enhanced TDD Workflow (MANDATORY)
-
-#### TaskMaster Integration Points
+#### Daily Development Loop
 1. **Task Selection:** `task-master next` → identify prioritized work
 2. **Context Review:** `task-master show <id>` → understand requirements
 3. **Status Update:** `task-master set-status --id=<id> --status=in-progress`
-
-#### Core TDD Cycle
 4. **RED:** Write failing BDD test aligned with task requirements
 5. **GREEN:** Minimal code to pass test
 6. **REFACTOR:** Improve while keeping tests green
@@ -1272,65 +694,52 @@ This project integrates TaskMaster AI for comprehensive development workflow man
 8. **COMMIT:** Atomic commit with task reference
 9. **COMPLETE:** `task-master set-status --id=<id> --status=done`
 
-### Enhanced Pre-Commit Checklist (MANDATORY)
+### Quality Gates (MANDATORY)
 
-#### Analysis-Informed Quality Gates
-- [ ] **Performance:** No O(n²) algorithms or unbounded operations (prevents identified bottlenecks)
-- [ ] **Architecture:** No layer coupling violations (maintains DDD boundaries)
+#### Pre-Commit Checklist
+- [ ] **Performance:** No O(n²) algorithms or unbounded operations
+- [ ] **Architecture:** No layer coupling violations (DDD boundaries)
 - [ ] **Quality:** All tests pass, coverage > 80%
-- [ ] **Boundaries:** All input validation implemented (prevents runtime crashes)
+- [ ] **Boundaries:** All input validation implemented
 - [ ] **Immutability:** Value objects properly immutable
-
-#### TaskMaster Integration Checks
 - [ ] **Task Context:** Implementation details logged via `task-master update-subtask`
 - [ ] **Status Management:** Task status properly updated
-- [ ] **Dependency Validation:** `task-master validate-dependencies` passes
-- [ ] **Analysis Alignment:** Changes align with comprehensive analysis recommendations
 
-### Enhanced Git Workflow
+### Git Workflow
 
-#### TaskMaster-Informed Commits
+#### Commit Standards
 - **Conventional Commits:** `feat:`, `fix:`, `refactor:`, `security:`, `perf:`
 - **Task References:** Include task IDs in commit messages (e.g., "feat: implement JWT auth (task 1.2)")
-- **Analysis Context:** Reference analysis findings in commit descriptions
 - **Atomic Commits:** Single logical change per commit
 - **Branch Naming:** `feature/`, `bugfix/`, `security/`, `perf/`
 
-#### Analysis-Driven Branch Examples
-**Analysis-driven branch naming examples:**
-- Security branches: security/implement-jwt-authentication, security/fix-cors-configuration
-- Performance branches: perf/optimize-sorting-algorithm, perf/implement-database-indexes
-- Architecture branches: refactor/remove-dto-coupling, refactor/fix-value-object-mutability
-- Use descriptive branch names that reference specific analysis findings
-- Create branches with descriptive names referencing specific analysis findings
+### Critical Review Focus
 
-### Critical Code Review Focus (Analysis-Enhanced)
+#### Priority 1: Security
+1. **Input validation** - prevent injection attacks
 
-#### Priority 1: Security (Analysis Score: 3/10)
-1. **Authentication gaps** - ensure all endpoints secured
-2. **CORS misconfiguration** - validate origin restrictions
-3. **Input validation** - prevent injection attacks
-
-#### Priority 2: Performance (Analysis Score: 5/10)
+#### Priority 2: Performance
 1. **O(n²) algorithms** - especially in sorting operations
 2. **Memory exhaustion patterns** - full dataset loading
 3. **Database query optimization** - prevent N+1 problems
 
-#### Priority 3: Architecture (Analysis Score: 8/10)
+#### Priority 3: Architecture
 1. **Layer coupling violations** - domain/DTO dependencies
 2. **Value object immutability** - prevent state corruption
 3. **Boundary condition handling** - negative values, null inputs
 
-### Workflow Integration Summary
+### Essential TaskMaster Commands
 
-The enhanced development process integrates TaskMaster commands at key points in the traditional TDD cycle. Detailed workflows and examples are provided in the [AI Development Workflow](#ai-development-workflow) section.
+#### Core Commands
+- `task-master next` - Get next available task
+- `task-master show <id>` - View task details
+- `task-master set-status --id=<id> --status=<status>` - Update task status
+- `task-master update-subtask --id=<id> --prompt="notes"` - Add implementation notes
 
-### Build Commands
-
-- **Run tests**: Execute test and integrationTest tasks for comprehensive testing
-- **Check code quality**: Use detekt and spotbugsMain for static analysis
-- **Generate coverage report**: Run jacocoTestReport for test coverage analysis
-- **Full build verification**: Execute clean build for complete project verification
+#### Task Structure
+- **Task IDs:** Main tasks (1, 2, 3), Subtasks (1.1, 1.2), Sub-subtasks (1.1.1)
+- **Status Values:** pending, in-progress, done, deferred, cancelled, blocked
+- **File Structure:** `.taskmaster/tasks/tasks.json`, `.taskmaster/docs/prd.txt`
 
 ## Additional Standards
 
@@ -1344,7 +753,7 @@ The enhanced development process integrates TaskMaster commands at key points in
 ### Performance Monitoring
 
 - **Metrics:** Micrometer with Prometheus
-- **Response Times:** P95 < 500ms target
+- **Response Times:** P95 < 300ms for standard operations, P95 < 500ms for complex queries
 - **Resource Usage:** Memory < 80% heap
 - **Database:** Query times < 200ms average
 
@@ -1402,250 +811,6 @@ The enhanced development process integrates TaskMaster commands at key points in
 - **Bounded Context Analysis:** Identify context boundaries from requirements
 - **Integration Points:** Plan adapter layer changes for new requirements
 - **Test Strategy:** Define acceptance criteria and test approaches in PRDs
-
-## Task Master Integration
-
-### Essential Commands
-
-#### Core Workflow Commands
-
-**TaskMaster command reference:**
-
-**Project Setup Commands:**
-- Initialize Task Master in current project
-- Generate tasks from Product Requirements Documents
-- Configure AI models interactively
-
-**Daily Development Workflow Commands:**
-- List all tasks with current status
-- Get next available task to work on
-- View detailed task information with specific IDs
-- Mark tasks complete with status updates
-
-**Task Management Commands:**
-- Add new tasks with AI assistance and research capabilities
-- Break tasks into subtasks with forced expansion
-- Update specific tasks or multiple tasks from a starting ID
-- Add implementation notes to subtasks
-
-**Analysis & Planning Commands:**
-- Analyze task complexity with research mode
-- View complexity analysis reports
-- Expand all eligible tasks automatically
-
-**Dependencies & Organization Commands:**
-- Add task dependencies between related tasks
-- Reorganize task hierarchy by moving tasks
-- Validate dependency chains for correctness
-- Generate task markdown files for documentation
-
-### Project Structure Integration
-
-#### Core Files
-- `.taskmaster/tasks/tasks.json` - Main task data file (auto-managed)
-- `.taskmaster/config.json` - AI model configuration (use `task-master models` to modify)
-- `.taskmaster/docs/prd.txt` - Product Requirements Document for parsing
-- `.taskmaster/tasks/*.txt` - Individual task files (auto-generated from tasks.json)
-- `.env` - API keys for CLI usage
-
-#### Claude Code Integration Files
-- `CLAUDE.md` - Auto-loaded context for Claude Code (this file)
-- `.claude/settings.json` - Claude Code tool allowlist and preferences
-- `.claude/commands/` - Custom slash commands for repeated workflows
-- `.mcp.json` - MCP server configuration (project-specific)
-
-#### Integration with Existing Structure
-project/
-├── .taskmaster/
-│   ├── tasks/              # Task files directory
-│   │   ├── tasks.json      # Main task database
-│   │   ├── task-1.md      # Individual task files
-│   │   └── task-2.md
-│   ├── docs/              # Documentation directory
-│   │   ├── prd.txt        # Product requirements
-│   ├── reports/           # Analysis reports directory
-│   │   └── task-complexity-report.json
-│   ├── templates/         # Template files
-│   │   └── example_prd.txt  # Example PRD template
-│   └── config.json        # AI models & settings
-├── .claude/
-│   ├── settings.json      # Claude Code configuration
-│   └── commands/         # Custom slash commands
-├── PRPs/                 # Context engineering patterns (existing)
-├── doc/                  # Technical documentation (existing)
-├── src/                  # Source code (existing)
-├── .env                  # API keys
-├── .mcp.json            # MCP configuration
-└── CLAUDE.md            # This file - auto-loaded by Claude Code
-
-### Task Structure & Management
-
-#### Task ID Format
-- Main tasks: `1`, `2`, `3`, etc.
-- Subtasks: `1.1`, `1.2`, `2.1`, etc.
-- Sub-subtasks: `1.1.1`, `1.1.2`, etc.
-
-#### Task Status Values
-- `pending` - Ready to work on
-- `in-progress` - Currently being worked on
-- `done` - Completed and verified
-- `deferred` - Postponed
-- `cancelled` - No longer needed
-- `blocked` - Waiting on external factors
-
-#### Task Integration with Development Standards
-
-**Task structure integration requirements:**
-- Use hierarchical ID format (main tasks: 1,2,3; subtasks: 1.1,1.2; sub-subtasks: 1.1.1)
-- Include comprehensive task metadata: title, description, status, priority, dependencies
-- Reference analysis findings in task details and implementation requirements
-- Define clear test strategies for verification and quality assurance
-- Support subtask hierarchies for complex feature breakdown
-- Complete task structures with comprehensive metadata and hierarchical organization
-
-### Gradle Integration
-
-TaskMaster works seamlessly with existing Gradle workflow:
-
-**TaskMaster-Gradle integration workflow:**
-- Get next task from TaskMaster queue
-- Run tests for current implementation
-- Update subtask with implementation progress notes
-- Perform full build verification
-- Mark task complete upon successful verification
-
-### Git Integration Patterns
-
-**Git integration pattern requirements:**
-- Use conventional commit format with task ID references in commit messages
-- Include bullet points for specific changes and test results
-- Reference analysis findings and security gaps in commit descriptions
-- Create pull requests with comprehensive change descriptions
-- Include security review checklists in PR descriptions
-- Link tasks to commits and PRs for traceability
-
-## AI Development Workflow
-
-### Standard Development Workflow
-
-#### 1. Project Initialization
-**Project initialization workflow:**
-- Initialize Task Master in existing project directory
-- Create or obtain Product Requirements Documents referencing analysis findings
-- Parse PRDs to generate structured task lists
-- Analyze task complexity with research mode for informed planning
-- Expand all eligible tasks automatically with research assistance
-
-#### 2. AI-Assisted Planning Phase
-**AI-assisted planning workflow:**
-- Generate additional tasks from PRDs referencing specific analysis findings
-- Use research mode for complex technical decision making
-- Expand specific tasks with controlled subtask generation
-- Validate task dependencies to ensure architectural alignment
-
-#### 3. Daily Development Loop
-**Daily development loop workflow:**
-- Start sessions by finding next available task
-- Review task details and acceptance criteria
-- Follow TDD workflow with TaskMaster integration:
-  - RED Phase: Set task in-progress, document failing test creation
-  - GREEN Phase: Document minimal implementation achieving test pass
-  - REFACTOR Phase: Document performance/quality improvements
-- Complete tasks with proper status updates
-
-#### 4. Multi-Claude Session Coordination
-
-For complex projects requiring parallel development:
-
-**Multi-Claude session coordination workflow:**
-- Terminal 1: Main implementation focusing on security features with JWT authentication
-- Terminal 2: Performance optimization on separate branch with database index optimization
-- Terminal 3: Testing and validation with integration test development
-- Use TaskMaster to coordinate work across multiple Claude sessions
-- Maintain separate contexts for different development streams
-
-### Context Engineering Patterns
-
-#### PRD Creation from Analysis Findings
-
-Transform analysis findings into actionable PRDs:
-
-**PRD creation from analysis findings:**
-- Create Security Implementation PRDs based on comprehensive analysis
-- Identify critical security gaps requiring immediate attention
-- Define requirements with priority levels (CRITICAL, HIGH)
-- Implement JWT-based authentication for all API endpoints
-- Use Quarkus Security with role-based access control
-- Replace permissive CORS with restrictive policies
-- Configure domain-specific origins for security
-- Reference analysis report sections for traceability
-- Consider architecture impact on existing Onion Architecture
-- Integrate with existing Quarkus CDI patterns
-- Maintain performance standards during security implementation
-
-#### Task Generation Workflow
-
-**Task generation workflow from analysis:**
-- Create PRDs based on comprehensive analysis findings
-- Parse PRDs to generate structured task lists with append mode
-- Analyze complexity for specific task ranges with research mode
-- Expand critical tasks with forced regeneration for algorithm fixes
-- Validate dependencies against established architecture standards
-
-### Complex Workflow Integration
-
-#### Performance Optimization Example
-
-**Performance optimization workflow example:**
-- Generate tasks from performance analysis PRDs with append mode
-- Expand critical performance tasks with controlled subtask generation
-- Work systematically through TDD cycle with TaskMaster integration
-- Track implementation progress through all TDD phases:
-  - RED: Document failing test creation for performance improvements
-  - GREEN: Document algorithm implementation achieving test pass
-  - REFACTOR: Document code cleanup and performance validation
-- Complete tasks with measurable performance improvements
-
-#### Security Implementation Example
-
-**Security implementation workflow example:**
-- Address critical security findings with research-backed task creation
-- Expand security tasks into comprehensive implementation subtasks
-- Follow security-first development approach with ordered task execution:
-  - Dependencies: Add required security frameworks
-  - Endpoints: Implement authentication and authorization
-  - Configuration: Configure CORS and security policies
-  - Access Control: Implement role-based permissions
-  - Testing: Security integration and penetration testing
-- Track security compliance with specific analysis recommendation references
-
-### Integration with Existing Development Standards
-
-#### Combining AI Workflow with Existing Standards
-
-The TaskMaster workflow integrates seamlessly with existing development standards:
-
-1. **Security Standards Integration:**
-   - TaskMaster tasks reference security checklist items
-   - PRDs map to OWASP Top 10 compliance requirements
-   - Task completion tied to security review completion
-
-2. **Performance Standards Integration:**
-   - Tasks include performance criteria (P95 < 500ms)
-   - Complexity analysis prevents O(n²) implementations
-   - Performance testing integrated into task completion
-
-3. **Architecture Standards Integration:**
-   - Tasks validate against Onion Architecture principles
-   - PRDs ensure DDD pattern compliance
-   - Task updates reference specific architectural layers
-
-4. **Quality Standards Integration:**
-   - TDD workflow tracked through TaskMaster updates
-   - Coverage requirements tied to task completion
-   - Code review checklist integrated with task validation
-
----
 
 ## Summary
 
@@ -1705,15 +870,13 @@ Based on comprehensive analysis findings (System Health Score: 6.2/10):
 - ⚠️ **NO O(n²) ALGORITHMS** especially in sorting operations (Performance Score: 5/10)
 - ⚠️ **NO MEMORY EXHAUSTION** patterns from full dataset loading
 - ⚠️ **NO LAYER COUPLING** violations (enforced by ArchUnit)
-- ⚠️ **FRONTEND SECURITY** CSP headers and XSS prevention required
 
 **QUALITY STANDARDS:**
-- ⚡ **Database operations optimized** with proper indexing
-- 🏗️ **Architecture compliance** maintained through testing
-- 🧪 **80%+ test coverage** with BDD structure (frontend and backend)
-- 🔍 **Input validation comprehensive** at all boundaries
+- ⚡ **Performance:** API endpoints P95 < 300ms, SSR pages < 200ms, database queries < 200ms
+- 🏗️ **Architecture compliance** maintained through testing with ArchUnit
+- 🧪 **80%+ test coverage** with BDD structure (unified frontend/backend standards)
+- 🔍 **Input validation comprehensive** at all boundaries to prevent crashes
 - ⚡ **Frontend performance** Bundle size < 1MB, Lighthouse score > 90
-- 🎯 **SSR optimization** < 200ms response times for server-rendered pages
 
 ### Development Workflow Summary
 The integrated AI-assisted workflow combines traditional DDD/TDD practices with TaskMaster for **production-ready code quality** and **enhanced developer velocity** through automated planning, context preservation, and analysis-driven quality gates across the complete Self-Contained System stack.
