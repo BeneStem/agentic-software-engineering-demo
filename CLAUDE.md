@@ -738,172 +738,100 @@ The development workflow leverages **SuperClaude personas** for specialized expe
 - Performance/optimization tasks → Performance Persona
 - UI/UX development → Frontend Persona
 
-### Enhanced Development Loop with SuperClaude Commands
+### Daily Development Loop (AUTOMATED with SuperClaude Personas)
 
-#### 1. **Context & Analysis Phase**
-```
-/load --context → Load project context
-/analyze --code|arch --persona-{domain} --think → Domain-specific analysis
-task-master next → Identify prioritized work
-task-master show <id> → Understand requirements
-```
+#### Core TDD Cycle with Intelligent Persona Activation
 
-#### 2. **Design Phase**  
-```
-/design --api|ddd --persona-architect --think-hard → System design
-task-master set-status --id=<id> --status=in-progress → Update status
-```
+1. **Task Selection:** `task-master next` → identify prioritized work
+   - **Auto-Persona Selection**: Context analysis determines appropriate persona based on task type, file patterns, and requirements
 
-#### 3. **Implementation Phase (Persona-Specific)**
+2. **Context Review:** `task-master show <id>` → understand requirements
+   - **Intelligent Analysis**: SuperClaude automatically applies `--think` or `--think-hard` based on task complexity
+   - **Domain Detection**: Auto-activates relevant persona (`--persona-architect` for system design, `--persona-frontend` for UI work, etc.)
 
-**Frontend Development:**
-```
-/build --react --magic --persona-frontend → UI component development
-/test --e2e --pup → Interactive testing
-```
+3. **Status Update:** `task-master set-status --id=<id> --status=in-progress`
+   - **Context Setup**: Persona-specific environment and tools automatically configured
 
-**Backend Development:**
-```
-/build --api --tdd --persona-backend --c7 → API implementation with library docs
-/test --coverage → Comprehensive backend testing
-```
+4. **RED:** Write failing BDD test aligned with task requirements
+   - **Auto-Enhancement**: QA persona (`--persona-qa`) automatically enhances test strategy
+   - **Smart Testing**: Appropriate test types selected based on context (unit, integration, E2E)
 
-**Security Implementation:**
-```
-/scan --security --persona-security → Security analysis
-/build --security --validate → Secure implementation
-```
+5. **GREEN:** Minimal code to pass test
+   - **Persona-Guided Implementation**:
+     - Frontend tasks → `--persona-frontend --magic` (UI components)
+     - Backend tasks → `--persona-backend --c7` (API with library docs)
+     - Security tasks → `--persona-security --strict` (secure implementation)
+   - **Tool Integration**: Automatic MCP tool activation based on needs
 
-#### 4. **Quality Assurance Phase**
-```
-/test --coverage --persona-qa → Comprehensive testing
-/scan --validate --security → Security validation
-/improve --quality --iterate → Quality improvements
-```
+6. **REFACTOR:** Improve while keeping tests green
+   - **Auto-Quality**: Refactorer persona (`--persona-refactorer`) automatically analyzes code quality
+   - **Performance Check**: Performance persona (`--persona-performance --profile`) validates no regressions
 
-#### 5. **Performance Optimization Phase**
-```
-/analyze --profile --persona-performance → Performance analysis
-/improve --perf --iterate --threshold 95% → Performance optimization
-/test --benchmark → Performance validation
-```
+7. **CONTEXT:** `task-master update-subtask --id=<id> --prompt="implementation notes"`
+   - **Intelligent Documentation**: Mentor persona (`--persona-mentor`) enhances context capture
+   - **Learning Integration**: Automatic knowledge extraction and preservation
 
-#### 6. **Documentation & Context Phase**
-```
-/document --api|user --persona-mentor → Context-aware documentation
-task-master update-subtask --id=<id> --prompt="implementation notes" → Context capture
-```
+8. **COMMIT:** Atomic commit with task reference
+   - **Pre-Commit Validation**: Automatic persona-enhanced quality gates run:
+     - Security scan (`--persona-security`)
+     - Performance validation (`--persona-performance`)
+     - Architecture compliance (`--persona-architect`)
 
-#### 7. **Deployment Phase**
-```
-/deploy --env staging --plan --validate → Safe staging deployment
-/test --e2e → End-to-end validation
-/deploy --env prod --think-hard → Production deployment
-```
+9. **COMPLETE:** `task-master set-status --id=<id> --status=done`
+   - **Completion Validation**: Multi-persona final check ensures all quality dimensions met
 
-#### 8. **Completion Phase**
-```
-/git --commit → Atomic commit with task reference
-task-master set-status --id=<id> --status=done → Complete task
-```
+### Intelligent Workflow Automation
 
-### Advanced Workflow Patterns
+#### How SuperClaude Personas Enhance Your Automated Loop
 
-#### Feature Development Workflow
-```
-# Complete feature implementation with persona switching
-/load → /analyze --arch --persona-architect --think-hard →
-/design --api --ddd --persona-architect →
-/build --tdd --persona-{domain} --magic|c7 →
-/test --coverage --persona-qa →
-/scan --security --persona-security →
-/deploy --env staging --plan
-```
+When you provide a feature implementation prompt, SuperClaude automatically:
 
-#### Security Hardening Workflow  
-```
-# Comprehensive security implementation
-/scan --security --owasp --persona-security --think-hard →
-/analyze --security --threats --persona-security →
-/improve --security --validate --persona-security →
-/scan --validate --strict →
-/test --security --coverage
-```
+1. **Context Analysis**: Analyzes the prompt to determine:
+   - Domain area (frontend, backend, security, performance)
+   - Complexity level (basic, standard, deep, critical)
+   - Required tools and frameworks
+   - Quality requirements
 
-#### Performance Optimization Workflow
-```
-# Performance-focused development cycle
-/analyze --profile --persona-performance --pup --seq →
-/improve --perf --iterate --threshold 95% --persona-performance →
-/test --benchmark --profile →
-/analyze --profile --validate →
-/deploy --env staging --watch-perf
-```
+2. **Persona Selection**: Automatically activates appropriate personas based on:
+   - **File Pattern Detection**: `*.tsx` → Frontend, `*api*` → Backend, `*auth*` → Security
+   - **Task Keywords**: "performance" → Performance persona, "design" → Architect persona
+   - **Technology Stack**: Vue.js → Frontend persona, Kotlin/Quarkus → Backend persona
 
-#### Bug Investigation & Resolution
-```
-# Systematic debugging with analyzer persona
-/troubleshoot --investigate --persona-analyzer --ultrathink --seq →
-/troubleshoot --fix --persona-{domain} →
-/test --regression --persona-qa →
-/git --commit
-```
+3. **Automatic Tool Configuration**: Enables relevant MCP tools:
+   - Frontend tasks → `--magic --pup` (UI generation + browser testing)
+   - Backend tasks → `--c7` (library documentation lookup)
+   - Complex analysis → `--seq` (sequential thinking)
+   - All tasks → Auto-selects `--think`, `--think-hard`, or `--ultrathink` based on complexity
 
-#### Architecture Review & Refactoring
-```
-# System-wide architecture improvements
-/analyze --arch --persona-architect --ultrathink --seq →
-/design --system --ddd --persona-architect --think-hard →
-/improve --architecture --persona-refactorer --iterate →
-/scan --validate --architecture →
-/document --arch --persona-mentor
-```
+4. **Quality Gate Automation**: Runs persona-specific validations at each step:
+   - **Step 4 (RED)**: QA persona ensures comprehensive test coverage
+   - **Step 5 (GREEN)**: Domain persona guides optimal implementation patterns
+   - **Step 6 (REFACTOR)**: Refactorer persona identifies improvement opportunities
+   - **Step 8 (COMMIT)**: Multi-persona validation (security, performance, architecture)
 
-### SuperClaude Command Flag Combinations
+#### Execution Flow Example
 
-#### Power User Patterns
-```yaml
-Deep_Analysis: "/analyze --architecture --seq --think-hard --persona-architect"
-UI_Development: "/build --react --magic --pup --watch --persona-frontend"
-Production_Deploy: "/scan --validate --seq → /deploy --env prod --think-hard"
-Emergency_Debug: "/troubleshoot --prod --ultrathink --seq --persona-analyzer"
-```
+**User Prompt**: "Implement JWT authentication for the product API"
 
-#### Research & Learning Patterns
-```yaml
-Library_Study: "/explain --c7 --seq --depth expert --persona-mentor"
-Architecture_Design: "/design --ddd --seq --think-hard --persona-architect"
-Performance_Analysis: "/analyze --profile --seq --persona-performance"
-Security_Audit: "/scan --security --owasp --seq --persona-security"
-```
+**SuperClaude Auto-Response**:
+1. **Analysis**: Detects security + backend context
+2. **Persona Activation**: `--persona-security --persona-backend`
+3. **Tool Selection**: `--c7 --security --think-hard`
+4. **Automated Execution**: Runs 9-step loop with security-focused enhancements
+5. **Quality Gates**: Automatic OWASP security validation, API reliability checks
 
-#### Quality Assurance Patterns
-```yaml
-Comprehensive_Testing: "/test --coverage --e2e --persona-qa --strict"
-Code_Quality_Review: "/analyze --code --persona-refactorer → /improve --quality"
-Security_Validation: "/scan --security --validate --persona-security --strict"
-Performance_Validation: "/test --benchmark --profile --persona-performance"
-```
-
-#### Context-Aware Development
-```yaml
-Frontend_Feature: "Auto-detect .tsx → --persona-frontend --magic --pup"
-API_Development: "Auto-detect *api* → --persona-backend --c7 --api"
-Security_Task: "Auto-detect *auth* → --persona-security --security --strict"
-Performance_Task: "Auto-detect *perf* → --persona-performance --profile"
-```
+**Result**: Complete implementation following the automated TDD cycle with intelligent security and backend expertise applied at each step.
 
 ### Quality Gates (MANDATORY)
 
 #### Persona-Enhanced Pre-Commit Checklist
 - [ ] **Performance:** No O(n²) algorithms (`/analyze --profile --persona-performance`)
 - [ ] **Architecture:** No layer coupling violations (`/scan --validate --arch --persona-architect`)
-- [ ] **Security:** All vulnerabilities addressed (`/scan --security --persona-security`)
+- [ ] **Frontend:** UI/UX standards met (`/test --e2e --persona-frontend --pup`)
+- [ ] **Backend:** API reliability validated (`/test --api --persona-backend`)
 - [ ] **Quality:** All tests pass, coverage > 80% (`/test --coverage --persona-qa`)
 - [ ] **Boundaries:** All input validation implemented (`/scan --validate --strict`)
 - [ ] **Immutability:** Value objects properly immutable (`/analyze --code --persona-refactorer`)
-- [ ] **Frontend:** UI/UX standards met (`/test --e2e --persona-frontend --pup`)
-- [ ] **Backend:** API reliability validated (`/test --api --persona-backend`)
 - [ ] **Task Context:** Implementation details logged via `task-master update-subtask`
 - [ ] **Status Management:** Task status properly updated
 
@@ -919,8 +847,7 @@ Performance_Task: "Auto-detect *perf* → --persona-performance --profile"
 
 #### Priority 1: Security (`--persona-security`)
 1. **Input validation** - `/scan --security --validate` prevent injection attacks
-2. **Authentication & Authorization** - `/analyze --security --auth` verify access controls
-3. **Data protection** - `/scan --security --data` prevent data exposure
+2. **Data protection** - `/scan --security --data` prevent data exposure
 
 #### Priority 2: Performance (`--persona-performance`)
 1. **Algorithm complexity** - `/analyze --profile --complexity` prevent O(n²) operations
@@ -1057,7 +984,6 @@ The Finden system exemplifies Self-Contained Systems principles:
 #### Integration & Operations
 - **API Communication:** Type-safe REST APIs with Axios
 - **Monitoring:** OpenTelemetry with Stackdriver integration
-- **Security:** JWT authentication with role-based access control
 - **Performance:** SSR optimization and bundle splitting
 - **AI Integration:** TaskMaster with Claude Code for context-driven development
 
