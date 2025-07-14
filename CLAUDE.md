@@ -9,13 +9,13 @@ This guide outlines the development standards, coding conventions, and contribut
 - [Architecture and Domain Design](#architecture-and-domain-design)
 - [Frontend Development Guidelines](#frontend-development-guidelines)
 - [Frontend-Backend Integration](#frontend-backend-integration)
-- [Testing Strategy (MANDATORY)](#testing-strategy-mandatory)
+- [Testing Strategy](#testing-strategy)
 - [Frontend Build & Deployment](#frontend-build--deployment)
 - [Frontend Performance & Security](#frontend-performance--security)
 - [Performance Standards](#performance-standards)
 - [Kotlin Development Guidelines](#kotlin-development-guidelines)
 - [Code Quality Standards](#code-quality-standards)
-- [Development Workflow (MANDATORY)](#development-workflow-mandatory)
+- [Development Workflow](#development-workflow)
 - [Additional Standards](#additional-standards)
 - [Context Engineering & Task Management](#context-engineering--task-management)
 
@@ -75,7 +75,7 @@ The Finden system exhibits all characteristics of a well-designed SCS:
 - **Feature Delivery**: New product search features implemented entirely within team boundaries
 - **Technology Decisions**: Independent choice of Vue.js, TypeScript, Quarkus, Kotlin, MongoDB
 
-### SCS Implementation Principles (MANDATORY)
+### SCS Implementation Principles
 
 #### 1. **UI Ownership**
 
@@ -101,7 +101,7 @@ The Finden system exhibits all characteristics of a well-designed SCS:
 - NO deployment coordination required
 - Independent scaling and versioning
 
-#### 5. **Security Boundary (CRITICAL)**
+#### 5. **Security Boundary**
 
 - **Authorization & Authentication HANDLED BY INFRASTRUCTURE**
 - SCS consumes pre-validated security context from infrastructure layer
@@ -151,13 +151,13 @@ This architectural approach enables the development practices outlined in subseq
 
 ## Critical Rules & Constraints
 
-### System Boundaries & Absolute Constraints (MANDATORY)
+### System Boundaries & Core Constraints
 
-These constraints define **absolute system boundaries** that must NEVER be violated under any circumstances:
+Key constraints that define system boundaries:
 
-#### Security Boundaries (CRITICAL)
+#### Security Boundaries
 
-**SCS Security Responsibilities (ABSOLUTE):**
+**SCS Security Responsibilities:**
 
 - **SCS MUST NEVER implement authentication or authorization** - handled by infrastructure
 - **SCS MUST ONLY implement input validation and data protection**
@@ -165,7 +165,7 @@ These constraints define **absolute system boundaries** that must NEVER be viola
 - **SCS MUST protect sensitive data** (product prices, business rules, customer data)
 - **FORBIDDEN**: Direct user authentication, session management, role-based access control
 
-**Data Protection Requirements (ABSOLUTE):**
+**Data Protection Requirements:**
 
 - **NO personal data storage** - search operates on anonymous basis only
 - **NO search query logging with personal identifiers** - anonymize all search analytics
@@ -173,9 +173,9 @@ These constraints define **absolute system boundaries** that must NEVER be viola
 - **MANDATORY GDPR compliance** - right to be forgotten, data minimization
 - **FORBIDDEN**: Storing personal preferences without explicit consent, cross-border personal data transfer without compliance
 
-#### Performance Boundaries (CRITICAL)
+#### Performance Boundaries
 
-**Absolute Performance Limits (MUST NEVER EXCEED):**
+**Performance Limits:**
 
 - **API Response Time**: P95 < 300ms for standard operations, P95 < 500ms for complex queries
 - **Database Query Time**: Average < 200ms, maximum 2 seconds before timeout
@@ -183,16 +183,16 @@ These constraints define **absolute system boundaries** that must NEVER be viola
 - **Algorithm Complexity**: NO O(n²) or higher complexity operations in production
 - **Collection Size**: NO unbounded collection loading - always paginate
 
-**Performance Anti-Patterns (FORBIDDEN):**
+**Performance Anti-Patterns to Avoid:**
 
 - **Memory exhaustion patterns**: Full dataset loading, disabled pagination
 - **Inefficient algorithms**: O(n) operations in comparators, nested loops on large datasets
 - **Resource leaks**: Unclosed connections, unmanaged object lifecycles
 - **Blocking operations**: Synchronous calls that block event loops
 
-#### Data Consistency Boundaries (CRITICAL)
+#### Data Consistency Boundaries
 
-**SCS Data Autonomy (ABSOLUTE):**
+**SCS Data Autonomy:**
 
 - **NO direct database access** between SCS instances
 - **NO shared database schemas** between SCS boundaries
@@ -200,23 +200,23 @@ These constraints define **absolute system boundaries** that must NEVER be viola
 - **MANDATORY eventual consistency** for cross-SCS data synchronization
 - **FORBIDDEN**: Cross-SCS transactions, shared data stores, real-time cross-SCS data requirements
 
-**Data Integrity Requirements (ABSOLUTE):**
+**Data Integrity Requirements:**
 
 - **Product data consistency** - prices and availability must be real-time accurate
 - **Search index consistency** - search results must reflect current product state
 - **Event ordering** - maintain causality in event streams
 - **Schema evolution** - backward compatibility required for all data changes
 
-#### Architecture Boundaries (CRITICAL)
+#### Architecture Boundaries
 
-**Layer Coupling Constraints (ABSOLUTE):**
+**Layer Coupling Constraints:**
 
 - **Domain layer MUST NEVER reference** adapter DTOs or external data structures
 - **Application layer MUST ONLY depend** on domain interfaces
 - **Adapter layer MUST implement** domain interfaces without domain contamination
 - **FORBIDDEN**: Cross-layer dependencies, domain logic in adapters, DTO usage in domain
 
-**SCS Integration Constraints (ABSOLUTE):**
+**SCS Integration Constraints:**
 
 - **NO synchronous dependencies** on other SCS for core functionality
 - **NO shared UI components** between SCS boundaries (each SCS owns complete UI)
@@ -224,11 +224,11 @@ These constraints define **absolute system boundaries** that must NEVER be viola
 - **MANDATORY asynchronous communication** for all cross-SCS interactions
 - **FORBIDDEN**: Runtime dependencies on external SCS, shared deployment artifacts
 
-### Breaking Change Policies (MANDATORY)
+### Breaking Change Policies
 
-#### API Breaking Change Policy (CRITICAL)
+#### API Breaking Change Policy
 
-**API Versioning Rules (ABSOLUTE):**
+**API Versioning Rules:**
 
 - **NO breaking changes** to existing API endpoints without versioning
 - **Minimum 6-month deprecation period** for API version retirement
@@ -241,9 +241,9 @@ These constraints define **absolute system boundaries** that must NEVER be viola
 - **REQUIRED**: New endpoints for new functionality, additive field changes only
 - **MANDATORY**: Version negotiation for clients, graceful degradation
 
-#### Cross-SCS Contract Policy (CRITICAL)
+#### Cross-SCS Contract Policy
 
-**Event Schema Changes (ABSOLUTE):**
+**Event Schema Changes:**
 
 - **NO breaking changes** to published event schemas without coordination
 - **Avro schema evolution** required for all event modifications
@@ -256,61 +256,61 @@ These constraints define **absolute system boundaries** that must NEVER be viola
 - **NO changes to event payload structure** without backward compatibility
 - **MANDATORY**: Schema registry validation, consumer impact assessment
 
-### Resource & Operational Limits (MANDATORY)
+### Resource & Operational Limits
 
-#### Infrastructure Resource Limits (ABSOLUTE)
+#### Infrastructure Resource Limits
 
-**Memory Limits (CRITICAL):**
+**Memory Limits:**
 
 - **Maximum heap size**: 2GB per instance under normal load
 - **Memory leak detection**: Automatic alerts at 85% usage
 - **Garbage collection**: Maximum 100ms pause times
 - **FORBIDDEN**: Memory-intensive operations without streaming, unlimited object creation
 
-**Network Limits (CRITICAL):**
+**Network Limits:**
 
-- **Connection pooling**: Maximum 100 concurrent database connections
+- **Connection pooling**: Maximum 50 connections per application instance
 - **Request timeouts**: 30 seconds maximum for any single request
 - **Rate limiting**: 1000 requests per minute per client
 - **FORBIDDEN**: Unlimited connection creation, blocking network operations
 
-#### Database Operational Limits (ABSOLUTE)
+#### Database Operational Limits
 
-**Query Performance Limits (CRITICAL):**
+**Query Performance Limits:**
 
 - **Index requirements**: ALL production queries MUST use proper indexes
 - **Query timeout**: 2 seconds maximum for any single query
-- **Connection limits**: Maximum 50 connections per application instance
+- **Connection limits**: 50 connections per application instance (see Network Limits section)
 - **FORBIDDEN**: Full table scans, queries without WHERE clauses on large collections
 
-**Data Size Limits (CRITICAL):**
+**Data Size Limits:**
 
 - **Document size**: Maximum 16MB per MongoDB document
 - **Collection size**: Maximum 10M documents before partitioning required
 - **Index size**: Maximum 500MB per index
 - **FORBIDDEN**: Unbounded document growth, missing data archival strategies
 
-#### Deployment & Environment Constraints (MANDATORY)
+#### Deployment & Environment Constraints
 
-**Deployment Safety Rules (ABSOLUTE):**
+**Deployment Safety Rules:**
 
 - **Zero-downtime deployments** required for production
 - **Rollback capability** required within 5 minutes
 - **Health check endpoints** mandatory for all deployments
 - **FORBIDDEN**: Production deployments without testing, deployments during business hours without approval
 
-**Environment Isolation (CRITICAL):**
+**Environment Isolation:**
 
 - **NO production data** in development/staging environments
 - **NO shared credentials** between environments
 - **NO cross-environment communication** except for monitoring
 - **MANDATORY**: Environment-specific configurations, secrets management
 
-### Compliance & Regulatory Constraints (MANDATORY)
+### Compliance & Regulatory Constraints
 
-#### GDPR Compliance (ABSOLUTE)
+#### GDPR Compliance
 
-**Data Processing Constraints (CRITICAL):**
+**Data Processing Constraints:**
 
 - **Legal basis required** for all personal data processing
 - **Data minimization** - collect only necessary data for product search
@@ -325,7 +325,7 @@ These constraints define **absolute system boundaries** that must NEVER be viola
 - **Right to portability** - users can export their data
 - **MANDATORY**: Automated user rights fulfillment, audit trails
 
-#### Regional Compliance (MANDATORY)
+#### Regional Compliance
 
 **Data Residency Rules (ABSOLUTE):**
 
@@ -341,39 +341,6 @@ These constraints define **absolute system boundaries** that must NEVER be viola
 - **Regional restrictions** - respect local business hour and delivery constraints
 - **MANDATORY**: Regular compliance audits, violation reporting
 
-### Emergency Procedures & Override Policies (MANDATORY)
-
-#### Production Emergency Rules (CRITICAL)
-
-**Emergency Override Conditions (ABSOLUTE):**
-
-- **Only for P1 production incidents** affecting core functionality
-- **CTO approval required** for constraint overrides
-- **Time-limited overrides** - maximum 4 hours
-- **MANDATORY**: Incident documentation, post-incident review
-
-**Emergency Response Constraints (ABSOLUTE):**
-
-- **NO data integrity compromises** even during emergencies
-- **NO security boundary violations** under any circumstances
-- **NO user data exposure** during incident response
-- **MANDATORY**: Audit trails for all emergency actions
-
-#### Incident Escalation (MANDATORY)
-
-**Escalation Triggers (ABSOLUTE):**
-
-- **Any constraint violation** automatically triggers incident
-- **Security boundary breach** - immediate P1 escalation
-- **Data loss or corruption** - immediate CTO notification
-- **Cross-SCS cascade failure** - architecture team involvement
-
-**Response Requirements (CRITICAL):**
-
-- **15-minute response time** for P1 incidents
-- **1-hour resolution time** for constraint violations
-- **Post-incident analysis** for all constraint breaches
-- **MANDATORY**: Root cause analysis, prevention measures
 
 ## Architecture and Domain Design
 
@@ -397,87 +364,27 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 - **Aggregates MUST enforce business invariants**
 - **Domain services for complex operations** spanning multiple entities
 
-#### Layer Dependencies (ENFORCED BY ARCHUNIT)
+#### Layer Dependencies
 
-- **Domain layer:** Zero outward dependencies
-- **Application layer:** Depends only on domain interfaces
-- **Adapter layer:** Implements domain interfaces
+**Dependencies:** See Architecture Boundaries section for detailed layer coupling constraints and ArchUnit enforcement.
 
-#### Anti-Corruption Layer (MANDATORY)
+#### Anti-Corruption Layer
 
 - **Domain MUST NOT reference DTOs** from adapter layer
 - **External data structures MUST be mapped** at adapter boundaries
 - **Domain model protected from external changes**
 
-## Business Logic Documentation
+## Core Domain Logic
 
-### Product Search Domain Workflows (MANDATORY)
-
-The Finden system implements **core business workflows** for product search and discovery within the e-commerce domain:
-
-#### Product Search Workflow (MANDATORY)
-
-**Primary Search Flow:**
-
-```
-User Query → Query Analysis → Classification Matching → Availability Check → Price Calculation → Ranking Algorithm → Result Presentation
-```
-
-**Search Components:**
-
-- **Query Analysis**: Parse user input, extract keywords, identify product categories
-- **Classification Matching**: Match query against `klassifikationId` hierarchy for product categorization
-- **Availability Check**: Filter products based on `verfuegbarkeiten.bestellschlussUTC` and `verfuegbarkeiten.liefertag`
-- **Price Calculation**: Apply pricing rules, discounts, and regional variations
-- **Ranking Algorithm**: Sort results by relevance, availability, price, and business rules
-- **Result Presentation**: Format and paginate results for frontend display
-
-#### Product Filtering Workflow (MANDATORY)
-
-**Filter Application Flow:**
-
-```
-Filter Selection → Validation → Database Query Optimization → Result Filtering → UI Update
-```
-
-**Filter Types:**
-
-- **Category Filters**: Based on product classification hierarchy
-- **Availability Filters**: Filter by delivery dates and order deadlines
-- **Price Range Filters**: Apply minimum/maximum price constraints
-- **Custom Attribute Filters**: Filter by product-specific attributes
-
-#### Product Detail Workflow (MANDATORY)
-
-**Detail Retrieval Flow:**
-
-```
-Product Selection → Authorization Check → Detail Lookup → Availability Calculation → Price Calculation → Related Products → Display
-```
-
-**Detail Components:**
-
-- **Product Information**: Complete product data with specifications
-- **Real-time Availability**: Current availability status and delivery options
-- **Dynamic Pricing**: Current price with applicable discounts
-- **Related Products**: Recommendations based on business rules
+**Search Operations:** Query analysis → classification matching → availability/price calculations → ranking → presentation
+**Key Fields:** `klassifikationId` (categories), `verfuegbarkeiten.bestellschlussUTC` (order deadlines), `verfuegbarkeiten.liefertag` (delivery dates)
+**Business Rules:** Real-time pricing, availability checks, hierarchical product classification
 
 ### Business Rules & Decision Trees (MANDATORY)
 
-#### Price Calculation Rules (CRITICAL)
+#### Price Calculation Rules
 
-**Price Decision Tree:**
-
-```
-Base Price
-├── Apply Regional Pricing (if applicable)
-├── Apply Volume Discounts
-│   ├── Tier 1: 1-10 units (no discount)
-│   ├── Tier 2: 11-50 units (5% discount)
-│   └── Tier 3: 50+ units (10% discount)
-├── Apply Promotional Discounts (if active)
-└── Apply Tax Calculations (region-specific)
-```
+**Price Calculation:** Base price → regional pricing → volume discounts → promotional discounts → tax calculations
 
 **Business Rules:**
 
@@ -486,22 +393,9 @@ Base Price
 - **Currency formatting** - always display in user's regional currency
 - **Discount precedence** - promotional discounts override volume discounts
 
-#### Availability Calculation Rules (CRITICAL)
+#### Availability Calculation Rules
 
-**Availability Decision Tree:**
-
-```
-Product Request
-├── Check bestellschlussUTC (order deadline)
-│   ├── Current time > deadline → "Order Deadline Passed"
-│   └── Current time ≤ deadline → Continue
-├── Check liefertag (delivery date)
-│   ├── Delivery date < today → "Past Delivery Date"
-│   └── Delivery date ≥ today → "Available"
-└── Check inventory levels (if applicable)
-    ├── Stock = 0 → "Out of Stock"
-    └── Stock > 0 → "In Stock"
-```
+**Availability Calculation:** Check order deadline → delivery date → inventory levels → determine status
 
 **Business Rules:**
 
@@ -510,24 +404,9 @@ Product Request
 - **Grace periods** - 30-minute grace period for order deadlines
 - **Business hours** - consider business hours for same-day delivery
 
-#### Classification Hierarchy Rules (MANDATORY)
+#### Classification Hierarchy Rules
 
-**Classification Decision Tree:**
-
-```
-Product Classification
-├── Primary Category (Level 1)
-│   ├── Food & Beverages
-│   ├── Electronics
-│   └── Household Items
-├── Secondary Category (Level 2)
-│   ├── Subcategory specific to primary
-│   └── Cross-category items
-└── Tertiary Attributes (Level 3)
-    ├── Brand-specific attributes
-    ├── Technical specifications
-    └── Regional variations
-```
+**Classification Hierarchy:** Primary categories → Secondary subcategories → Tertiary attributes (3-level hierarchy)
 
 **Business Rules:**
 
@@ -536,87 +415,14 @@ Product Classification
 - **Classification validation** - invalid klassifikationId returns empty results
 - **Search optimization** - index classification hierarchy for fast lookups
 
-### Domain Events & Triggers (MANDATORY)
+### Domain Events
 
-#### Product Domain Events
+**Event Publishing:** Asynchronous via Kafka with Avro schemas. Key events include search operations, price calculations, and cross-SCS integration events for availability/price changes.
 
-**Core Domain Events:**
+### Key Domain Concepts
 
-- **ProductSearchRequested**: Triggered when user performs search
-- **ProductFiltered**: Triggered when filters are applied
-- **ProductViewed**: Triggered when product detail is accessed
-- **PriceCalculated**: Triggered when product price is computed
-- **AvailabilityChecked**: Triggered when availability is verified
-
-**Event Payload Examples:**
-
-```kotlin
-// ProductSearchRequested Event
-data class ProductSearchRequested(
-  val userId: String,
-  val query: String,
-  val filters: Map<String, Any>,
-  val timestamp: Instant
-)
-
-// PriceCalculated Event
-data class PriceCalculated(
-  val productId: String,
-  val basePrice: BigDecimal,
-  val finalPrice: BigDecimal,
-  val discountsApplied: List<Discount>,
-  val region: String
-)
-```
-
-#### Cross-SCS Integration Events (MANDATORY)
-
-**Integration Event Types:**
-
-- **ProductAvailabilityChanged**: Notify when product availability updates
-- **PriceUpdated**: Notify when product prices change
-- **NewProductAdded**: Notify when products are added to catalog
-- **ProductDiscontinued**: Notify when products are removed
-
-**Event Publishing Rules:**
-
-- **Asynchronous publishing** - all events published via Kafka
-- **Event versioning** - use Avro schemas for backward compatibility
-- **Event ordering** - maintain causality for related events
-- **Error handling** - dead letter queues for failed event processing
-
-### Business Terminology Glossary (MANDATORY)
-
-#### Core Domain Terms
-
-**Product Terms:**
-
-- **Produkt**: Core product entity with specifications and metadata
-- **Klassifikation**: Product classification/category system
-- **Verfügbarkeit**: Product availability including order deadlines and delivery dates
-- **Bestellschluss**: Order deadline - latest time to place order for scheduled delivery
-- **Liefertag**: Delivery date - scheduled date for product delivery
-
-**Search Terms:**
-
-- **Suchquery**: User search query with keywords and filters
-- **Filterkriterien**: Search filter criteria for narrowing results
-- **Ranking**: Result ordering algorithm based on relevance and business rules
-- **Facetten**: Search facets for guided navigation
-
-**Business Process Terms:**
-
-- **Preisberechnung**: Price calculation including discounts and regional pricing
-- **Verfügbarkeitsprüfung**: Availability check against current inventory and schedule
-- **Bestellabwicklung**: Order processing workflow (handled by separate SCS)
-- **Produktkatalog**: Complete product catalog management
-
-**Technical Terms:**
-
-- **API-Gateway**: Infrastructure component handling cross-SCS routing
-- **Event-Stream**: Kafka event streaming for cross-SCS communication
-- **Suchindex**: Search index optimized for product discovery
-- **Cache-Ebene**: Caching layer for performance optimization
+**Core Entities:** Produkt (product), Klassifikation (category), Verfügbarkeit (availability with order deadlines and delivery dates)
+**Technical Integration:** API-Gateway, Event-Stream (Kafka), Search indexes, Caching layer
 
 ### Compliance & Regulatory Rules (MANDATORY)
 
@@ -636,7 +442,7 @@ data class PriceCalculated(
 - **Right to be forgotten** - clear user data on request
 - **Data minimization** - collect only necessary search analytics
 
-#### Business Rules Validation (MANDATORY)
+#### Business Rules Validation
 
 **Critical Business Rules:**
 
@@ -652,722 +458,88 @@ data class PriceCalculated(
 - **Audit trails** - maintain audit logs for critical business operations
 - **Error handling** - graceful degradation when business rules fail
 
-## Frontend Architecture Analysis
+## Frontend Architecture
 
-### Frontend Layered Architecture (MANDATORY)
+### Three-Layer Architecture
 
-The frontend follows a **three-layer architecture** that complements the backend's Onion Architecture:
+**Layer Structure:**
+- **Presentation (Components):** Vue components, templates, styles - UI rendering only
+- **Business Logic (Composables):** Reusable reactive business logic and state management  
+- **Data Access (API):** HTTP clients, API abstractions, data transformation
+- **Dependencies:** Presentation → Composables → API (strict layer dependency)
 
-**Frontend Architecture Layer Structure:**
+### Key Frontend Principles
 
-- **Presentation Layer (Components):** Vue components, templates, styles, and user interaction handling
-- **Business Logic Layer (Composables):** Reusable business logic, state management, and domain operations
-- **Data Access Layer (API):** HTTP clients, API abstractions, and data transformation
-- **Dependencies:** Presentation depends only on composables, composables depend only on API layer
+**Component Architecture:**
+- Business logic in composables, not components
+- Components handle only UI rendering and user interaction
+- TypeScript typing for all props, emits, and composables
 
-#### Presentation Layer Principles (MANDATORY)
+**Multi-App Support:**
+- Independent apps (produktliste, tool) with separate build entry points
+- Shared component library with clear interface contracts
+- Runtime isolation between applications
 
-- **Components MUST handle only UI rendering and user interaction**
-- **NO business logic in component script sections** - delegate to composables
-- **Template logic MUST be minimal** - use computed properties for complex operations
-- **Style scoping MUST prevent CSS bleeding** between components
-- **FORBIDDEN:** Direct API calls from components, complex calculations in templates
+**SSR with Fastify:**
+- Server-side rendering with proper error boundaries  
+- Separate HTTP client configurations for SSR vs client-side
+- State hydration with serializable initial state
 
-#### Business Logic Layer Principles (MANDATORY)
+### Component Standards
 
-- **Composables MUST contain all reusable business logic** and state management
-- **State management MUST be reactive** using Vue's reactivity system
-- **Business rules MUST be testable** independently of Vue components
-- **Cross-cutting concerns MUST be handled** in dedicated composables
-- **FORBIDDEN:** Business logic in components, non-reactive state management
+**Component Hierarchy:**
+- Base components (framework-agnostic, reusable)
+- Layout components (structural concerns only)  
+- Business components (domain-specific logic)
+- Single responsibility per component
 
-#### Data Access Layer Principles (MANDATORY)
+**State Management:**
+- Vuex modular patterns with strict TypeScript typing
+- Flat state structures, namespaced modules
+- Typed actions, mutations, and getters
 
-- **API layer MUST handle all backend communication** and data transformation
-- **HTTP clients MUST be abstracted** behind service interfaces
-- **Response transformation MUST occur** at API boundary
-- **Error handling MUST be centralized** in API layer
-- **FORBIDDEN:** Direct HTTP client usage in composables, unhandled API errors
-
-### Multi-App Architecture (MANDATORY)
-
-The frontend supports **multiple independent applications** within a single codebase:
-
-#### App Separation Principles (MANDATORY)
-
-- **Each app (produktliste, tool) MUST be independently buildable** and deployable
-- **App-specific configurations MUST be isolated** per application
-- **Build entry points MUST be separate** for each application
-- **Runtime isolation MUST be maintained** between applications
-- **FORBIDDEN:** Cross-app dependencies at runtime, shared mutable state between apps
-
-#### Shared Component Library (MANDATORY)
-
-- **Shared components MUST have clear interface contracts** with typed props and events
-- **Component reusability MUST be maximized** across applications
-- **Breaking changes MUST be avoided** in shared component interfaces
-- **Component documentation MUST be maintained** for shared library
-- **FORBIDDEN:** App-specific logic in shared components, undocumented interface changes
-
-#### Build System Architecture (MANDATORY)
-
-- **Vue CLI MUST support multi-app builds** with separate output directories
-- **Environment variables MUST be app-specific** where applicable
-- **Code splitting MUST be optimized** per application
-- **Bundle analysis MUST be available** for each application
-- **FORBIDDEN:** Build configuration coupling between apps, shared build artifacts
-
-### SSR Architecture with Fastify (MANDATORY)
-
-The frontend implements **Server-Side Rendering** using Fastify server:
-
-#### SSR Server Principles (MANDATORY)
-
-- **Fastify server MUST handle SSR rendering** with proper error boundaries
-- **Server startup MUST be graceful** with proper health checks
-- **Request handling MUST be stateless** across server instances
-- **Server shutdown MUST be graceful** with proper cleanup
-- **FORBIDDEN:** Stateful server operations, browser-specific APIs in SSR context
-
-#### State Hydration Principles (MANDATORY)
-
-- **Client state MUST match server-rendered state** exactly during hydration
-- **Store hydration MUST be atomic** to prevent state inconsistencies
-- **Hydration mismatches MUST be handled** gracefully with fallbacks
-- **Initial state MUST be serializable** for server-to-client transfer
-- **FORBIDDEN:** State mismatches between server and client, non-serializable state
-
-#### HTTP Client Separation (MANDATORY)
-
-- **SSR and client-side MUST use separate HTTP client configurations**
-- **SSR HTTP client MUST use internal API URLs** for performance
-- **Client-side HTTP client MUST handle browser-specific concerns** (CORS, cookies)
-- **Timeout configurations MUST be optimized** per context (SSR vs client)
-- **FORBIDDEN:** Shared HTTP client instances between SSR and client contexts
-
-### Component Architecture Patterns (MANDATORY)
-
-Components follow **hierarchical organization** with clear responsibilities:
-
-#### Component Hierarchy Standards (MANDATORY)
-
-- **Base components MUST be framework-agnostic** and highly reusable
-- **Layout components MUST handle structural concerns** only
-- **Business components MUST encapsulate domain-specific logic**
-- **Utility components MUST handle cross-cutting concerns**
-- **FORBIDDEN:** Mixed responsibility components, unclear component categorization
-
-#### Single Responsibility Principles (MANDATORY)
-
-- **Each component MUST handle only one concern** or responsibility
-- **Component size MUST be limited** to maintainable complexity
-- **Component composition MUST be preferred** over inheritance
-- **Component interfaces MUST be minimal** and focused
-- **FORBIDDEN:** Multi-responsibility components, oversized components
-
-#### Props and Events Interface (MANDATORY)
-
-- **Props interfaces MUST be defined** with explicit TypeScript types
-- **Optional properties MUST be marked explicitly** in interfaces
-- **Event signatures MUST be specific** rather than generic
-- **Default values MUST be provided** using withDefaults
-- **FORBIDDEN:** Untyped props/events, function props instead of events, generic event handlers
-
-### State Management Architecture (MANDATORY)
-
-State management follows **Vuex modular patterns** with strict typing:
-
-#### Vuex Module Principles (MANDATORY)
-
-- **Each store module MUST handle only related domain concerns**
-- **Module namespacing MUST be enforced** for logical separation
-- **State interfaces MUST be comprehensively defined** with all properties
-- **Module dependencies MUST be minimized** between modules
-- **FORBIDDEN:** Cross-module state dependencies, unnamespaced modules
-
-#### Type Safety Requirements (MANDATORY)
-
-- **ALL store operations MUST be fully typed** with TypeScript
-- **ActionContext typing MUST be enforced** for all async actions
-- **Getters MUST return typed values** with explicit return types
-- **Mutations MUST be strongly typed** with payload interfaces
-- **FORBIDDEN:** Untyped store operations, any type usage without justification
-
-#### State Normalization (MANDATORY)
-
-- **State structure MUST be flat** to avoid deeply nested objects
-- **Computed state MUST use getters** rather than duplicated state
-- **Loading states MUST be handled consistently** across modules
-- **Error states MUST be centralized** with standardized error interfaces
-- **FORBIDDEN:** Deeply nested state structures, duplicated computed state
-
-### API Layer Architecture (MANDATORY)
-
-The API layer provides **type-safe abstractions** for backend communication:
-
-#### HTTP Client Abstraction (MANDATORY)
-
-- **HTTP clients MUST be abstracted** behind service interfaces
-- **SSR and client-side MUST use separate HTTP client instances**
-- **Base URL configuration MUST be environment-specific**
-- **Request/response interceptors MUST be properly configured**
-- **FORBIDDEN:** Direct HTTP client usage outside API layer, shared client instances
-
-#### Type Safety Requirements (MANDATORY)
-
-- **ALL API functions MUST use proper TypeScript interfaces**
-- **Request parameters MUST be strongly typed** with validation
-- **Response interfaces MUST be comprehensive** with all required fields
-- **Error responses MUST be typed** with standardized error structures
-- **FORBIDDEN:** Untyped API responses, missing request parameter validation
-
-#### Error Handling Strategy (MANDATORY)
-
-- **Error handling MUST be centralized** in API layer
-- **Error types MUST be distinguished** (network, server, business errors)
-- **Retry logic MUST be implemented** for transient failures
-- **Error recovery MUST be graceful** with fallback mechanisms
-- **FORBIDDEN:** Unhandled API errors, inconsistent error handling patterns
-
-#### Response Transformation (MANDATORY)
-
-- **DTOs MUST be transformed to domain models** at API boundaries
-- **Data normalization MUST occur** in API layer
-- **Response caching MUST be implemented** where appropriate
-- **API versioning MUST be supported** for backward compatibility
-- **FORBIDDEN:** Raw DTO usage in business logic, unprocessed API responses
+**API Layer:**
+- Type-safe abstractions for backend communication
+- Separate HTTP client instances for SSR vs client-side
+- Centralized error handling with retry logic
+- DTO transformation at API boundaries
 
 ## Code Organization
 
 ### Project Structure Overview (MANDATORY)
 
-The Finden Self-Contained System follows a **clear hierarchical structure** that separates concerns and maintains architectural boundaries:
-
-```
-finden-scs/
-├── backend/                          # Quarkus/Kotlin backend application
-│   ├── src/main/kotlin/
-│   │   ├── domain/                   # Domain layer (core business logic)
-│   │   ├── application/              # Application layer (use cases)
-│   │   ├── adapter/                  # Adapter layer (external integrations)
-│   │   └── infrastructure/           # Infrastructure configuration
-│   ├── src/test/kotlin/              # Test packages mirroring main structure
-│   └── build.gradle.kts              # Kotlin DSL build configuration
-├── frontend/                         # Vue.js frontend applications
-│   ├── src/
-│   │   ├── apps/                     # Multi-app entry points
-│   │   ├── shared/                   # Shared components and utilities
-│   │   ├── api/                      # API layer abstractions
-│   │   ├── composables/              # Business logic composables
-│   │   └── store/                    # Vuex state management
-│   ├── public/                       # Static assets
-│   └── package.json                  # Frontend dependencies
-├── infrastructure/                   # Infrastructure as Code
-│   ├── docker/                       # Container configurations
-│   ├── kubernetes/                   # K8s deployment manifests
-│   └── monitoring/                   # Observability configuration
-├── docs/                            # Project documentation
-│   ├── architecture/                # Architecture decision records
-│   ├── api/                         # API documentation
-│   └── business/                    # Business logic documentation
-└── .taskmaster/                     # TaskMaster AI integration
-    ├── tasks/                       # Task management
-    └── docs/                        # PRD and requirements
-```
+**Standard SCS layout:** backend/ (Quarkus/Kotlin), frontend/ (Vue.js), infrastructure/, docs/, .taskmaster/
 
 ### Backend Code Organization (MANDATORY)
 
-#### Domain Layer Structure (MANDATORY)
+**Domain Layer:** model/ (entities, value objects), service/ (domain services), repository/ (interfaces), exception/ (domain exceptions)
+- **Rules:** Business logic in entities, immutable value objects, no external dependencies
+- **FORBIDDEN:** Framework annotations in domain, infrastructure concerns
 
-**Domain layer package organization:**
+**Application Layer:** usecase/ (business operations), dto/ (data contracts), mapper/ (DTO↔domain), service/ (coordination)
+- **Rules:** Use cases orchestrate domain, DTOs for external contracts, mappers at boundaries
+- **FORBIDDEN:** Business logic in application services, direct database access
 
-```kotlin
-domain /
-├── model/                           # Domain entities and value objects
-│   ├── produkt/                     # Product aggregate
-│   │   ├── Produkt.kt              # Product entity
-│   │   ├── ProduktId.kt            # Product identifier value object
-│   │   ├── Klassifikation.kt       # Classification value object
-│   │   └── Verfuegbarkeit.kt       # Availability value object
-│   ├── search/                      # Search aggregate
-│   │   ├── SearchQuery.kt          # Search query entity
-│   │   ├── SearchResult.kt         # Search result aggregate
-│   │   └── SearchCriteria.kt       # Search criteria value object
-│   └── pricing/                     # Pricing aggregate
-│       ├── Price.kt                # Price value object
-│       ├── Discount.kt             # Discount entity
-│       └── Region.kt               # Regional pricing value object
-├── service/                         # Domain services
-│   ├── ProduktSearchService.kt     # Product search domain service
-│   ├── PricingService.kt           # Pricing calculation service
-│   └── AvailabilityService.kt      # Availability checking service
-├── repository/                      # Repository interfaces
-│   ├── ProduktRepository.kt        # Product repository interface
-│   ├── SearchRepository.kt         # Search repository interface
-│   └── PricingRepository.kt        # Pricing repository interface
-└── exception/                       # Domain exceptions
-├── DomainException.kt          # Base domain exception
-├── ProduktNotFoundException.kt  # Product-specific exceptions
-└── InvalidSearchException.kt   # Search-specific exceptions
-```
-
-**Domain Layer Rules (MANDATORY):**
-
-- **Domain entities** contain business logic and enforce invariants
-- **Value objects** are immutable and validated in constructors
-- **Domain services** handle complex operations spanning multiple entities
-- **Repository interfaces** define data access contracts without implementation
-- **FORBIDDEN**: External dependencies, framework annotations, infrastructure concerns
-
-#### Application Layer Structure (MANDATORY)
-
-**Application layer package organization:**
-
-```kotlin
-application /
-├── usecase/                         # Use case implementations
-│   ├── search/                      # Search use cases
-│   │   ├── SearchProductsUseCase.kt # Product search implementation
-│   │   ├── FilterProductsUseCase.kt # Product filtering implementation
-│   │   └── GetProductDetailUseCase.kt # Product detail retrieval
-│   ├── pricing/                     # Pricing use cases
-│   │   ├── CalculatePriceUseCase.kt # Price calculation implementation
-│   │   └── ApplyDiscountUseCase.kt  # Discount application
-│   └── availability/                # Availability use cases
-│       └── CheckAvailabilityUseCase.kt # Availability checking
-├── dto/                            # Data transfer objects
-│   ├── request/                    # Request DTOs
-│   │   ├── SearchRequest.kt        # Search request DTO
-│   │   ├── FilterRequest.kt        # Filter request DTO
-│   │   └── ProductDetailRequest.kt # Product detail request DTO
-│   └── response/                   # Response DTOs
-│       ├── SearchResponse.kt       # Search response DTO
-│       ├── ProductResponse.kt      # Product response DTO
-│       └── AvailabilityResponse.kt # Availability response DTO
-├── mapper/                         # DTO to domain mapping
-│   ├── ProduktMapper.kt           # Product mapping logic
-│   ├── SearchMapper.kt            # Search mapping logic
-│   └── PricingMapper.kt           # Pricing mapping logic
-└── service/                        # Application services
-├── ProductApplicationService.kt # Product application service
-├── SearchApplicationService.kt  # Search application service
-└── PricingApplicationService.kt # Pricing application service
-```
-
-**Application Layer Rules (MANDATORY):**
-
-- **Use cases** orchestrate domain operations for specific business scenarios
-- **DTOs** define contracts for external communication
-- **Mappers** translate between DTOs and domain objects
-- **Application services** coordinate multiple use cases
-- **FORBIDDEN**: Business logic in application services, direct database access
-
-#### Adapter Layer Structure (MANDATORY)
-
-**Adapter layer package organization:**
-
-```kotlin
-adapter /
-├── web/                            # Web adapters (REST controllers)
-│   ├── ProductController.kt        # Product REST endpoint
-│   ├── SearchController.kt         # Search REST endpoint
-│   ├── PricingController.kt        # Pricing REST endpoint
-│   └── HealthController.kt         # Health check endpoint
-├── persistence/                    # Database adapters
-│   ├── mongodb/                    # MongoDB implementations
-│   │   ├── MongoProduktRepository.kt # MongoDB product repository
-│   │   ├── MongoSearchRepository.kt  # MongoDB search repository
-│   │   ├── entity/                   # MongoDB entities
-│   │   │   ├── MongoProdukt.kt      # MongoDB product entity
-│   │   │   └── MongoSearchResult.kt # MongoDB search result
-│   │   └── mapper/                   # Entity mapping
-│   │       ├── ProduktEntityMapper.kt # Product entity mapper
-│   │       └── SearchEntityMapper.kt  # Search entity mapper
-├── messaging/                      # Message adapters
-│   ├── kafka/                      # Kafka implementations
-│   │   ├── ProductEventPublisher.kt # Product event publisher
-│   │   ├── SearchEventPublisher.kt  # Search event publisher
-│   │   └── consumer/                 # Event consumers
-│   │       ├── PriceUpdateConsumer.kt # Price update consumer
-│   │       └── ProductUpdateConsumer.kt # Product update consumer
-└── external/                       # External service adapters
-├── pricing/                    # External pricing service
-│   ├── PricingServiceClient.kt # Pricing service client
-│   └── PricingServiceMapper.kt # Pricing service mapper
-└── inventory/                  # External inventory service
-├── InventoryServiceClient.kt # Inventory service client
-└── InventoryServiceMapper.kt # Inventory service mapper
-```
-
-**Adapter Layer Rules (MANDATORY):**
-
-- **Controllers** handle HTTP concerns and delegate to application services
-- **Repository implementations** provide data access using specific technologies
-- **Entity mappers** translate between database entities and domain objects
-- **Message adapters** handle cross-SCS communication
-- **FORBIDDEN**: Business logic in adapters, domain object contamination
+**Adapter Layer:** web/ (REST controllers), persistence/ (database adapters), messaging/ (events), external/ (clients)
+- **Rules:** Controllers delegate to application, repository implementations use specific tech
+- **FORBIDDEN:** Business logic in adapters, domain contamination
 
 ### Frontend Code Organization (MANDATORY)
 
-#### Multi-App Structure (MANDATORY)
+**Multi-App Structure:** apps/ (entry points), shared/ (components), api/ (backend communication), composables/ (business logic), store/ (Vuex state)
+- **Rules:** Apps contain config, shared provides reusable UI, API abstracts backend, composables contain reactive logic
+- **FORBIDDEN:** Business logic in components, direct API calls from components
 
-**Frontend application organization:**
+### File Naming & Dependencies (MANDATORY)
 
-```typescript
-frontend / src /
-├── apps /
-#
-Application
-entry
-points
-│   ├── produktliste /
-#
-Product
-listing
-application
-│   │   ├── main.ts
-#
-Entry
-point
-│   │   ├── App.vue
-#
-Root
-component
-│   │   ├── router /
-#
-App - specific
-routing
-│   │   └── components /
-#
-App - specific
-components
-│   └── tool /
-#
-Tool
-application
-│       ├── main.ts
-#
-Entry
-point
-│       ├── App.vue
-#
-Root
-component
-│       ├── router /
-#
-App - specific
-routing
-│       └── components /
-#
-App - specific
-components
-├── shared /
-#
-Shared
-components
-and
-utilities
-│   ├── components /
-#
-Reusable
-UI
-components
-│   │   ├── base /
-#
-Base
-components(buttons, inputs)
-│   │   ├── layout /
-#
-Layout
-components(header, nav)
-│   │   ├── business /
-#
-Business
-components(product
-cards
-)
-│   │   └── utility /
-#
-Utility
-components(loading, error)
-│   ├── styles /
-#
-Shared
-styles
-and
-design
-system
-│   │   ├── variables.scss
-#
-SCSS
-variables
-│   │   ├── mixins.scss
-#
-SCSS
-mixins
-│   │   └── components.scss
-#
-Component
-styles
-│   └── utils /
-#
-Shared
-utilities
-│       ├── formatters.ts
-#
-Data
-formatting
-utilities
-│       ├── validators.ts
-#
-Input
-validation
-utilities
-│       └── constants.ts
-#
-Application
-constants
-├── api /
-#
-API
-layer
-│   ├── clients /
-#
-HTTP
-client
-configurations
-│   │   ├── productClient.ts
-#
-Product
-API
-client
-│   │   ├── searchClient.ts
-#
-Search
-API
-client
-│   │   └── baseClient.ts
-#
-Base
-HTTP
-client
-│   ├── services /
-#
-API
-service
-abstractions
-│   │   ├── ProductService.ts
-#
-Product
-API
-service
-│   │   ├── SearchService.ts
-#
-Search
-API
-service
-│   │   └── PricingService.ts
-#
-Pricing
-API
-service
-│   ├── types /
-#
-API
-type definitions
-│   │   ├── ProductTypes.ts
-#
-Product
-API
-types
-│   │   ├── SearchTypes.ts
-#
-Search
-API
-types
-│   │   └── ResponseTypes.ts
-#
-Common
-response
-types
-│   └── mappers /
-#
-API
-response
-mappers
-│       ├── ProductMapper.ts
-#
-Product
-response
-mapper
-│       └── SearchMapper.ts
-#
-Search
-response
-mapper
-├── composables /
-#
-Business
-logic
-composables
-│   ├── useProductSearch.ts
-#
-Product
-search
-composable
-│   ├── useProductFilter.ts
-#
-Product
-filtering
-composable
-│   ├── useProductDetail.ts
-#
-Product
-detail
-composable
-│   ├── usePricing.ts
-#
-Pricing
-composable
-│   └── useAuthentication.ts
-#
-Authentication
-composable
-└── store /
-#
-Vuex
-state
-management
-    ├── index.ts
-#
-Store
-configuration
-    ├── modules /
-#
-Store
-modules
-    │   ├── products.ts
-#
-Product
-state
-module
-    │   ├── search.ts
-#
-Search
-state
-module
-    │   ├── filters.ts
-#
-Filter
-state
-module
-    │   └── user.ts
-#
-User
-state
-module
-    └── types /
-#
-Store
-type definitions
-        ├── ProductState.ts
-#
-Product
-state
-types
-        ├── SearchState.ts
-#
-Search
-state
-types
-        └── RootState.ts
-#
-Root
-state
-types
-```
-
-**Frontend Layer Rules (MANDATORY):**
-
-- **Apps** contain application-specific entry points and configuration
-- **Shared components** provide reusable UI elements across applications
-- **API layer** abstracts backend communication with type safety
-- **Composables** contain reactive business logic
-- **Store modules** manage application state with strict typing
-- **FORBIDDEN**: Business logic in components, direct API calls from components
-
-### File Naming Conventions (MANDATORY)
-
-#### Backend Naming Standards (MANDATORY)
-
-**Kotlin file naming:**
-
-- **Entities**: PascalCase with domain suffix (e.g., `Produkt.kt`, `SearchQuery.kt`)
-- **Value Objects**: PascalCase with descriptive name (e.g., `ProduktId.kt`, `Price.kt`)
-- **Services**: PascalCase with Service suffix (e.g., `ProduktSearchService.kt`)
-- **Repositories**: PascalCase with Repository suffix (e.g., `ProduktRepository.kt`)
-- **Controllers**: PascalCase with Controller suffix (e.g., `ProductController.kt`)
-- **DTOs**: PascalCase with Request/Response suffix (e.g., `SearchRequest.kt`)
-- **Tests**: Same as class name with Test suffix (e.g., `ProduktTest.kt`)
-
-**Package naming:**
-
-- **All lowercase** with descriptive names (e.g., `domain.model.produkt`)
-- **No abbreviations** except for well-known terms (e.g., `dto`, `api`)
-- **Logical grouping** by domain concepts
-
-#### Frontend Naming Standards (MANDATORY)
-
-**TypeScript/Vue file naming:**
-
-- **Components**: PascalCase with descriptive names (e.g., `ProductCard.vue`, `SearchFilter.vue`)
-- **Composables**: camelCase with use prefix (e.g., `useProductSearch.ts`)
-- **Services**: PascalCase with Service suffix (e.g., `ProductService.ts`)
-- **Types**: PascalCase with descriptive names (e.g., `ProductTypes.ts`)
-- **Store modules**: camelCase with domain name (e.g., `products.ts`, `search.ts`)
-- **Tests**: Same as file name with `.spec` or `.test` suffix
-
-**Directory naming:**
-
-- **All lowercase** with hyphens for multi-word names (e.g., `product-detail`)
-- **Descriptive names** that clearly indicate purpose
-- **Consistent structure** across all applications
-
-### Module Organization Principles (MANDATORY)
-
-#### Dependency Management (MANDATORY)
-
-**Module dependency rules:**
-
-- **Domain modules** have NO external dependencies
-- **Application modules** depend only on domain modules
-- **Adapter modules** can depend on application and domain modules
-- **Frontend modules** follow layered dependency patterns
-- **FORBIDDEN**: Circular dependencies, cross-layer dependencies
-
-#### Cross-SCS Boundaries (MANDATORY)
-
-**Integration module organization:**
-
-- **Event schemas** in separate versioned modules
-- **API contracts** defined in shared contract modules
-- **Cross-SCS types** isolated in integration packages
-- **NO direct module dependencies** between SCS instances
-- **FORBIDDEN**: Shared business logic modules, runtime dependencies
-
-#### Module Cohesion Rules (MANDATORY)
-
-**High cohesion principles:**
-
-- **Related functionality** grouped in same module
-- **Single responsibility** per module
-- **Clear module interfaces** with minimal public APIs
-- **Business boundaries** align with module boundaries
-- **FORBIDDEN**: God modules, mixed concerns, unclear module purposes
+**Backend:** PascalCase with suffixes (.kt, Service, Repository, Controller, Request/Response), lowercase packages
+**Frontend:** PascalCase components (.vue), camelCase composables (use prefix), lowercase directories with hyphens
+**Dependencies:** Domain→Application→Adapter (strict hierarchy), no circular dependencies, no cross-SCS runtime dependencies
+**FORBIDDEN:** Cross-layer dependencies, shared business logic modules
 
 ## Frontend Development Guidelines
 
-#### Composition API (MANDATORY)
+#### Composition API
 
 **All new components MUST use the Composition API with script setup syntax:**
 
@@ -1384,7 +556,7 @@ types
 - Legacy Vue 2 patterns and syntax
 - Mixing Options API and Composition API within same component
 
-#### TypeScript Integration (MANDATORY)
+#### TypeScript Integration
 
 **Strict typing requirements for all components:**
 
@@ -1616,17 +788,11 @@ Browser Request → Fastify Server → Vue SSR → API Call → Quarkus Backend 
 
 The Finden SCS exposes **RESTful APIs** following industry best practices and consistent patterns:
 
-#### URL Structure & Naming (MANDATORY)
+#### URL Structure & Naming
 
 **URL Design Principles:**
 
-```
-Base URL: https://api.finden-scs.com/v1
-Resource Collection: /products
-Resource Instance: /products/{productId}
-Sub-Resources: /products/{productId}/availability
-Action Resources: /search/products
-```
+Standard REST URL structure with base URL, resource collections, resource instances, sub-resources, and action resources.
 
 **URL Naming Rules (MANDATORY):**
 
@@ -1639,16 +805,9 @@ Action Resources: /search/products
 
 **Resource URL Examples:**
 
-```
-GET /v1/products                    # Get product collection
-GET /v1/products/{productId}        # Get specific product
-GET /v1/products/{productId}/availability # Get product availability
-POST /v1/search/products            # Search products
-GET /v1/classifications             # Get product classifications
-GET /v1/classifications/{classId}/products # Get products in classification
-```
+Standard REST endpoints for product collections, individual products, availability, search operations, and classification hierarchies.
 
-#### HTTP Methods & Semantics (MANDATORY)
+#### HTTP Methods & Semantics
 
 **HTTP Method Usage (CRITICAL):**
 
@@ -1661,101 +820,17 @@ GET /v1/classifications/{classId}/products # Get products in classification
 
 **Status Code Standards (MANDATORY):**
 
-```
-Success Codes:
-200 OK          - Successful GET, PUT operations
-201 Created     - Successful POST creation
-204 No Content  - Successful DELETE, empty responses
+Standard HTTP status codes: 200/201/204 for success, 400/401/403/404/422 for client errors, 500/502/503/504 for server errors.
 
-Client Error Codes:
-400 Bad Request     - Invalid request format, validation errors
-401 Unauthorized    - Missing or invalid authentication
-403 Forbidden      - Valid auth but insufficient permissions
-404 Not Found      - Resource does not exist
-422 Unprocessable  - Valid format but business rule violations
-
-Server Error Codes:
-500 Internal Error  - Unexpected server errors
-502 Bad Gateway    - External service failures
-503 Service Unavailable - Temporary service overload
-504 Gateway Timeout - External service timeout
-```
-
-#### Request & Response Format (MANDATORY)
+#### Request & Response Format
 
 **JSON Request Format Standards:**
 
-```json
-// Search Products Request
-POST /v1/search/products
-{
-  "query": "elektronik laptop",
-  "filters": {
-    "klassifikationId": "electronics.computers",
-    "priceRange": {
-      "min": 500.00,
-      "max": 2000.00
-    },
-    "availability": {
-      "deliveryDateFrom": "2024-01-15",
-      "deliveryDateTo": "2024-02-15"
-    }
-  },
-  "pagination": {
-    "page": 1,
-    "size": 20
-  },
-  "sorting": {
-    "field": "price",
-    "direction": "asc"
-  }
-}
-```
+**Request Format**: JSON with query, filters (classification, price range, availability), pagination, and sorting fields.
 
 **JSON Response Format Standards:**
 
-```json
-// Successful Response
-{
-  "status": "success",
-  "data": {
-    "products": [
-      ...
-    ],
-    "pagination": {
-      "page": 1,
-      "size": 20,
-      "totalElements": 156,
-      "totalPages": 8
-    }
-  },
-  "meta": {
-    "timestamp": "2024-01-15T10:30:00Z",
-    "requestId": "req-12345",
-    "version": "1.0"
-  }
-}
-
-// Error Response
-{
-  "status": "error",
-  "error": {
-    "code": "VALIDATION_ERROR",
-    "message": "Invalid search parameters",
-    "details": [
-      {
-        "field": "priceRange.min",
-        "message": "Must be greater than 0"
-      }
-    ]
-  },
-  "meta": {
-    "timestamp": "2024-01-15T10:30:00Z",
-    "requestId": "req-12345",
-    "version": "1.0"
-  }
-}
-```
+**Response Format**: Envelope structure with status, data/error, and meta fields. Success responses include data and pagination. Error responses include error codes and details.
 
 **Response Format Rules (MANDATORY):**
 
@@ -1765,7 +840,7 @@ POST /v1/search/products
 - **Decimal numbers** - use strings for precise monetary values
 - **FORBIDDEN**: Inconsistent response structures, mixed date formats
 
-#### API Versioning Strategy (MANDATORY)
+#### API Versioning Strategy
 
 **Versioning Approach (CRITICAL):**
 
@@ -1776,12 +851,7 @@ POST /v1/search/products
 
 **Version Support Policy:**
 
-```
-Current Version: v1.2.0
-Supported Versions: v1.0.x, v1.1.x, v1.2.x
-Deprecated: (none currently)
-End-of-Life: (none currently)
-```
+Multiple version support with semantic versioning, deprecation notices, and end-of-life management.
 
 **Breaking Change Policy (MANDATORY):**
 
@@ -1790,52 +860,15 @@ End-of-Life: (none currently)
 - **Non-breaking changes**: Optional field additions, endpoint additions
 - **Version negotiation** supported via Accept-Version header
 
-#### Error Handling & Validation (MANDATORY)
+#### Error Handling & Validation
 
 **Input Validation Standards (CRITICAL):**
 
-```json
-// Validation Error Response
-{
-  "status": "error",
-  "error": {
-    "code": "VALIDATION_ERROR",
-    "message": "Request validation failed",
-    "details": [
-      {
-        "field": "query",
-        "value": "",
-        "message": "Search query cannot be empty",
-        "code": "REQUIRED_FIELD"
-      },
-      {
-        "field": "pagination.size",
-        "value": 500,
-        "message": "Page size must be between 1 and 100",
-        "code": "INVALID_RANGE"
-      }
-    ]
-  }
-}
-```
+Structured error responses with status, error code, message, and field-specific validation details.
 
 **Business Logic Error Standards:**
 
-```json
-// Business Logic Error Response
-{
-  "status": "error",
-  "error": {
-    "code": "PRODUCT_NOT_AVAILABLE",
-    "message": "Product is not available for the requested delivery date",
-    "details": {
-      "productId": "prod-12345",
-      "requestedDeliveryDate": "2024-01-10",
-      "nextAvailableDate": "2024-01-20"
-    }
-  }
-}
-```
+Business rule violation responses with specific error codes and contextual details for resolution.
 
 **Error Code Standards (MANDATORY):**
 
@@ -1847,114 +880,27 @@ End-of-Life: (none currently)
 - **EXTERNAL_SERVICE_ERROR**: External service integration failures
 - **RATE_LIMIT_EXCEEDED**: Client rate limiting violations
 
-#### Pagination & Filtering (MANDATORY)
+#### Pagination & Filtering
 
 **Pagination Standards (CRITICAL):**
 
-```json
-// Pagination Request
-{
-  "pagination": {
-    "page": 1,
-    // 1-based page numbering
-    "size": 20
-    // Items per page (max 100)
-  }
-}
-
-// Pagination Response
-{
-  "data": {
-    "products": [
-      ...
-    ],
-    "pagination": {
-      "page": 1,
-      "size": 20,
-      "totalElements": 156,
-      "totalPages": 8,
-      "hasNext": true,
-      "hasPrevious": false
-    }
-  }
-}
-```
+**Pagination**: Request with page/size fields (1-based, max 100 per page). Response includes totalElements, totalPages, hasNext/hasPrevious flags.
 
 **Filtering Standards (MANDATORY):**
 
-```json
-// Complex Filtering Example
-{
-  "filters": {
-    "klassifikationId": "electronics.computers.laptops",
-    "priceRange": {
-      "min": 500.00,
-      "max": 2000.00
-    },
-    "availability": {
-      "deliveryDateFrom": "2024-01-15",
-      "deliveryDateTo": "2024-02-15",
-      "regions": [
-        "DE",
-        "AT",
-        "CH"
-      ]
-    },
-    "attributes": {
-      "brand": [
-        "Apple",
-        "Dell",
-        "Lenovo"
-      ],
-      "screenSize": {
-        "min": 13,
-        "max": 17
-      }
-    }
-  }
-}
-```
+**Filtering**: Supports classification, price ranges, availability windows, regions, and custom attributes with ranges or arrays.
 
 **Sorting Standards (MANDATORY):**
 
-```json
-// Single Field Sorting
-{
-  "sorting": {
-    "field": "price",
-    "direction": "asc"
-    // "asc" or "desc"
-  }
-}
-
-// Multi-Field Sorting
-{
-  "sorting": [
-    {
-      "field": "availability.deliveryDate",
-      "direction": "asc"
-    },
-    {
-      "field": "price",
-      "direction": "asc"
-    }
-  ]
-}
-```
+**Sorting**: Single field with direction ("asc"/"desc") or array of multiple field/direction objects for complex sorting.
 
 ### Cross-SCS API Communication (MANDATORY)
 
-#### Integration API Standards (CRITICAL)
+#### Integration API Standards
 
 **Cross-SCS Request Headers (MANDATORY):**
 
-```
-X-SCS-Source: finden-product-search    # Source SCS identifier
-X-SCS-Correlation-ID: uuid-12345       # Request correlation for tracing
-X-SCS-Version: 1.2.0                   # API version
-Content-Type: application/json
-Accept: application/json
-```
+Required headers for SCS communication: source identifier, correlation ID, API version, and content type.
 
 **Cross-SCS Authentication (CRITICAL):**
 
@@ -1964,32 +910,11 @@ Accept: application/json
 - **NO user authentication** - handled by infrastructure layer
 - **FORBIDDEN**: User tokens in SCS-to-SCS communication
 
-#### Event-Driven API Integration (MANDATORY)
+#### Event-Driven API Integration
 
 **Event Publishing API Standards:**
 
-```json
-// Product Event Publication
-POST /v1/events/products
-{
-  "eventType": "ProductAvailabilityChanged",
-  "eventVersion": "1.0",
-  "source": "finden-product-search",
-  "timestamp": "2024-01-15T10:30:00Z",
-  "correlationId": "correlation-12345",
-  "data": {
-    "productId": "prod-12345",
-    "oldAvailability": {
-      "status": "available",
-      "deliveryDate": "2024-01-20"
-    },
-    "newAvailability": {
-      "status": "unavailable",
-      "nextAvailableDate": "2024-02-15"
-    }
-  }
-}
-```
+Product events with event type, version, source, timestamp, correlation ID, and structured data payload for availability changes.
 
 **Event Schema Evolution (MANDATORY):**
 
@@ -1998,134 +923,22 @@ POST /v1/events/products
 - **Backward compatibility** required for schema changes
 - **Event versioning** for breaking schema changes
 
-### API Documentation Standards (MANDATORY)
+### API Documentation & Security
 
-#### OpenAPI Specification (MANDATORY)
+**Documentation Standards:**
+- OpenAPI 3.0 specification with complete endpoint documentation
+- 6-month deprecation process with sunset headers
 
-**OpenAPI 3.0 Requirements:**
-
-- **Complete API specification** with all endpoints documented
-- **Schema definitions** for all request/response types
-- **Example payloads** for all operations
-- **Error response documentation** with all possible error codes
-- **Authentication schemes** properly documented
-
-**Documentation Structure:**
-
-```yaml
-openapi: 3.0.3
-info:
-  title: Finden Product Search API
-  version: 1.2.0
-  description: Product search and discovery API for Finden SCS
-servers:
-  - url: https://api.finden-scs.com/v1
-    description: Production server
-paths:
-  /products:
-    get:
-      summary: List products
-      parameters: [ ... ]
-      responses: [ ... ]
-  /search/products:
-    post:
-      summary: Search products
-      requestBody: [ ... ]
-      responses: [ ... ]
-```
-
-#### API Evolution & Deprecation (MANDATORY)
-
-**Deprecation Process (CRITICAL):**
-
-1. **Announce deprecation** - 6 months advance notice
-2. **Add deprecation headers** - `Sunset: 2024-07-15T00:00:00Z`
-3. **Client migration support** - provide migration guides
-4. **Monitor usage** - track deprecated endpoint usage
-5. **Gradual shutdown** - throttle deprecated endpoints before removal
-
-**API Evolution Guidelines:**
-
-- **Additive changes** - safe to add new optional fields, new endpoints
-- **Modification changes** - require new API version for required fields
-- **Removal changes** - require major version bump and deprecation process
-- **Client compatibility** - ensure existing clients continue working
-
-### API Security Standards (MANDATORY)
-
-#### Request Validation (CRITICAL)
-
-**Input Sanitization Requirements:**
-
-- **Schema validation** - validate all requests against OpenAPI schema
-- **Size limits** - maximum request body size (1MB), parameter lengths
-- **Type validation** - strict type checking for all parameters
-- **Range validation** - numeric ranges, date ranges, string lengths
-- **Pattern validation** - regex patterns for IDs, emails, URLs
-
-**Security Headers (MANDATORY):**
-
-```
-Request Security Headers:
-Content-Type: application/json
-X-Content-Type-Options: nosniff
-X-Frame-Options: DENY
-
-Response Security Headers:
-X-Content-Type-Options: nosniff
-X-Frame-Options: DENY
-X-XSS-Protection: 1; mode=block
-Strict-Transport-Security: max-age=31536000; includeSubDomains
-```
-
-#### Rate Limiting & Throttling (MANDATORY)
-
-**Rate Limiting Rules:**
-
-- **Per-client limits** - 1000 requests per minute per API key
-- **Global limits** - 10,000 requests per minute system-wide
-- **Burst limits** - Allow 50 requests in 10-second window
-- **Graceful degradation** - return 429 Too Many Requests with Retry-After header
-
-**Rate Limiting Response:**
-
-```json
-HTTP 429 Too Many Requests
-Retry-After: 60
-
-{
-"status": "error",
-"error": {
-"code": "RATE_LIMIT_EXCEEDED",
-"message": "API rate limit exceeded",
-"details": {
-"limit": 1000,
-"remaining": 0,
-"resetTime": "2024-01-15T10:31:00Z"
-}
-}
-}
-```
+**Security Standards:**
+- Schema validation and input sanitization for all requests
+- Security headers for content type validation and XSS prevention  
+- Rate limiting: 1000 requests/minute per client, 10,000 system-wide
 
 ## Testing Strategy (MANDATORY)
 
 ### Framework Stack
 
-#### Frontend Testing
-
-- **Framework:** Jest 28.1.1 with Vue Test Utils and TypeScript support
-- **Component Testing:** Vue Test Utils for component mounting and interaction
-- **API Mocking:** Mock Service Worker (MSW) for API integration testing
-- **E2E Testing:** Playwright for comprehensive user flow testing
-
-#### Backend Testing
-
-- **Unit Testing:** JUnit 5 Jupiter with Kotlin support
-- **Mocking:** Mockk 1.14.4 (Kotlin-specific)
-- **Assertions:** Strikt 0.35.1 (Kotlin-specific)
-- **Integration:** @QuarkusTest with TestContainers 1.21.3 (MongoDB & Kafka)
-- **Architecture:** ArchUnit 1.4.1 for layer compliance
-- **REST Testing:** REST Assured with Kotlin extensions
+**Framework Stack**: Uses technology stack defined in earlier sections (Jest/Vue Test Utils for frontend, JUnit 5/Mockk/TestContainers for backend).
 
 ### Test Organization & Execution
 
@@ -2149,7 +962,7 @@ Retry-After: 60
 
 1. **BDD Structure:** ALL tests MUST use Given-When-Then
 2. **Test Isolation:** Each test completely independent
-3. **Coverage:** 80% minimum, 95% for business logic
+3. **Coverage:** 80% minimum (JaCoCo with minimum threshold)
 4. **No Production Dependencies:** Test utils in test package only
 5. **Public Interface Testing:** No reflection or private method testing
 
@@ -2259,14 +1072,7 @@ Retry-After: 60
 
 #### Authentication Integration
 
-- Create authentication composables for token management
-- Store authentication tokens in localStorage
-- Implement computed properties for authentication state
-- Create async login functions with proper credential handling
-- Integrate with authentication API endpoints
-- Set token values and localStorage on successful login
-- Clear tokens and localStorage on logout
-- Return authentication state and functions from composables
+**Note:** Authentication handled by infrastructure layer - SCS consumes pre-validated security context. No auth implementation needed in SCS code.
 
 ## Performance Standards
 
@@ -2279,7 +1085,7 @@ Retry-After: 60
 - **Collection operations MUST be optimized** for expected data sizes
 - **Memory usage MUST be bounded** - no unlimited data loading
 
-#### Database Performance (MANDATORY)
+#### Database Performance
 
 1. **Query Optimization:**
 
@@ -2297,7 +1103,7 @@ Retry-After: 60
 - Query timeout limits set
 - Connection leak prevention
 
-#### Memory Management (MANDATORY)
+#### Memory Management
 
 1. **Object Lifecycle:**
 
@@ -2311,7 +1117,7 @@ Retry-After: 60
 - Use sequence operations for large datasets
 - Monitor heap usage in large operations
 
-#### Performance Anti-Patterns (FORBIDDEN)
+#### Performance Anti-Patterns
 
 **Forbidden performance anti-patterns:**
 
@@ -2320,107 +1126,36 @@ Retry-After: 60
 - Never load entire collections without limits (always use pagination)
 - Prevent memory exhaustion through proper collection handling
 
-#### Performance Monitoring (MANDATORY)
+#### Performance Monitoring
 
-- **API Endpoints:** P95 < 300ms for standard operations, P95 < 500ms for complex queries
-- **SSR Pages:** < 200ms response time for server-side rendered pages
-- **Database Queries:** < 200ms average, with proper indexing on search fields
-- **Memory Usage:** < 80% heap under normal load
-- **No memory leaks** in long-running operations
+Consolidated performance standards defined in Performance Standards section.
 
 ## Kotlin Development Guidelines
 
-### Language Standards
+### Language Standards (MANDATORY)
 
-#### Immutability (MANDATORY)
+**Immutability:** Use val (not var), validation in init blocks, immutable data classes
+**Null Safety:** Use `?.let`, avoid `!!` unless justified, Optional patterns for domain modeling
+**Collections:** Functional operations (filter, map, take), chain transformations, avoid imperative loops
+**FORBIDDEN:** Mutable value objects, missing null checks, imperative style
 
-- **Use val, not var** for all value object properties
-- **Implement validation in init blocks** for value objects
-- **Make data classes immutable** by using only val properties
-- **FORBIDDEN**: Mutable value objects that break immutability principles
+### Error Handling (MANDATORY)
 
-#### Null Safety (MANDATORY)
+**Domain Exceptions:** Specific exceptions with context, inherit from base domain exception class
+**Boundary Validation:** Validate all inputs, check nulls/negatives, use when expressions for conditions
+**FORBIDDEN:** Missing boundary checks, runtime crashes from invalid inputs
 
-- Use Kotlin's null safety features properly
-- Prefer `?.let` over explicit null checks
-- Never use `!!` unless absolutely necessary with clear justification
-- Use `Optional` patterns for domain modeling
+### MongoDB Integration (MANDATORY)
 
-#### Collection Operations
+**Repository Pattern:** Domain interfaces with domain types, adapter implementations with MongoDB classes
+**Entity Mapping:** MongoDB entities in adapter layer only, clean MongoProdukt ↔ Produkt mapping
+**Configuration:** ApplicationScoped CDI, PanacheMongoRepository inheritance, no MongoDB annotations in domain
 
-- **PREFERRED**: Use functional collection operations (filter, map, take)
-- **Chain operations** for readable data transformations
-- **AVOID**: Imperative loops for simple transformations that can be expressed functionally
+### Annotation Processing (MANDATORY)
 
-### Error Handling
-
-#### Domain Exceptions (MANDATORY)
-
-- **Create specific domain exceptions** with meaningful error messages
-- **Inherit from base domain exception class** for consistency
-- **Include context values** in exception messages for debugging
-- **Implement validation in value object constructors** using require() statements
-
-#### Boundary Validation (CRITICAL)
-
-- **MANDATORY**: Validate all boundary conditions to prevent crashes
-- **Check for null values** and negative numbers before processing
-- **Use when expressions** for comprehensive condition handling
-- **FORBIDDEN**: Missing boundary checks that cause runtime crashes with invalid inputs
-
-### MongoDB Integration
-
-#### Repository Pattern (MANDATORY)
-
-- **Domain layer**: Define repository interfaces with domain types only
-- **Adapter layer**: Implement repository interfaces using MongoDB-specific classes
-- **Use ApplicationScoped annotation** for CDI repository implementations
-- **Inherit from PanacheMongoRepository** for MongoDB data access patterns
-
-#### Entity Mapping (MANDATORY)
-
-- MongoDB entities in adapter layer only
-- Clean mapping between MongoProdukt ↔ Produkt
-- No MongoDB annotations in domain layer
-
-### Kotlin Annotation Processing Configuration
-
-The project uses sophisticated annotation processing for framework integration:
-
-#### AllOpen Configuration
-
-**AllOpen plugin configuration requirements:**
-
-- Configure CDI annotations (ConfigProperties, ApplicationScoped, Singleton, Dependent)
-- Configure JAX-RS endpoints with Path annotation
-- Configure persistence annotations for JPA and MongoDB entities
-- Configure QuarkusTest annotations for test class compatibility
-- Enable framework integration through annotation processing
-
-#### NoArg Configuration
-
-**NoArg plugin configuration requirements:**
-
-- Configure custom domain annotation for no-arg constructor generation
-- Configure CDI ConfigProperties for framework compatibility
-- Configure persistence entity annotations for JPA and MongoDB
-- Enable automatic no-arg constructor generation for framework integration
-
-#### Custom NoArg Annotation
-
-**Custom NoArg annotation requirements:**
-
-- Define annotation with CLASS target and RUNTIME retention
-- Apply to domain entities for framework compatibility
-- Use with data classes to generate no-arg constructors automatically
-- Maintain clean domain code while supporting framework requirements
-
-#### Annotation Processing Benefits
-
-- **Framework Integration**: Seamless CDI and JAX-RS integration
-- **Persistence Layer**: Both JPA and MongoDB support configured
-- **Testing Support**: QuarkusTest classes get proper initialization
-- **Domain Model**: Custom NoArg annotation for clean domain code
+**AllOpen/NoArg Configuration:** CDI annotations, JAX-RS endpoints, persistence entities, QuarkusTest compatibility
+**Custom NoArg Annotation:** CLASS target, RUNTIME retention, framework compatibility for domain entities
+**Benefits:** Seamless CDI/JAX-RS integration, JPA/MongoDB support, clean domain code
 
 ## Code Quality Standards
 
@@ -2442,12 +1177,9 @@ The project uses sophisticated annotation processing for framework integration:
 
 ### Architecture Compliance (ENFORCED)
 
-#### Layer Coupling (FORBIDDEN)
+#### Layer Coupling
 
-- **Domain layer MUST NOT reference adapter DTOs** or external data structures
-- **Domain classes should only work with domain types** and interfaces
-- **Keep clear separation** between domain model and adapter layer representations
-- **Use proper mapping at adapter boundaries** to convert between domain and DTO types
+See Architecture Boundaries section for detailed layer coupling constraints.
 
 ### Quality Tools
 
@@ -2455,7 +1187,7 @@ The project uses sophisticated annotation processing for framework integration:
 - **Build Quality:** Gradle 8.x build verification with Kotlin DSL
 - **Dependency Check:** OWASP Dependency Check 12.1.3 for vulnerability scanning
 - **Version Management:** Gradle Versions Plugin 0.52.0 for dependency updates
-- **Coverage:** JaCoCo 0.8.7 with 80% minimum threshold
+- **Coverage:** JaCoCo 0.8.7 with 80% minimum threshold (see Testing Strategy section)
 - **Schema Management:** Avro Plugin 1.9.1 for Kafka schema handling
 
 ### Build Verification (MANDATORY)
@@ -2474,48 +1206,9 @@ The development workflow leverages **SuperClaude personas** for specialized expe
 
 #### Available Personas
 
-**Architect Persona (`--persona-architect`)**
+**Available Personas:** Architect (system design), Frontend (UI/UX), Backend (API/performance), Security (input validation/data protection), QA (testing/quality), Performance (optimization)
 
-- **Core Belief:** "Systems evolve, design for change"
-- **Primary Question:** "How will this scale & evolve?"
-- **Auto-Flags:** `--think-hard`, `--arch`, `--validate`
-- **Commands:** `/analyze --arch`, `/design --api --ddd`, `/build --tdd`
-
-**Frontend Persona (`--persona-frontend`)**
-
-- **Core Belief:** "UX determines product success"
-- **Primary Question:** "How does this feel to user?"
-- **Auto-Flags:** `--react`, `--interactive`, `--visual`
-- **Commands:** `/build --react --magic`, `/test --e2e --pup`, `/analyze --perf`
-
-**Backend Persona (`--persona-backend`)**
-
-- **Core Belief:** "Reliability & perf enable everything else"
-- **Primary Question:** "Will this handle high scalability?"
-- **Auto-Flags:** `--api`, `--profile`, `--security`
-- **Commands:** `/build --api --c7`, `/analyze --perf --profile`, `/scan --security`
-
-**Security Persona (`--persona-security`)**
-
-- **Core Belief:** "Threats exist everywhere, trust must be earned"
-- **Primary Question:** "What could go wrong?"
-- **SCS Security Scope:** Input validation, data protection, business logic security (NOT auth/authorization)
-- **Auto-Flags:** `--security`, `--validate`, `--strict`
-- **Commands:** `/scan --security --input-validation`, `/analyze --security --data-protection`, `/build --security`
-
-**QA Persona (`--persona-qa`)**
-
-- **Core Belief:** "Quality cannot be tested in, must be built in"
-- **Primary Question:** "How could this break?"
-- **Auto-Flags:** `--coverage`, `--validate`, `--strict`
-- **Commands:** `/test --coverage --e2e`, `/analyze --quality`, `/scan --validate`
-
-**Performance Persona (`--persona-performance`)**
-
-- **Core Belief:** "Speed is a feature, slowness kills adoption"
-- **Primary Question:** "Where is the bottleneck?"
-- **Auto-Flags:** `--profile`, `--watch-perf`, `--iterate`
-- **Commands:** `/analyze --profile --pup`, `/improve --perf --iterate`, `/test --benchmark`
+**Auto-Activation:** Personas activate automatically based on file patterns and task context.
 
 #### Persona Auto-Activation Rules
 
@@ -2539,7 +1232,7 @@ The development workflow leverages **SuperClaude personas** for specialized expe
 
 #### Core TDD Cycle with Intelligent Persona Activation
 
-##### Task-Level Setup
+#### Task-Level Setup
 
 1. **Task Selection:** `task-master next` → identify prioritized main task
 
@@ -2554,7 +1247,7 @@ The development workflow leverages **SuperClaude personas** for specialized expe
 
 - **Context Setup**: Persona-specific environment and tools automatically configured
 
-##### Subtask Iteration Loop
+#### Subtask Iteration Loop
 
 4. **For Each Subtask in Task:** Process all subtasks sequentially
 
@@ -2592,7 +1285,7 @@ g. **SUBTASK COMMIT:** Atomic commit with subtask reference
   - Performance validation (`--persona-performance --scope=subtask --task-id=<task-id>.<subtask-id>`) - validate subtask-specific performance
   - Architecture compliance (`--persona-architect --scope=subtask --task-id=<task-id>.<subtask-id>`) - validate subtask layer compliance
 
-##### Task-Level Completion
+#### Task-Level Completion
 
 5. **Final Quality Check:** Cross-subtask validation and integration testing
 
@@ -2620,7 +1313,7 @@ g. **SUBTASK COMMIT:** Atomic commit with subtask reference
 - [ ] **Data Security:** Input validation & data protection implemented (`/scan --security --persona-security --scope=task --task-id=<task-id>`)
 - [ ] **Frontend:** UI/UX standards met (`/test --e2e --persona-frontend --pup --scope=task --task-id=<task-id>`)
 - [ ] **Backend:** API reliability validated (`/test --api --persona-backend --scope=task --task-id=<task-id>`)
-- [ ] **Quality:** All tests pass, coverage > 80% (`/test --coverage --persona-qa --scope=task --task-id=<task-id>`)
+- [ ] **Quality:** All tests pass, 80% coverage minimum (`/test --coverage --persona-qa --scope=task --task-id=<task-id>`)
 - [ ] **Boundaries:** All input validation implemented (`/scan --validate --strict --scope=task --task-id=<task-id>`)
 - [ ] **Immutability:** Value objects properly immutable (`/analyze --code --persona-refactorer --scope=task --task-id=<task-id>`)
 - [ ] **Task Context:** Implementation details logged via `task-master update-subtask` for all subtasks
@@ -2683,277 +1376,33 @@ g. **SUBTASK COMMIT:** Atomic commit with subtask reference
 - **Status Values:** pending, in-progress, done, deferred, cancelled, blocked
 - **File Structure:** `.taskmaster/tasks/tasks.json`, `.taskmaster/docs/prd.txt`
 
-## Code Review Process
+## Code Review Standards
+
+### Key Review Standards
+
+**Architecture Compliance:**
+- Layer boundaries respected (no domain/DTO mixing)
+- Dependency direction correct (domain has no outward dependencies)
+- SCS boundaries maintained (no direct cross-SCS dependencies)
+
+**Frontend Standards:**
+- Composition API usage (no Options API in new components)
+- TypeScript typing (all props, emits, and composables typed)
+- Business logic in composables, not components
+- Input sanitization and XSS prevention
+
+**Backend Standards:**
+- Immutable value objects with validation
+- Business logic in domain entities
+- Proper exception handling with context
+- Algorithm complexity: no O(n²) or higher operations
+
+**Security Requirements:**
+- Input validation at all boundaries
+- No user auth implementation in SCS (handled by infrastructure)
+- Parameterized queries (no string concatenation)
+- GDPR compliance: data minimization and user rights support
 
-### Review Workflow & Responsibilities (MANDATORY)
-
-The code review process integrates with **SuperClaude personas** to ensure comprehensive quality validation across all system dimensions:
-
-#### Review Types & Triggers (MANDATORY)
-
-**Pull Request Review Requirements:**
-
-- **ALL code changes** require peer review before merge
-- **Cross-SCS boundary changes** require architecture team review
-- **Security-related changes** require security team review
-- **Performance-critical changes** require performance team review
-- **Database migrations** require DBA review
-
-**Review Assignment Rules:**
-
-- **Domain expertise** - assign reviewers based on code area (frontend, backend, infrastructure)
-- **Cross-training** - include junior reviewers for knowledge sharing
-- **Availability** - maximum 24-hour response time for review requests
-- **Conflict resolution** - escalate to tech lead for disagreements
-
-#### Persona-Enhanced Review Process (MANDATORY)
-
-**Automated Persona Analysis Integration:**
-Before human review, SuperClaude personas automatically analyze changes:
-
-```
-1. Context Analysis (--persona-analyzer --think-hard)
-   → Identify change scope, complexity, and risk level
-
-2. Architecture Review (--persona-architect --validate)
-   → Check layer compliance, dependency patterns, SCS boundaries
-
-3. Security Analysis (--persona-security --strict)
-   → Validate input handling, data protection, boundary security
-
-4. Performance Review (--persona-performance --profile)
-   → Check algorithm complexity, memory patterns, database queries
-
-5. Quality Assessment (--persona-qa --coverage)
-   → Validate test coverage, edge cases, error handling
-```
-
-**Persona Review Integration:**
-
-- **Automated analysis runs** before human review assignment
-- **Review comments pre-populated** with persona findings
-- **Quality gate enforcement** - personas block merge for critical issues
-- **Human reviewers focus** on business logic and architectural decisions
-
-### Review Checklist & Standards (MANDATORY)
-
-#### Universal Review Checklist (CRITICAL)
-
-**Code Quality Standards (MANDATORY):**
-
-- [ ] **Code follows established patterns** from existing codebase
-- [ ] **Naming conventions** are consistent and descriptive
-- [ ] **Function/method size** is manageable (< 50 lines preferred)
-- [ ] **Code complexity** is reasonable (avoid deep nesting)
-- [ ] **Comments explain why, not what** - focus on business logic rationale
-- [ ] **TODO comments** include task references and deadlines
-- [ ] **FORBIDDEN**: Dead code, debug statements, hardcoded values
-
-**Architecture Compliance Checklist (CRITICAL):**
-
-- [ ] **Layer boundaries respected** - no domain/DTO mixing
-- [ ] **Dependency direction correct** - domain has no outward dependencies
-- [ ] **Single responsibility** - classes/modules have clear purpose
-- [ ] **Interface segregation** - no fat interfaces with unused methods
-- [ ] **SCS boundaries maintained** - no direct cross-SCS dependencies
-- [ ] **FORBIDDEN**: Cross-layer dependencies, business logic in adapters
-
-#### Frontend-Specific Review Checklist (MANDATORY)
-
-**Vue.js/TypeScript Standards (MANDATORY):**
-
-- [ ] **Composition API usage** - no Options API in new components
-- [ ] **TypeScript typing** - all props, emits, and composables typed
-- [ ] **Component responsibility** - single concern per component
-- [ ] **Business logic location** - logic in composables, not components
-- [ ] **State management** - proper Vuex integration with typed modules
-- [ ] **Performance patterns** - lazy loading, code splitting, reactivity optimization
-- [ ] **FORBIDDEN**: Business logic in components, untyped API calls
-
-**Frontend Security Checklist (MANDATORY):**
-
-- [ ] **Input sanitization** - all user inputs properly sanitized
-- [ ] **XSS prevention** - no innerHTML with unsanitized content
-- [ ] **CSRF protection** - proper token handling for state changes
-- [ ] **Authentication integration** - correct composable usage
-- [ ] **FORBIDDEN**: Direct authentication implementation, unsanitized data display
-
-#### Backend-Specific Review Checklist (MANDATORY)
-
-**Kotlin/Quarkus Standards (MANDATORY):**
-
-- [ ] **Immutability** - value objects are immutable with validation
-- [ ] **Null safety** - proper use of Kotlin null safety features
-- [ ] **Domain logic location** - business logic in domain entities
-- [ ] **Repository pattern** - clean separation of domain and persistence
-- [ ] **Exception handling** - proper domain exceptions with context
-- [ ] **Collection operations** - functional style preferred over imperative
-- [ ] **FORBIDDEN**: Mutable value objects, business logic in controllers
-
-**Performance Review Checklist (CRITICAL):**
-
-- [ ] **Algorithm complexity** - no O(n²) or higher complexity operations
-- [ ] **Database queries** - proper indexing and pagination
-- [ ] **Memory management** - bounded collections, proper resource cleanup
-- [ ] **Connection handling** - proper connection pooling and timeouts
-- [ ] **FORBIDDEN**: Full collection loading, memory exhaustion patterns
-
-#### Security Review Checklist (CRITICAL)
-
-**Security Validation Standards (MANDATORY):**
-
-- [ ] **Input validation** - all boundary inputs validated with proper error handling
-- [ ] **Data protection** - sensitive data properly handled and encrypted
-- [ ] **Authentication boundaries** - no user auth implementation in SCS
-- [ ] **Authorization context** - proper consumption of infrastructure auth context
-- [ ] **SQL injection prevention** - parameterized queries, no string concatenation
-- [ ] **Cross-SCS security** - proper service-to-service authentication
-- [ ] **FORBIDDEN**: SQL string concatenation, plaintext sensitive data storage
-
-**GDPR Compliance Checklist (CRITICAL):**
-
-- [ ] **Personal data minimization** - only necessary data collected
-- [ ] **Data anonymization** - search analytics properly anonymized
-- [ ] **Retention policies** - automatic data deletion implemented
-- [ ] **User rights support** - data access/deletion capabilities
-- [ ] **FORBIDDEN**: Unnecessary personal data collection, indefinite data retention
-
-### Review Approval Process (MANDATORY)
-
-#### Approval Requirements by Change Type (CRITICAL)
-
-**Standard Changes (Low Risk):**
-
-- **Requirements**: 1 peer reviewer approval
-- **Examples**: Bug fixes, minor refactoring, test improvements
-- **Criteria**: No architecture changes, no performance impact
-- **Timeline**: 24-hour review requirement
-
-**Significant Changes (Medium Risk):**
-
-- **Requirements**: 2 reviewer approvals (1 senior, 1 peer)
-- **Examples**: New features, API changes, dependency updates
-- **Criteria**: Architecture impact, moderate complexity
-- **Timeline**: 48-hour review requirement
-
-**Critical Changes (High Risk):**
-
-- **Requirements**: 3 reviewer approvals (1 tech lead, 1 senior, 1 domain expert)
-- **Examples**: Cross-SCS changes, security modifications, performance optimizations
-- **Criteria**: System-wide impact, high complexity, security implications
-- **Timeline**: 72-hour review requirement with mandatory testing
-
-**Emergency Changes (Production Fix):**
-
-- **Requirements**: 1 senior reviewer + post-merge review
-- **Examples**: Production hotfixes, critical security patches
-- **Criteria**: P1 production incidents only
-- **Timeline**: Immediate review, 4-hour post-merge full review
-
-#### Review Quality Standards (MANDATORY)
-
-**Effective Review Practices (CRITICAL):**
-
-- **Constructive feedback** - suggest improvements, don't just identify problems
-- **Code examples** - provide better alternatives when suggesting changes
-- **Business context** - understand and validate business requirements
-- **Testing verification** - ensure adequate test coverage for changes
-- **Documentation updates** - verify docs are updated for public API changes
-
-**Review Communication Standards:**
-
-- **Clear feedback** - specific, actionable comments with code references
-- **Respectful tone** - professional communication focused on code quality
-- **Timely responses** - acknowledge reviews within SLA timeframes
-- **Resolution tracking** - ensure all feedback is addressed before approval
-
-### Cross-SCS Review Coordination (MANDATORY)
-
-#### Integration Change Reviews (CRITICAL)
-
-**Cross-SCS Impact Assessment:**
-
-- **Event schema changes** - coordinate with consuming SCS teams
-- **API contract modifications** - validate backward compatibility
-- **Performance impact** - assess cross-SCS performance implications
-- **Security boundary changes** - validate with security architecture team
-
-**Integration Review Process:**
-
-1. **Technical Review** - standard code review process
-2. **Impact Analysis** - assess cross-SCS implications
-3. **Stakeholder Notification** - inform affected SCS teams
-4. **Integration Testing** - validate cross-SCS functionality
-5. **Deployment Coordination** - plan rollout across SCS boundaries
-
-#### Architecture Review Board (MANDATORY)
-
-**Architecture Review Triggers (CRITICAL):**
-
-- **New SCS integration patterns** require architecture board review
-- **Technology stack changes** require architecture approval
-- **Performance pattern changes** require performance architecture review
-- **Security model changes** require security architecture review
-
-**Review Board Composition:**
-
-- **Technical Architect** (required)
-- **Security Architect** (for security changes)
-- **Performance Engineer** (for performance changes)
-- **Domain Expert** (for business logic changes)
-
-### Review Metrics & Continuous Improvement (MANDATORY)
-
-#### Review Quality Metrics (MANDATORY)
-
-**Effectiveness Metrics:**
-
-- **Defect escape rate** - bugs found in production vs. code review
-- **Review coverage** - percentage of changes that receive proper review
-- **Review turnaround time** - time from PR submission to approval
-- **Review participation** - distribution of review load across team members
-
-**Quality Improvement Process:**
-
-- **Monthly review retrospectives** - identify process improvements
-- **Review effectiveness analysis** - correlate review quality with bug rates
-- **Training identification** - identify areas where reviewers need more expertise
-- **Process refinement** - update review checklists based on learnings
-
-#### Automated Quality Gates (MANDATORY)
-
-**Pre-Review Automation:**
-
-- **SuperClaude persona analysis** - automated quality assessment
-- **Static analysis** - Detekt, ESLint, type checking
-- **Test execution** - all tests must pass before review
-- **Performance testing** - automated performance regression detection
-- **Security scanning** - automated vulnerability detection
-
-**Review Integration Requirements:**
-
-- **Quality gates must pass** before human review assignment
-- **Automated findings** are included in review context
-- **Human reviewers focus** on logic, architecture, and business requirements
-- **Merge blocked** until all automated and human reviews approve
-
-### Knowledge Sharing & Documentation (MANDATORY)
-
-#### Review as Learning Tool (MANDATORY)
-
-**Knowledge Transfer Objectives:**
-
-- **Cross-training** - expose team members to different code areas
-- **Pattern sharing** - identify and propagate good practices
-- **Architectural education** - teach SCS and DDD principles through review
-- **Quality standards** - reinforce coding standards and conventions
-
-**Documentation Requirements:**
-
-- **Significant decisions** documented in architecture decision records
-- **Pattern examples** added to code organization documentation
-- **Review lessons learned** captured in team knowledge base
-- **Best practices** updated based on review findings
 
 ## Additional Standards
 
@@ -2966,10 +1415,12 @@ Before human review, SuperClaude personas automatically analyze changes:
 
 ### Performance Monitoring
 
-- **Metrics:** Micrometer with Prometheus
-- **Response Times:** P95 < 300ms for standard operations, P95 < 500ms for complex queries
-- **Resource Usage:** Memory < 80% heap
-- **Database:** Query times < 200ms average
+- **Metrics:** Micrometer with Prometheus  
+- **API Response Times:** P95 < 300ms standard operations, P95 < 500ms complex queries
+- **SSR Pages:** < 200ms response time
+- **Database Queries:** < 200ms average with proper indexing
+- **Memory Usage:** < 80% heap under normal load
+- **Connection Limits:** 50 connections per application instance
 
 ### Error Handling
 
