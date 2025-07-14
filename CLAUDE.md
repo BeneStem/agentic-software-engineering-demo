@@ -10,9 +10,7 @@ This guide outlines the development standards, coding conventions, and contribut
 **Domains:** 🏗️ Architecture | 🎨 Frontend | 🔧 Backend | 🛡️ Security | ⚡ Performance | 📊 Quality | 💻 Git | 🧠 Memory | 🤖 AI | 📦 Deploy | 🌐 Network | 📱 Mobile | 🧩 Components | 🔍 Analysis
 **Abbreviations:** cfg (configuration) | impl (implementation) | arch (architecture) | perf (performance) | req (requirements) | val (validation) | std (standards) | qual (quality) | sec (security) | mgmt (management) | ops (operations) | comm (communication) | dev (development) | deps (dependencies) | src (source) | dst (destination) | env (environment) | usr (user) | sys (system) | tmp (temporary) | max (maximum) | min (minimum) | avg (average)
 
-## System Overview & Architecture
-
-### Self-Contained Systems (SCS) Principles
+## System Overview & Architecture: Self-Contained Systems (SCS) Principles
 
 **SCS:** Finden = autonomous unit w/ own UI, business logic, DB → handles specific business capability end-to-end
 **SCS Implementation Principles:** UI Ownership: Each SCS MUST include own web interface, NO shared UI components between SCS boundaries | Data Autonomy: Dedicated DB per SCS, NO direct DB access between systems or shared schemas | Communication Boundaries: Async communication only via Kafka+Avro (≠direct API calls) | Deployment Independence: Each SCS deployed as complete unit, NO deployment coordination req | 🛡️ Security Model: Auth & authz handled by infrastructure
@@ -94,8 +92,6 @@ This guide outlines the development standards, coding conventions, and contribut
 **🤖 Personas:** 🏗️ Architect, 🎨 Frontend, 🔧 Backend, 🛡️ Security, 📊 QA, ⚡ Performance - auto-activate based on file patterns & task context | Auto-Activation: Frontend files → 🎨 | API/server/DB files → 🔧 | Test files → 📊 | Architecture/design → 🏗️ | Input val → 🛡️ | Optimization → ⚡
 
 ### Daily Development Loop (TDD with task-master)
-
-#### Core TDD Cycle with Intelligent Persona Activation
 
 **🔄 TDD Cycle:** 0. Clear conversation w/ `/clear` | 1. Task Setup: `task-master next` → select task | `task-master show <task-id>` → review req | `task-master set-status --id=<task-id> --status=in-progress` | Auto-persona selection (🎨/🔧/🛡️/📊/⚡) | 2. Subtask Iteration: For each subtask (`<task-id>.1`, `<task-id>.2`, etc.): a. **RED:** Write failing BDD test (📊 QA persona auto-enhances test strategy) | b. **GREEN:** Minimal code to pass test w/ persona-guided impl | c. **REFACTOR:** Improve code (auto-quality analysis w/ refactorer persona) | d. **DOCUMENT:** `task-master update-subtask --id=<task-id>.<subtask-id> --prompt="notes"` | e. **COMMIT:** Atomic commit w/ pre-commit val | f. **MEMORY:** Capture patterns, problems, solutions in dev episode | 3. Task Completion: Integration testing across subtasks | Final refactoring for consistency | Store completion insights & learnings | `task-master set-status --id=<task-id> --status=done` | 4. Commit & Push: Final commit & push changes |
 Follow Quality Gates (pre-commit, pre-merge, pre-deploy)
