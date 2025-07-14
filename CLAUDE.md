@@ -23,47 +23,15 @@ This guide outlines the development standards, coding conventions, and contribut
 
 ## Self-Contained Systems Architecture
 
-### What is a Self-Contained System?
-
-The Finden application is designed as a **Self-Contained System (SCS)** - an architectural approach that provides a middle ground between monolithic and microservices architectures. An SCS is an autonomous unit that includes its own web interface, business logic, and database, designed to handle a specific business capability end-to-end.
+The Finden application is designed as a **Self-Contained System (SCS)** - an autonomous unit that includes its own web interface, business logic, and database, designed to handle a specific business capability end-to-end.
 
 ### SCS Implementation Principles
 
-#### 1. **UI Ownership**
-
-- Each SCS MUST include its own web interface
-- NO shared UI components between SCS boundaries
-- Changes contained within single SCS reduce coordination
-
-#### 2. **Data Autonomy**
-
-- Dedicated database per SCS
-- NO direct database access between systems
-- Data consistency handled within SCS boundaries
-
-#### 3. **Communication Boundaries**
-
-- Prefer asynchronous communication between SCS
-- Minimize synchronous API calls
-- Event-driven integration where possible
-
-#### 4. **Deployment Independence**
-
-- Each SCS deployed as complete unit
-- NO deployment coordination required
-- Independent scaling and versioning
-
-### Integration with Development Workflow
-
-The SCS architecture directly influences development practices:
-
-- **Feature Development**: Complete features implemented within single system
-- **Testing Strategy**: End-to-end testing within SCS boundaries
+- **UI Ownership**: Each SCS MUST include its own web interface, NO shared UI components between SCS boundaries
+- **Data Autonomy**: Dedicated database per SCS, NO direct database access between systems
+- **Communication Boundaries**: Prefer asynchronous communication between SCS, minimize synchronous API calls
+- **Deployment Independence**: Each SCS deployed as complete unit, NO deployment coordination required
 - **Security Model**: Authentication and authorization handled by infrastructure - SCS handles input validation and business logic security only
-- **Performance Optimization**: Full-stack performance monitoring and optimization
-- **Quality Gates**: Complete SCS must pass all quality standards before deployment
-
-This architectural approach enables the development practices outlined in subsequent sections while maintaining system modularity and team autonomy.
 
 ## Technology Stack
 
@@ -119,7 +87,6 @@ This architectural approach enables the development practices outlined in subseq
 - **Application layer MUST ONLY depend** on domain interfaces
 - **Adapter layer MUST implement** domain interfaces without domain contamination
 - **NO synchronous dependencies** on other SCS for core functionality
-- **NO shared UI components** between SCS boundaries (each SCS owns complete UI)
 - **MANDATORY asynchronous communication** for all cross-SCS interactions
 
 ## Architecture and Domain Design
@@ -156,7 +123,7 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 ## Core Domain Logic
 
 **Search Operations:** Query analysis → classification matching → availability/price calculations → ranking → presentation
-**Key Fields:** `klassifikationId` (categories), `verfuegbarkeiten.bestellschlussUTC` (order deadlines), `verfuegbarkeiten.liefertag` (delivery dates)
+**Key Fields:** classification IDs (categories), order deadlines, delivery dates
 **Business Rules:** Real-time pricing, availability checks, hierarchical product classification
 
 ### Business Rules & Decision Trees (MANDATORY)
@@ -207,8 +174,6 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 
 ### Three-Layer Architecture
 
-**Layer Structure:**
-
 - **Presentation (Components):** Vue components, templates, styles - UI rendering only
 - **Business Logic (Composables):** Reusable reactive business logic and state management
 - **Data Access (API):** HTTP clients, API abstractions, data transformation
@@ -217,52 +182,26 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 ### Essential Requirements (MANDATORY)
 
 **Vue.js 3 Composition API Only:**
-
-- Use `<script setup>` syntax with reactive functions (ref, computed, onMounted)
+- Use Composition API syntax with reactive functions
 - TypeScript interfaces for all Props and Emits
 - **FORBIDDEN**: Options API, untyped props/events, Vue 2 patterns
 
 **Component Architecture:**
-
 - Base components (reusable UI), Layout components (structure), Business components (domain-specific)
 - Single responsibility per component, business logic in composables
 - Semantic HTML, BEM methodology, scoped styling
 
 **State Management:**
-
 - Vuex with TypeScript typing, namespaced modules
-- Composables for reactive business logic (useProductFilter, useProductTracking)
+- Composables for reactive business logic
 - Centralized error handling with try-catch patterns
 
 **Performance:**
-
-- Lazy loading with defineAsyncComponent for heavy components
-- shallowRef for large arrays, markRaw for non-reactive objects
-- Route-level code splitting with dynamic imports
-
-**Multi-App Support:**
-
-- Independent apps (produktliste, tool) with separate build entry points
-- Shared component library with clear interface contracts
-- Runtime isolation between applications
-
-### Component Standards
-
-**Component Hierarchy:**
-
-- Base components (framework-agnostic, reusable)
-- Layout components (structural concerns only)
-- Business components (domain-specific logic)
-- Single responsibility per component
-
-**State Management:**
-
-- Vuex modular patterns with strict TypeScript typing
-- Flat state structures, namespaced modules
-- Typed actions, mutations, and getters
+- Lazy loading for heavy components
+- Shallow references for large arrays, non-reactive objects for performance
+- Route-level code splitting
 
 **API Layer:**
-
 - Type-safe abstractions for backend communication
 - Separate HTTP client instances for SSR vs client-side
 - Centralized error handling with retry logic
@@ -278,7 +217,7 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 
 **Domain Layer:** model/ (entities, value objects), service/ (domain services), repository/ (interfaces), exception/ (domain exceptions)
 
-- **Rules:** Business logic in entities, immutable value objects, no external dependencies
+- **Rules:** Immutable value objects, no external dependencies
 - **FORBIDDEN:** Framework annotations in domain, infrastructure concerns
 
 **Application Layer:** usecase/ (business operations), dto/ (data contracts), mapper/ (DTO↔domain), service/ (coordination)
@@ -300,8 +239,8 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 
 ### File Naming & Dependencies (MANDATORY)
 
-**Backend:** PascalCase with suffixes (.kt, Service, Repository, Controller, Request/Response), lowercase packages
-**Frontend:** PascalCase components (.vue), camelCase composables (use prefix), lowercase directories with hyphens
+**Backend:** PascalCase with suffixes, lowercase packages
+**Frontend:** PascalCase components, camelCase composables with prefix, lowercase directories with hyphens
 **FORBIDDEN:** Cross-layer dependencies, shared business logic modules
 
 ## Frontend-Backend Integration
@@ -329,34 +268,11 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 
 ### REST API Design Standards (MANDATORY)
 
-**URL Naming:**
-
-- Nouns not verbs, plural collections, kebab-case
-- Path parameters for IDs, query params for filtering
-- **FORBIDDEN**: Verbs in URLs, camelCase paths, nested resources >2 levels
-
-**HTTP Methods:**
-
-- **GET**: Retrieve (idempotent, cacheable) | **POST**: Create/search operations
-- **PUT**: Replace entire resource | **DELETE**: Remove (not used in read-only catalog)
-- **FORBIDDEN**: GET with side effects, POST for idempotent operations
-
-**Response Format:**
-
-- Envelope structure with status, data/error, and meta fields
-- ISO 8601 UTC dates, monetary values as strings
-- Standard status codes: 200/201/204 success, 4xx client errors, 5xx server errors
-
-**Versioning & Security:**
-
-- URL path versioning, semantic versioning, 6-month deprecation
-- Input validation, schema sanitization, rate limiting (1000/min per client)
-
-**Finden-Specific Standards:**
-
-- Product search endpoints with classification/price/availability filters
-- Pagination: 1-based, max 100 per page, includes totalElements/hasNext flags
-- Event-driven integration via Kafka with Avro schemas
+**URL Naming:** Nouns not verbs, plural collections, kebab-case, path parameters for IDs, query params for filtering
+**HTTP Methods:** GET (retrieve), POST (create/search), PUT (replace), DELETE (remove) 
+**Response Format:** Envelope structure with status, data/error, and meta fields, ISO 8601 UTC dates, monetary values as strings
+**Versioning & Security:** URL path versioning, input validation, schema sanitization, rate limiting (1000/min per client)
+**Finden-Specific Standards:** Product search endpoints with classification/price/availability filters, pagination (1-based, max 100 per page), event-driven integration via Kafka with Avro schemas
 
 ## Testing Strategy (MANDATORY)
 
@@ -372,13 +288,13 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 
 **Test Types:**
 
-- **Unit Tests**: `@Tag("unit")` - Fast, isolated, no external dependencies
-- **Integration Tests**: `@Tag("integration")` - TestContainers, real databases
-- **E2E Tests**: Playwright for complete user journeys
-- **Architecture Tests**: ArchUnit for layer dependency validation
+- **Unit Tests**: Fast, isolated, no external dependencies
+- **Integration Tests**: TestContainers, real databases
+- **E2E Tests**: Complete user journeys
+- **Architecture Tests**: Layer dependency validation
 
-**Frontend Patterns:** Component mounting with mocked stores, MSW for API mocking, data-testid selectors
-**Backend Patterns:** @QuarkusTest for full context, TestContainers for real database integration
+**Frontend Patterns:** Component mounting with mocked stores, API mocking, test selectors
+**Backend Patterns:** Full context testing, TestContainers for real database integration
 
 ## Performance Standards
 
@@ -394,7 +310,7 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 
 - **NO O(n²) or higher complexity operations** in production code
 - **Database operations MUST use proper indexes**
-- **Required MongoDB indexes**: klassifikationId, verfuegbarkeiten.bestellschlussUTC, verfuegbarkeiten.liefertag
+- **Required MongoDB indexes**: classification IDs, order deadlines, delivery dates
 - **Memory usage MUST be bounded** - no unlimited data loading
 
 #### Performance Anti-Patterns (FORBIDDEN)
@@ -408,9 +324,9 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 
 ### Language Standards (MANDATORY)
 
-**Immutability:** Use val (not var), validation in init blocks, immutable data classes
-**Null Safety:** Use `?.let`, avoid `!!` unless justified, Optional patterns for domain modeling
-**Collections:** Functional operations (filter, map, take), chain transformations, avoid imperative loops
+**Immutability:** Use immutable values, validation in init blocks, immutable data classes
+**Null Safety:** Use safe operators, avoid force unwrapping unless justified, Optional patterns for domain modeling
+**Collections:** Functional operations, chain transformations, avoid imperative loops
 **FORBIDDEN:** Mutable value objects, missing null checks, imperative style
 
 ### Error Handling (MANDATORY)
@@ -422,7 +338,7 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 ### MongoDB Integration (MANDATORY)
 
 **Repository Pattern:** Domain interfaces with domain types, adapter implementations with MongoDB classes
-**Entity Mapping:** MongoDB entities in adapter layer only, clean MongoProdukt ↔ Produkt mapping
+**Entity Mapping:** MongoDB entities in adapter layer only, clean mapping between layers
 **Configuration:** ApplicationScoped CDI, PanacheMongoRepository inheritance, no MongoDB annotations in domain
 
 ## Code Quality Standards
@@ -430,7 +346,7 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 ### Critical Bug Prevention (MANDATORY)
 
 - **Validate all boundary conditions** to prevent crashes
-- **Use null-safe operators** (?.let) for safe value processing
+- **Use null-safe operators** for safe value processing
 - **Implement try-catch blocks** for parsing operations that may fail
 - **Return null for invalid values** rather than throwing exceptions for negative numbers
 - **Use proper null handling** with null-checks before value comparisons
@@ -438,7 +354,6 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 ### Quality Tools
 
 - **Static Analysis:** Detekt for Kotlin code quality
-- **Coverage:** JaCoCo with 80% minimum threshold
 - **Dependency Check:** OWASP Dependency Check for vulnerability scanning
 - **Schema Management:** Avro Plugin for Kafka schema handling
 
@@ -447,11 +362,7 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 ### SuperClaude Development Workflow
 
 **Available Personas:** Architect, Frontend, Backend, Security, QA, Performance - auto-activate based on file patterns and task context.
-
-**Auto-Activation Rules:**
-
-- `*.tsx|*.jsx|*.css` → Frontend | `*api*|*server*|*db*` → Backend | `*.test.*` → QA
-- Architecture/design → Architect | Input validation → Security | Optimization → Performance
+**Auto-Activation Rules:** Frontend files → Frontend | API/server/database files → Backend | Test files → QA | Architecture/design → Architect | Input validation → Security | Optimization → Performance
 
 ### Daily Development Loop (AUTOMATED with SuperClaude Personas)
 
@@ -499,65 +410,25 @@ b. **GREEN:** Minimal code to pass test with persona-guided implementation:
 - Performance: No O(n²) algorithms, memory patterns
 - Architecture: Layer coupling compliance
 
-### Git Workflow
+### Git Workflow & Critical Review Priorities
 
-- **Conventional Commits:** `feat:`, `fix:`, `refactor:`, `security:`, `perf:` with task IDs
-- **Atomic Commits:** Single logical change per commit
-- **Branch Naming:** `feature/`, `bugfix/`, `security/`, `perf/`
+**Git Workflow:** Conventional Commits (`feat:`, `fix:`, `refactor:`, `security:`, `perf:` with task IDs), Atomic Commits (single logical change per commit), Branch Naming (`feature/`, `bugfix/`, `security/`, `perf/`)
 
-### Critical Review Priorities
+**Critical Review Priorities:**
 
 **Priority 1: Data Security** - Input validation, data protection, business logic security (NOT auth/authorization)
 **Priority 2: Performance** - Algorithm complexity, memory patterns, database optimization
 **Priority 3: Architecture** - Layer coupling, value object immutability, boundary conditions
 **Priority 4: Code Quality** - Complexity analysis, duplication elimination, test coverage
 
-### Essential TaskMaster Commands
-
-#### Core Commands
-
-- `task-master next` - Get next available task
-- `task-master show <task-id>` - View main task details and subtasks
-- `task-master get-task <task-id>.<subtask-id>` - View specific subtask details
-- `task-master set-status --id=<task-id> --status=<status>` - Update main task status
-- `task-master set-status --id=<task-id>.<subtask-id> --status=<status>` - Update subtask status
-- `task-master update-subtask --id=<task-id>.<subtask-id> --prompt="notes"` - Add implementation notes to subtask
-- `task-master update-task --id=<task-id> --prompt="notes"` - Add implementation notes to main task
-
-#### Task Structure
-
-- **Task IDs:** Main tasks (1, 2, 3), Subtasks (1.1, 1.2), Sub-subtasks (1.1.1)
-- **Status Values:** pending, in-progress, done, deferred, cancelled, blocked
-- **File Structure:** `.taskmaster/tasks/tasks.json`, `.taskmaster/docs/prd.txt`
-
 ## Code Review Standards
 
 ### Key Review Standards
 
-**Architecture Compliance:**
-
-- Layer boundaries respected (no domain/DTO mixing)
-- SCS boundaries maintained (no direct cross-SCS dependencies)
-
-**Frontend Standards:**
-
-- Composition API usage (no Options API in new components)
-- TypeScript typing (all props, emits, and composables typed)
-- Business logic in composables, not components
-- Input sanitization and XSS prevention
-
-**Backend Standards:**
-
-- Immutable value objects with validation
-- Business logic in domain entities
-- Proper exception handling with context
-- Algorithm complexity: no O(n²) or higher operations
-
-**Security Requirements:**
-
-- Input validation at all boundaries
-- Parameterized queries (no string concatenation)
-- GDPR compliance: data minimization and user rights support
+**Architecture Compliance:** Layer boundaries respected (no domain/DTO mixing), SCS boundaries maintained (no direct cross-SCS dependencies)
+**Frontend Standards:** Composition API usage (no Options API), TypeScript typing (all props, emits, composables typed), business logic in composables, input sanitization and XSS prevention
+**Backend Standards:** Immutable value objects with validation, business logic in domain entities, proper exception handling with context
+**Security Requirements:** Parameterized queries (no string concatenation), GDPR compliance: data minimization and user rights support
 
 ## Context Engineering & Task Management
 
