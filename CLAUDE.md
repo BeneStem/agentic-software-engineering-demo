@@ -23,7 +23,7 @@ The Finden application is designed as a **Self-Contained System (SCS)** - an aut
 
 - **UI Ownership**: Each SCS MUST include its own web interface, NO shared UI components between SCS boundaries
 - **Data Autonomy**: Dedicated database per SCS, NO direct database access between systems
-- **Communication Boundaries**: Prefer asynchronous communication between SCS, minimize synchronous API calls
+- **Communication Boundaries**: Asynchronous communication only (see "Architecture & Code Standards" section)
 - **Deployment Independence**: Each SCS deployed as complete unit, NO deployment coordination required
 - **Security Model**: Authentication and authorization handled by infrastructure (see "Security Requirements" section)
 
@@ -74,7 +74,7 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 - **Cross-SCS Communication**: Kafka with Avro (NOT direct API calls)
 - **Architecture**: Onion/Hexagonal with DDD principles, Self-Contained System approach
 
-### Technology Constraints (FORBIDDEN)
+**Technology Constraints (FORBIDDEN):**
 
 - Spring Framework (use Quarkus)
 - Vue.js Options API (use Composition API)
@@ -83,6 +83,12 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 - Synchronous cross-SCS communication (use Kafka)
 - Direct cross-SCS database access
 
+## Platform Principles Compliance (MANDATORY)
+
+**12-Factor App Compliance:** Environment-based configuration, stateless processes, explicit dependencies, structured logging, horizontal scaling, dev/prod parity, graceful shutdown, port binding, immutable builds.
+
+**Reactive Manifesto Compliance:** Responsive (P95 < 300ms), resilient (isolated failure handling), elastic (horizontal scaling), message-driven (Kafka-based async processing).
+
 ### Architecture & Code Standards (MANDATORY)
 
 **Onion/Hexagonal Architecture Layers:**
@@ -90,14 +96,17 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 - **Domain Layer (Core):** Model entities, value objects, aggregates, domain services, repository interfaces, domain exceptions
   - **Rules:** Immutable value objects, zero outward dependencies, no external dependencies
   - **FORBIDDEN:** Framework annotations, infrastructure concerns, adapter DTOs or external data structures
+  - **Code Organization:** model/ (entities, value objects), service/ (domain services), repository/ (interfaces), exception/ (domain exceptions)
 
 - **Application Layer:** Application services implementing use cases, DTOs for data contracts, mappers at boundaries, coordination services
   - **Rules:** Use cases orchestrate domain, DTOs for external contracts, depends only on domain interfaces
   - **FORBIDDEN:** Business logic in application services, direct database access
+  - **Code Organization:** usecase/ (business operations), dto/ (data contracts), mapper/ (DTO↔domain), service/ (coordination)
 
 - **Adapter Layer (Outer):** REST controllers, database adapters, message consumers, external service clients
   - **Rules:** Controllers delegate to application layer, repository implementations use specific tech, implement domain interfaces
   - **FORBIDDEN:** Business logic in adapters, domain contamination
+  - **Code Organization:** web/ (REST controllers), persistence/ (database adapters), messaging/ (events), external/ (clients)
 
 **Layer Dependencies & Boundaries:**
 
@@ -122,31 +131,31 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 - **Data Access Layer:** HTTP clients, API abstractions, data transformation
 - **Dependencies:** Presentation → Composables → API (strict layer dependency)
 - **FORBIDDEN:** Business logic in components, direct API calls from components, Options API patterns
-
-**Backend Code Organization:**
-
-- **Domain Layer:** model/ (entities, value objects), service/ (domain services), repository/ (interfaces), exception/ (domain exceptions)
-- **Application Layer:** usecase/ (business operations), dto/ (data contracts), mapper/ (DTO↔domain), service/ (coordination)
-- **Adapter Layer:** web/ (REST controllers), persistence/ (database adapters), messaging/ (events), external/ (clients)
-
-**Frontend Code Organization:**
-
-- **Multi-App Structure:** apps/ (entry points), shared/ (components), api/ (backend communication), composables/ (business logic), store/ (Vuex state)
+- **Code Organization:** apps/ (entry points), shared/ (components), api/ (backend communication), composables/ (business logic), store/ (Vuex state)
 - **Rules:** Apps contain config, shared provides reusable UI, API abstracts backend, composables contain reactive logic
-- **FORBIDDEN:** Business logic in components, direct API calls from components
 
 **File Naming Standards:**
 
 - **Backend:** PascalCase with suffixes, lowercase packages
 - **Frontend:** PascalCase components, camelCase composables with prefix, lowercase directories with hyphens
 
-**Kotlin Development Standards:**
+**Kotlin Development Standards & Functional Programming:**
 
-- **Immutability:** Use immutable values, validation in init blocks, immutable data classes
-- **Null Safety:** Use safe operators, avoid force unwrapping unless justified, Optional patterns for domain modeling
-- **Collections:** Functional operations, chain transformations, avoid imperative loops
+- **Immutability:** Use `val` over `var` (MANDATORY), immutable data classes with `val` properties and `copy()` method
+- **Null Safety:** Use safe operators (`?.`, `?:`), avoid force unwrapping unless justified, Optional patterns for domain modeling
+- **Collections:** Functional operations (`map`, `filter`, `fold`, `reduce`), chain transformations, avoid imperative loops
 - **Error Handling:** Specific exceptions with context, inherit from base domain exception class
 - **Boundary Validation:** Validate all inputs, check nulls/negatives, use when expressions for conditions
+- **Pure Functions:** Domain logic as pure functions with no side effects, push side effects to adapter layer
+- **Fail Fast:** Validate early and fail fast with clear error messages
+
+**FORBIDDEN Anti-Patterns:**
+
+- Mutable global state or shared mutable objects
+- Functions with side effects mixed with business logic
+- Imperative loops when functional alternatives exist
+- Null checks that can be replaced with safe operators
+- Exception handling for expected business scenarios
 
 **MongoDB Integration:**
 
@@ -340,7 +349,7 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 
 **API Performance:**
 
-- Keep API response times under 500ms for standard queries
+- API response times P95 < 300ms for all queries
 - Bounded data loading to prevent memory issues
 - Proper object lifecycle management
 - JSON envelope responses for consistency
@@ -362,26 +371,30 @@ The application follows **Domain-Driven Design (DDD)** with **Onion/Hexagonal Ar
 
 ### Quality Gates (MANDATORY)
 
-**Pre-Commit Gates:**
+**Pre-Commit Gates (Local Development):**
 
-- Linting and code formatting
-- Unit tests with 80% coverage
-- Security checks (input validation, data protection)
-- Performance validation (no O(n²) algorithms, memory patterns)
+- **Backend**: Run `unitTest`, `integrationTest`, `detekt`, `dependencyCheckAnalyze`, `build`
+- **Frontend**: Run `install`, `lint`, `unitTest`, `build`
 
-**Pre-Merge Gates:**
+**Pre-Merge Gates (GitLab CI Pipeline):**
 
 - Integration tests with TestContainers
 - Architecture compliance (layer coupling validation)
 - Code review approval
 - SCS communication pattern compliance
+- All GitLab CI pipeline jobs pass:
+  - Backend: Build, Lint, Unit Test, Integration Test
+  - Frontend: Install dependencies, Lint, Unit Test
+  - Infrastructure: Terraform validation
 
-**Pre-Deploy Gates:**
+**Pre-Deploy Gates (GitLab CI Pipeline):**
 
 - E2E tests with Playwright
 - Performance tests under load
 - Security validation
 - Database index optimization verification
+- Docker image build and push
+- Kubernetes deployment validation
 
 ## Development Workflow (MANDATORY)
 
@@ -430,6 +443,15 @@ b. **GREEN:** Minimal code to pass test with persona-guided implementation:
 - Final commit with pre-commit validation (security, performance, architecture)
 - Push changes
 
+**Pre-Push Validation Checklist (MANDATORY):**
+
+- [ ] Backend: All `./gradlew` commands pass locally (`build`)
+- [ ] Frontend: All `npm run` commands pass locally (`lint`, `unitTest`, `build`)
+- [ ] Testing requirements met (see Testing Strategy section)
+- [ ] Functional programming standards validated (immutability, pure functions)
+- [ ] 12-Factor App compliance verified (config, dependencies, logs)
+- [ ] Reactive principles maintained (responsive, resilient, elastic, message-driven)
+
 ### Git Workflow & Critical Review Priorities
 
 **Git Workflow:** Conventional Commits (`feat:`, `fix:`, `refactor:`, `security:`, `perf:` with task IDs), Atomic Commits (single logical change per commit), Branch Naming (`feature/`, `bugfix/`, `security/`, `perf/`)
@@ -438,57 +460,59 @@ b. **GREEN:** Minimal code to pass test with persona-guided implementation:
 
 **Critical Review Priorities:**
 
-1. **Data Security** - Input validation, data protection, business logic security (NOT auth/authorization)
+1. **Architecture** - Layer coupling, value object immutability, boundary conditions
 2. **Performance** - Algorithm complexity, memory patterns, database optimization
-3. **Architecture** - Layer coupling, value object immutability, boundary conditions
-4. **Code Quality** - Complexity analysis, duplication elimination, test coverage
+3. **Code Quality** - Complexity analysis, duplication elimination, test coverage
+4. **Security** - Input validation, data protection (see Security Requirements section)
 
 **Review Focus Areas:**
 
 - Architecture layer compliance (domain/application/adapter boundaries)
 - SCS communication patterns (Kafka-only, no direct calls)
-- Security scope (input validation, no auth implementation)
-- Performance standards (O(n) algorithms, proper indexing)
+- Performance standards compliance (see Performance Standards section)
+- Security requirements compliance (see Security Requirements section)
+
+**Platform Principles Compliance Validation:**
+
+- [ ] **12-Factor App Compliance**:
+  - [ ] Configuration stored in environment variables (Factor 3)
+  - [ ] Dependencies explicitly declared in build files (Factor 2)
+  - [ ] Stateless processes implementation (Factor 6)
+  - [ ] Structured logging to stdout (Factor 11)
+  - [ ] Build/release/run separation (Factor 5)
+
+- [ ] **Reactive Manifesto Adherence**:
+  - [ ] Responsive: API response times within limits (see Performance Standards)
+  - [ ] Resilient: Proper error handling and isolation
+  - [ ] Elastic: Supports horizontal scaling patterns
+  - [ ] Message-driven: Asynchronous Kafka communication
+
+- [ ] **Functional Programming Standards**:
+  - [ ] Immutability: `val` over `var`, immutable data classes
+  - [ ] Pure functions: Domain logic without side effects
+  - [ ] Functional collections: `map`, `filter`, `fold` over loops
+  - [ ] Side-effect isolation: I/O operations in adapter layer
+  - [ ] Null safety: Elvis operator and safe calls used
+
+- [ ] **GitLab CI Pipeline Integration**:
+  - [ ] All pre-commit commands documented and tested
+  - [ ] Quality gates align with CI pipeline jobs
+  - [ ] Security requirements compliance verified
 
 **Red Flag Review Process:**
 
 - Use Red Flag Checklist (see "Red Flag Standards" section for complete 14-point checklist)
 - Apply Red Flag Resolution Process for any identified issues
 - Ensure all quality gates pass before approval
+- Validate platform principles compliance before merge
 
 ## Context & Task Management
 
-### Project Awareness & Context (MANDATORY)
+**AI Behavior Rules:** Never assume missing context - ask questions if uncertain. Never hallucinate libraries or functions - only use known, verified packages and APIs. Always confirm file paths and class names exist before referencing them.
 
-**AI Behavior Rules:**
+**Task Completion Standards:** Mark completed tasks immediately after finishing implementation. Add discovered sub-tasks to TaskMaster during development. Document blockers and solutions in task notes.
 
-- **Never assume missing context. Ask questions if uncertain.**
-- **Never hallucinate libraries or functions** – only use known, verified packages and APIs
-- **Always confirm file paths and class names** exist before referencing them in code or tests
-- **Maintain context continuity** across Claude sessions using TaskMaster and PRD references
-
-**Task Completion Standards:**
-
-- **Mark completed tasks immediately** after finishing implementation
-- **Add discovered sub-tasks** to TaskMaster during development
-- **Document blockers and solutions** in task notes for future reference
-- **Link tasks to commits** using conventional commit format with task IDs
-
-### PRD Integration with DDD Architecture
-
-**Requirements Analysis:**
-
-- **Domain Modeling:** Extract aggregates, entities, and value objects from PRDs
-- **Use Case Identification:** Map PRD features to application services
-- **Architecture Impact:** Assess new requirements against existing Onion Architecture
-- **Performance Implications:** Analyze requirements for potential performance bottlenecks
-
-**Context Engineering Best Practices:**
-
-- **Ubiquitous Language:** Ensure PRD terminology matches domain model
-- **Bounded Context Analysis:** Identify context boundaries from requirements
-- **Integration Points:** Plan adapter layer changes for new requirements
-- **Test Strategy:** Define acceptance criteria and test approaches in PRDs
+**PRD Integration:** Extract domain entities from PRDs, map features to application services, assess architecture impact, ensure PRD terminology matches domain model, identify bounded context boundaries.
 
 ---
 
