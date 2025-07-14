@@ -15,19 +15,14 @@ This guide outlines the development standards, coding conventions, and contribut
 ### Self-Contained Systems (SCS) Principles
 
 **SCS:** Finden = autonomous unit w/ own UI, business logic, DB → handles specific business capability end-to-end
-
 **SCS Implementation Principles:** UI Ownership: Each SCS MUST include own web interface, NO shared UI components between SCS boundaries | Data Autonomy: Dedicated DB per SCS, NO direct DB access between systems or shared schemas | Communication Boundaries: Async communication only via Kafka+Avro (≠direct API calls) | Deployment Independence: Each SCS deployed as complete unit, NO deployment coordination req | 🛡️ Security Model: Auth & authz handled by infrastructure
-
 **Architecture Pattern:** Onion/Hexagonal with Domain-Driven Design (DDD) principles
-
 **🧩 Components:** Finden Search SCS: Product search, classification, filtering w/ MongoDB & Kafka events | Adjacent: User Mgmt, Order Processing, Product Mgmt | DB: Collections (products, classifications, search_analytics, availability_cache) | API: `/api/v1/search`, JSON envelope, OpenAPI docs `/api/docs` | Events: Kafka → product.updated, pricing.changed, availability.changed, search.performed | Cache: App (classification hierarchy), DB (WiredTiger), CDN (static assets)
-
 **🎯 Req Indexes:** klassifikationId+active, price+currency, availability fields, text search
 
 ## Technology Constraints (MANDATORY)
 
 **Backend Stack:** Lang: Kotlin(JVM) | Framework: Quarkus (≠Spring) | DB: MongoDB+Panache Kotlin (≠direct drivers) | Build: Gradle+Kotlin DSL | Messaging: Kafka+Avro
-
 **Frontend Stack:** Lang: TypeScript(strict) | Framework: Vue.js+Composition API (≠Options API) | State: Vuex | SSR: Fastify | Build: Vue CLI+Webpack | HTTP: Axios (≠fetch API)
 
 ## Architecture Standards (MANDATORY)
@@ -58,24 +53,17 @@ This guide outlines the development standards, coding conventions, and contribut
 ❌ Direct API calls from components, Options API patterns
 📁 apps/ (entry points), shared/ (components), api/ (backend comm), composables/ (business logic), store/ (Vuex state)
 
-**📝 File Naming:** Backend: PascalCase w/ suffixes (`UserService`, `ProductRepository`), lowercase packages | Frontend: PascalCase components (`ProductCard.vue`), camelCase composables w/ `use` prefix (`useProductSearch`), lowercase directories w/ hyphens
-
 **📊 Dev Standards:**
 
+**📝 File Naming:** Backend: PascalCase w/ suffixes (`UserService`, `ProductRepository`), lowercase packages | Frontend: PascalCase components (`ProductCard.vue`), camelCase composables w/ `use` prefix (`useProductSearch`), lowercase directories w/ hyphens
 **🔧 Kotlin/Backend:** ✅ Use `val` over `var` (MANDATORY), immutable data classes w/ `val` properties & `copy()` method | ✅ Safe operators (`?.`, `?:`), avoid force unwrapping | ✅ Functional ops (`map`, `filter`, `fold`, `reduce`), chain transformations, avoid imperative loops | ✅ Specific exceptions w/ context, inherit from base domain exception class | ✅ Follow sec req for input val & error handling | ✅ Domain logic as pure functions w/ no side effects, push side effects to adapter layer | ✅ Val early & fail fast w/ clear error messages | ✅ Close all connections properly to avoid resource leaks
-
 **🎨 Vue.js/Frontend:** ✅ Composition API syntax w/ reactive functions, TypeScript interfaces for all Props & Emits | ✅ Base components (reusable UI), Layout components (structure), Business components (domain-specific) | ✅ Single responsibility per component, business logic in composables | ✅ Semantic HTML, BEM methodology, scoped styling | ✅ Vuex w/ TypeScript typing, namespaced modules, composables for reactive business logic | ✅ Centralized error handling w/ try-catch patterns
-
-**❌ FORBIDDEN Anti-Patterns:** Business logic in components, adapters, or app services | Mutable global state or shared mutable objects | Functions w/ side effects mixed w/ business logic | Imperative loops when functional alternatives exist | Null checks that can be replaced w/ safe operators, exception handling for expected business scenarios | Code structure follows execution order, design decisions scattered across modules | Interface complexity matches impl, common ops req advanced knowledge | Code behavior req extensive comments
+**❌ Anti-Patterns:** Business logic in components, adapters, or app services | Mutable global state or shared mutable objects | Functions w/ side effects mixed w/ business logic | Imperative loops when functional alternatives exist | Null checks that can be replaced w/ safe operators, exception handling for expected business scenarios | Code structure follows execution order, design decisions scattered across modules | Interface complexity matches impl, common ops req advanced knowledge | Code behavior req extensive comments
 
 ## Security Requirements (MANDATORY)
 
-**🛡️ Security:**
-
 **Scope & Boundaries:** Infrastructure: Auth & authz handled by infrastructure - SCS MUST NEVER implement | SCS: Input val, data protection, business logic sec only
-
 **Data Protection:** GDPR: NO personal data storage - search operates on anonymous basis only | Data Minimization: Right to be forgotten, minimal data collection | Input Val: Val all boundaries & user inputs w/ proper error handling | NO Sensitive Logging: NO logging of sensitive data
-
 **System Patterns:** Domain Layer Purity: NO framework annotations in domain layer, NO infrastructure concerns in domain layer | Injection Prevention: NO SQL injection patterns - use parameterized queries (no string concatenation for DB ops) | SCS Isolation: Enforce SCS boundaries as defined in System Overview | Schema Separation: NO shared DB schemas between SCS boundaries | Consistency Model: MANDATORY eventual consistency for cross-SCS data sync
 
 ## Quality Standards (MANDATORY)
@@ -83,7 +71,6 @@ This guide outlines the development standards, coding conventions, and contribut
 ### Testing Strategy
 
 **📊 Testing Stack:** Backend: JUnit 5 + Mockk | TestContainers for DB & external service integration | ArchUnit for layer val & dependency compliance | Frontend: Jest + Vue Test Utils | Playwright for user journey testing | Vue Test Utils w/ TypeScript support
-
 **📊 Testing Standards:** BDD (Given-When-Then) format | Min 80% code coverage for unit/integration tests + arch compliance val | Complete test isolation, no production deps | Unit (fast, isolated), Integration (TestContainers), E2E (user journeys), Architecture (layer val)
 
 ### Performance Standards
@@ -120,7 +107,6 @@ Follow Quality Gates (pre-commit, pre-merge, pre-deploy)
 ### Self-Learning Cycle
 
 **🧠 Memory Capture:** Store dev episodes w/ patterns, problems, solutions | Capture anti-patterns encountered & prevention methods | Record perf metrics & arch decisions | CLAUDE.md Evolution: Weekly analysis of memory patterns (>3 occurrences) | Auto-update FORBIDDEN Anti-Patterns based on real issues | Refine std based on proven practices
-
 **🤖 AI Behavior & Context Mgmt:** AI Behavior Rules: Never assume missing context - ask questions if uncertain | Never hallucinate libraries or functions - only use known, verified packages & APIs | Always confirm file paths & class names exist before referencing them | Task Completion Standards: Mark completed tasks immediately after finishing impl | Add discovered sub-tasks to task-master during dev | Document blockers & solutions in task notes | Context Optimization: Use `--uc` for token optimization when context usage >75%, apply `--delegate` for large codebase analysis (>50 files), use `--wave-mode` for complex multi-stage ops, leverage `--seq` for systematic analysis & debugging, use `--c7` for docs & framework pattern lookups
 
 ---
