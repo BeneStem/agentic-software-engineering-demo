@@ -22,7 +22,7 @@ import java.time.LocalDate
 import java.util.Currency
 import java.util.Date
 import java.util.Locale
-import javax.enterprise.context.ApplicationScoped
+import jakarta.enterprise.context.ApplicationScoped
 import mu.KLogging
 import org.bson.BsonBoolean
 import org.bson.BsonDocument

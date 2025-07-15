@@ -28,7 +28,7 @@ import strikt.api.expectThat
 import strikt.assertions.isEmpty
 import strikt.assertions.isEqualTo
 import java.time.LocalDate
-import javax.inject.Inject
+import jakarta.inject.Inject
 
 @QuarkusTest
 @QuarkusTestResource(TestContainers::class)

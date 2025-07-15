@@ -4,16 +4,16 @@ import io.quarkiverse.loggingjson.JsonGenerator
 import io.quarkiverse.loggingjson.JsonProvider
 import io.quarkiverse.loggingjson.JsonWritingUtils
 import io.quarkiverse.loggingjson.StringBuilderWriter
-import io.quarkus.arc.Priority
 import io.quarkus.arc.Unremovable
 import org.eclipse.microprofile.config.inject.ConfigProperty
 import org.jboss.logmanager.ExtFormatter
 import org.jboss.logmanager.ExtLogRecord
 import java.io.IOException
 import java.io.PrintWriter
-import javax.enterprise.inject.Alternative
-import javax.inject.Singleton
-import javax.interceptor.Interceptor.Priority.PLATFORM_AFTER
+import jakarta.enterprise.inject.Alternative
+import jakarta.inject.Singleton
+import jakarta.annotation.Priority
+import jakarta.interceptor.Interceptor.Priority.PLATFORM_AFTER
 
 @Singleton
 @Alternative
@@ -21,11 +21,11 @@ import javax.interceptor.Interceptor.Priority.PLATFORM_AFTER
 @Unremovable
 @Suppress("unused")
 class JsonLoggingProvider(
-    @ConfigProperty(name = "b2k.gcp-project.environment")
+    @param:ConfigProperty(name = "b2k.gcp-project.environment")
     private val environment: String,
-    @ConfigProperty(name = "b2k.team.key")
+    @param:ConfigProperty(name = "b2k.team.key")
     private val teamKey: String,
-    @ConfigProperty(name = "quarkus.application.name")
+    @param:ConfigProperty(name = "quarkus.application.name")
     private val applicationName: String
 ) : JsonProvider, ExtFormatter() {
 

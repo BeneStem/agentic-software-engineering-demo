@@ -1,7 +1,7 @@
 package de.blume2000.util
 
-import javax.validation.Constraint
-import javax.validation.Payload
+import jakarta.validation.Constraint
+import jakarta.validation.Payload
 import kotlin.reflect.KClass
 
 @Target(AnnotationTarget.FIELD, AnnotationTarget.VALUE_PARAMETER)

@@ -13,7 +13,7 @@ import de.blume2000.finden.architecture.onion.OnionTest.Companion.COMPANION
 import de.blume2000.finden.architecture.onion.OnionTest.Companion.INSTANCE
 import de.blume2000.finden.architecture.onion.OnionTest.Companion.PASSIVE_ADAPTER_PACKAGE
 import org.eclipse.microprofile.reactive.messaging.Outgoing
-import javax.enterprise.context.ApplicationScoped
+import jakarta.enterprise.context.ApplicationScoped
 
 @AnalyzeClasses(packages = [BOUNDED_CONTEXT_PACKAGE],
   importOptions = [DoNotIncludeTests::class, DoNotIncludeArchives::class])

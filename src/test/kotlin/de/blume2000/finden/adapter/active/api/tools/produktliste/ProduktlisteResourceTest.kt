@@ -31,7 +31,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.util.Currency
 import java.util.Locale
-import javax.inject.Inject
+import jakarta.inject.Inject
 
 @QuarkusTest
 @QuarkusTestResource(TestContainers::class)

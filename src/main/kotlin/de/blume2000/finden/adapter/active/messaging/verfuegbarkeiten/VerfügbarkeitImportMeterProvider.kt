@@ -2,7 +2,7 @@ package de.blume2000.finden.adapter.active.messaging.verfuegbarkeiten
 
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.MeterRegistry
-import javax.enterprise.context.ApplicationScoped
+import jakarta.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class VerfügbarkeitImportMeterProvider(meterRegistry: MeterRegistry) {

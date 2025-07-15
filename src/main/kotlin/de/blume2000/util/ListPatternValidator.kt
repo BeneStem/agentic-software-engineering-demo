@@ -1,7 +1,7 @@
 package de.blume2000.util
 
-import javax.validation.ConstraintValidator
-import javax.validation.ConstraintValidatorContext
+import jakarta.validation.ConstraintValidator
+import jakarta.validation.ConstraintValidatorContext
 
 class ListPatternValidator : ConstraintValidator<ListPattern, List<String>> {
 

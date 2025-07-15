@@ -12,7 +12,7 @@ import de.blume2000.finden.architecture.onion.OnionTest.Companion.BOUNDED_CONTEX
 import de.blume2000.finden.architecture.onion.OnionTest.Companion.COMPANION
 import de.blume2000.finden.architecture.onion.OnionTest.Companion.DOMAIN_SERVICE_PACKAGE
 import de.blume2000.finden.architecture.onion.OnionTest.Companion.INSTANCE
-import javax.enterprise.context.ApplicationScoped
+import jakarta.enterprise.context.ApplicationScoped
 
 @AnalyzeClasses(packages = [BOUNDED_CONTEXT_PACKAGE],
   importOptions = [DoNotIncludeTests::class, DoNotIncludeArchives::class])

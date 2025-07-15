@@ -11,7 +11,7 @@ import de.blume2000.finden.domain.model.produkte.ProduktnummernVerwendung
 import de.blume2000.finden.domain.model.produkte.UserProdukteFilter
 import de.blume2000.finden.domain.model.produkte.VerfügbareFilterwerteRepository
 import de.blume2000.finden.domain.model.produkte.produkt.ProduktComperatorByBaseListOccurence
-import javax.enterprise.context.ApplicationScoped
+import jakarta.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class ProduktlistenApplicationService(

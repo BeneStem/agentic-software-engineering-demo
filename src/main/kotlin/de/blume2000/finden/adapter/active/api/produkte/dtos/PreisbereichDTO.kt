@@ -1,7 +1,7 @@
 package de.blume2000.finden.adapter.active.api.produkte.dtos
 
 import de.blume2000.finden.domain.model.produkte.verfuegbareFilterwerte.PreisBereich
-import javax.validation.Valid
+import jakarta.validation.Valid
 
 data class PreisbereichDTO(
   @field:Valid

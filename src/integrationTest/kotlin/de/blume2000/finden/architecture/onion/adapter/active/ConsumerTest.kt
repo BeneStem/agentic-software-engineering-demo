@@ -18,7 +18,7 @@ import de.blume2000.finden.architecture.onion.OnionTest.Companion.BOUNDED_CONTEX
 import de.blume2000.finden.architecture.onion.OnionTest.Companion.COMPANION
 import de.blume2000.finden.architecture.onion.OnionTest.Companion.INSTANCE
 import org.eclipse.microprofile.reactive.messaging.Incoming
-import javax.enterprise.context.ApplicationScoped
+import jakarta.enterprise.context.ApplicationScoped
 
 @AnalyzeClasses(packages = [BOUNDED_CONTEXT_PACKAGE],
   importOptions = [DoNotIncludeTests::class, DoNotIncludeArchives::class])

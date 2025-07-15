@@ -3,8 +3,8 @@ package de.blume2000.finden.adapter.active.api.produkte.dtos
 import de.blume2000.finden.domain.model.produkte.produkt.Klassifikation
 import de.blume2000.finden.domain.model.produkte.produkt.KlassifikationId
 import de.blume2000.finden.domain.model.produkte.produkt.KlassifikationName
-import javax.validation.constraints.NotBlank
-import javax.validation.constraints.Pattern
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Pattern
 
 data class KlassifikationDTO(
   @field:NotBlank

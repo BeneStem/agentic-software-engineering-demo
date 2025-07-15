@@ -1,8 +1,8 @@
 package de.blume2000.finden.domain.model.produkte
 
 import de.blume2000.finden.domain.model.produkte.produkt.Produktnummer
-import javax.ws.rs.core.MultivaluedHashMap
-import javax.ws.rs.core.MultivaluedMap
+import jakarta.ws.rs.core.MultivaluedHashMap
+import jakarta.ws.rs.core.MultivaluedMap
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat

@@ -23,7 +23,7 @@ import de.blume2000.util.TestContainers
 import io.quarkus.test.common.QuarkusTestResource
 import io.quarkus.test.junit.QuarkusTest
 import java.time.LocalDate
-import javax.inject.Inject
+import jakarta.inject.Inject
 import kotlin.random.Random.Default.nextInt
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag

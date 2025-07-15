@@ -5,7 +5,7 @@ import io.micrometer.core.instrument.Gauge
 import io.micrometer.core.instrument.MeterRegistry
 import io.quarkus.arc.profile.UnlessBuildProfile
 import io.quarkus.runtime.Startup
-import javax.enterprise.context.ApplicationScoped
+import jakarta.enterprise.context.ApplicationScoped
 
 @Startup
 @ApplicationScoped

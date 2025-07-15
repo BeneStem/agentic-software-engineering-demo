@@ -13,7 +13,7 @@ import de.blume2000.finden.architecture.onion.OnionTest.Companion.ADAPTER_PACKAG
 import de.blume2000.finden.architecture.onion.OnionTest.Companion.BOUNDED_CONTEXT_PACKAGE
 import de.blume2000.finden.architecture.onion.OnionTest.Companion.COMPANION
 import de.blume2000.finden.architecture.onion.OnionTest.Companion.INSTANCE
-import javax.enterprise.context.Dependent
+import jakarta.enterprise.context.Dependent
 
 @AnalyzeClasses(packages = [BOUNDED_CONTEXT_PACKAGE],
   importOptions = [DoNotIncludeTests::class, DoNotIncludeArchives::class])

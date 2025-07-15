@@ -3,7 +3,7 @@ package de.blume2000.finden.domain.service.produkte
 import de.blume2000.finden.domain.model.produkte.ProduktRepository
 import de.blume2000.finden.domain.model.produkte.produkt.Produkt
 import de.blume2000.finden.domain.model.produkte.produkt.Produktnummer
-import javax.enterprise.context.ApplicationScoped
+import jakarta.enterprise.context.ApplicationScoped
 import mu.KLogging
 import org.jmolecules.ddd.annotation.Service
 

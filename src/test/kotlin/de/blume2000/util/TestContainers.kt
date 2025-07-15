@@ -10,8 +10,9 @@ class TestContainers : QuarkusTestResourceLifecycleManager {
   private val useTestContainers =
     ConfigProvider.getConfig().getOptionalValue("b2k.testing.integration.use-testcontainers", Boolean::class.java)
       .orElse(true)
-  private val mongoDBContainer = MongoDBContainer(DockerImageName.parse("mongo:4.0.21-xenial"))
-  private val kafka = KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:6.0.0-1-ubi8"))
+  private val mongoDBContainer = MongoDBContainer(DockerImageName.parse("mongo:6.0"))
+  //  TODO fix deprecation
+  private val kafka = KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.4.0"))
 
   override fun start(): Map<String, String> {
 

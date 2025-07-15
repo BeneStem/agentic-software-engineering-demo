@@ -4,10 +4,10 @@ import de.blume2000.finden.domain.model.produkte.produkt.preis.Preis
 import java.math.BigDecimal
 import java.util.Currency
 import java.util.Locale
-import javax.validation.constraints.NotBlank
-import javax.validation.constraints.NotNull
-import javax.validation.constraints.Pattern
-import javax.validation.constraints.Positive
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Pattern
+import jakarta.validation.constraints.Positive
 
 data class PreisDTO(
   @field:NotNull

@@ -2,9 +2,9 @@ package de.blume2000.finden.adapter.active.api.produkte.dtos
 
 import de.blume2000.finden.domain.model.produkte.CmsProdukteFilter
 import de.blume2000.finden.domain.model.produkte.ProduktnummernVerwendung
-import javax.validation.Valid
-import javax.validation.constraints.Min
-import javax.validation.constraints.Pattern
+import jakarta.validation.Valid
+import jakarta.validation.constraints.Min
+import jakarta.validation.constraints.Pattern
 
 data class CmsProdukteFilterDTO(
   @field:Valid

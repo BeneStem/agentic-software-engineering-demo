@@ -2,12 +2,12 @@ package de.blume2000.finden.adapter.passive.messaging
 
 import io.quarkus.arc.Unremovable
 import io.smallrye.reactive.messaging.kafka.DeserializationFailureHandler
-import javax.enterprise.context.ApplicationScoped
+import jakarta.enterprise.context.Dependent
 import mu.KLogging
 import org.apache.kafka.common.header.Headers
-import javax.inject.Named
+import jakarta.inject.Named
 
-@ApplicationScoped
+@Dependent
 @Unremovable
 @Named(value = "LoggingDeserializationFailureHandler")
 class LoggingDeserializationFailureHandler<T> : DeserializationFailureHandler<T> {

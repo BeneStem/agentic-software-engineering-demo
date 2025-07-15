@@ -3,9 +3,9 @@ package de.blume2000.finden.adapter.passive.operations
 import io.micrometer.stackdriver.StackdriverConfig
 import io.smallrye.config.ConfigMapping
 import java.util.UUID
-import javax.enterprise.context.Dependent
-import javax.enterprise.inject.Produces
-import javax.inject.Singleton
+import jakarta.enterprise.context.Dependent
+import jakarta.enterprise.inject.Produces
+import jakarta.inject.Singleton
 import mu.KLogging
 import org.eclipse.microprofile.config.Config
 import org.eclipse.microprofile.config.inject.ConfigProperty
@@ -13,8 +13,8 @@ import org.eclipse.microprofile.config.inject.ConfigProperty
 @Dependent
 class StackdriverConfigFactory(
   private val stackdriverConfig: StackdriverConfiguration,
-  @ConfigProperty(name = "b2k.zone") private val zone: String,
-  @ConfigProperty(name = "quarkus.application.name") private val namespace: String
+  @param:ConfigProperty(name = "b2k.zone") private val zone: String,
+  @param:ConfigProperty(name = "quarkus.application.name") private val namespace: String
 ) {
 
   companion object : KLogging() {

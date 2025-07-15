@@ -4,6 +4,8 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import groovy.json.JsonSlurper
 import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.extensions.DetektExtension
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.owasp.dependencycheck.gradle.extension.AnalyzerExtension
@@ -67,7 +69,8 @@ dependencies {
   implementation("io.quarkus:quarkus-mongodb-panache-kotlin") {
     description = "Native compilation only works with Entity Id: ObjectId"
   }
-  implementation("io.quarkus:quarkus-smallrye-reactive-messaging-kafka:3.8.6.1")
+  implementation("io.quarkus:quarkus-messaging-kafka")
+  implementation("io.quarkus:quarkus-confluent-registry-avro")
 
   implementation("io.github.microutils:kotlin-logging-jvm:3.0.5") {
     exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
@@ -111,17 +114,16 @@ dependencies {
 
   detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.8")
 
-  // Sentry
-  implementation("io.quarkus:quarkus-logging-sentry:2.5.4.Final")
+  // implementation("io.quarkus:quarkus-logging-sentry") // TODO: Check if this extension exists in Quarkus 3.x
 }
 
 allOpen {
   annotation("io.quarkus.arc.config.ConfigProperties")
-  annotation("javax.ws.rs.Path")
-  annotation("javax.enterprise.context.ApplicationScoped")
-  annotation("javax.inject.Singleton")
-  annotation("javax.enterprise.context.Dependent")
-  annotation("javax.persistence.Entity")
+  annotation("jakarta.ws.rs.Path")
+  annotation("jakarta.enterprise.context.ApplicationScoped")
+  annotation("jakarta.inject.Singleton")
+  annotation("jakarta.enterprise.context.Dependent")
+  annotation("jakarta.persistence.Entity")
   annotation("io.quarkus.mongodb.panache.MongoEntity")
   annotation("io.quarkus.test.junit.QuarkusTest")
 }
@@ -129,7 +131,7 @@ allOpen {
 noArg {
   annotation("de.blume2000.util.NoArg")
   annotation("io.quarkus.arc.config.ConfigProperties")
-  annotation("javax.persistence.Entity")
+  annotation("jakarta.persistence.Entity")
   annotation("io.quarkus.mongodb.panache.MongoEntity")
 }
 
@@ -138,7 +140,7 @@ configure<DetektExtension> {
 }
 
 jacoco {
-  toolVersion = "0.8.7"
+  toolVersion = "0.8.13"
 }
 
 dependencyCheck {
@@ -151,8 +153,8 @@ dependencyCheck {
 }
 
 java {
-  sourceCompatibility = JavaVersion.VERSION_22
-  targetCompatibility = JavaVersion.VERSION_22
+  sourceCompatibility = JavaVersion.VERSION_21
+  targetCompatibility = JavaVersion.VERSION_21
 }
 
 sourceSets {
@@ -168,13 +170,13 @@ sourceSets {
 
 tasks {
   withType<Detekt> {
-    jvmTarget = JavaVersion.VERSION_22.toString()
+    jvmTarget = JavaVersion.VERSION_21.toString()
   }
 
   withType<KotlinCompile> {
     compilerOptions {
-      jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_22)
-      apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_2)
+      jvmTarget.set(JvmTarget.JVM_21)
+      apiVersion.set(KotlinVersion.KOTLIN_2_2)
       javaParameters.set(true)
     }
   }

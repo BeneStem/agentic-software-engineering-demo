@@ -11,7 +11,7 @@ import de.blume2000.finden.architecture.onion.OnionTest.Companion.ADAPTER_PACKAG
 import de.blume2000.finden.architecture.onion.OnionTest.Companion.BOUNDED_CONTEXT_PACKAGE
 import de.blume2000.finden.architecture.onion.OnionTest.Companion.COMPANION
 import de.blume2000.finden.architecture.onion.OnionTest.Companion.INSTANCE
-import io.quarkus.arc.config.ConfigProperties
+import io.smallrye.config.ConfigMapping
 
 @AnalyzeClasses(packages = [BOUNDED_CONTEXT_PACKAGE],
   importOptions = [DoNotIncludeTests::class, DoNotIncludeArchives::class])
@@ -26,13 +26,13 @@ class ConfigurationTest {
     classes()
       .that().haveSimpleNameEndingWith(CONFIGURATION)
       .should().resideInAPackage("$ADAPTER_PACKAGE.")
-      .andShould().beAnnotatedWith(ConfigProperties::class.java)
+      .andShould().beAnnotatedWith(ConfigMapping::class.java)
       .check(classes)
 
   @ArchTest
-  fun classesAnnotatedWithConfigProperties(classes: JavaClasses) =
+  fun classesAnnotatedWithConfigMapping(classes: JavaClasses) =
     classes()
-      .that().areAnnotatedWith(ConfigProperties::class.java)
+      .that().areAnnotatedWith(ConfigMapping::class.java)
       .should().resideInAPackage("$ADAPTER_PACKAGE.")
       .andShould().haveSimpleNameEndingWith(CONFIGURATION)
       .check(classes)

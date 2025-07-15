@@ -16,7 +16,7 @@ import de.blume2000.finden.architecture.onion.OnionTest.Companion.DOMAIN_MODEL_P
 import de.blume2000.finden.architecture.onion.OnionTest.Companion.INSTANCE
 import de.blume2000.finden.architecture.onion.OnionTest.Companion.PASSIVE_ADAPTER_PACKAGE
 import de.blume2000.finden.architecture.onion.domain.model.RepositoryTest.Companion.REPOSITORY
-import javax.enterprise.context.ApplicationScoped
+import jakarta.enterprise.context.ApplicationScoped
 
 @AnalyzeClasses(packages = [BOUNDED_CONTEXT_PACKAGE],
   importOptions = [DoNotIncludeTests::class, DoNotIncludeArchives::class])

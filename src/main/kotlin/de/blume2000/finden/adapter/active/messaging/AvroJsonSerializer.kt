@@ -17,7 +17,9 @@ class AvroJsonSerializer<T> : Serializer<T> {
         logger.error(exception) { "exception during serialization of $data" }
         throw exception
       }
-    } else null
+    } else {
+      null
+    }
   }
 
   @Suppress("EmptyFunctionBlock")

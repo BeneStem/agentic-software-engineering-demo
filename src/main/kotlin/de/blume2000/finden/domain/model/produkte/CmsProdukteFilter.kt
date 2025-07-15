@@ -8,7 +8,7 @@ import de.blume2000.finden.domain.model.produkte.produkt.preis.Preis
 import java.util.Currency
 import java.util.Locale
 import java.util.function.Function
-import javax.ws.rs.core.MultivaluedMap
+import jakarta.ws.rs.core.MultivaluedMap
 
 data class CmsProdukteFilter(
   val klassifikationen: List<KlassifikationId> = emptyList(),

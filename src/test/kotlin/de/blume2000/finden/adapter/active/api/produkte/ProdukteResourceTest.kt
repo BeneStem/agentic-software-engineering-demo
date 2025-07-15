@@ -46,7 +46,7 @@ import java.time.LocalDate
 import java.util.Currency
 import java.util.Locale
 import java.util.stream.Stream
-import javax.inject.Inject
+import jakarta.inject.Inject
 import org.hamcrest.CoreMatchers.hasItem
 import org.hamcrest.CoreMatchers.hasItems
 import org.hamcrest.CoreMatchers.`is`
@@ -796,17 +796,25 @@ internal class ProdukteResourceTest {
   ) {
     // Given
     val minPreisString = if (preisbereich?.minPreis != null) {
-      "{\"bruttoBetrag\": ${preisbereich.minPreis!!.bruttoBetrag}, \"waehrung\": \"${preisbereich.minPreis!!.waehrung}\"}"
-    } else null
+      "{\"bruttoBetrag\": ${preisbereich.minPreis.bruttoBetrag}, \"waehrung\": \"${preisbereich.minPreis!!.waehrung}\"}"
+    } else {
+      null
+    }
     val maxPreisString = if (preisbereich?.maxPreis != null) {
-      "{\"bruttoBetrag\": ${preisbereich.maxPreis!!.bruttoBetrag}, \"waehrung\": \"${preisbereich.maxPreis!!.waehrung}\"}"
-    } else null
+      "{\"bruttoBetrag\": ${preisbereich.maxPreis.bruttoBetrag}, \"waehrung\": \"${preisbereich.maxPreis!!.waehrung}\"}"
+    } else {
+      null
+    }
     val preisbereichString = if (preisbereich != null) {
       "{\"minPreis\": $minPreisString, \"maxPreis\": $maxPreisString}"
-    } else null
+    } else {
+      null
+    }
     val produktnummernVerwendungString = if (produktnummernVerwendung != null) {
       "\"$produktnummernVerwendung\""
-    } else null
+    } else {
+      null
+    }
     val invalidRequestBody = """
        {
          "blumensorten": [${blumensorten.joinToString { "{\"name\": \"${it.name}\"}" }}],

@@ -17,8 +17,8 @@ import de.blume2000.finden.architecture.onion.OnionTest.Companion.APPLICATION_SE
 import de.blume2000.finden.architecture.onion.OnionTest.Companion.BOUNDED_CONTEXT_PACKAGE
 import de.blume2000.finden.architecture.onion.OnionTest.Companion.COMPANION
 import de.blume2000.finden.architecture.onion.OnionTest.Companion.INSTANCE
-import javax.enterprise.context.ApplicationScoped
-import javax.transaction.Transactional
+import jakarta.enterprise.context.ApplicationScoped
+import jakarta.transaction.Transactional
 
 @AnalyzeClasses(packages = [BOUNDED_CONTEXT_PACKAGE],
   importOptions = [DoNotIncludeTests::class, DoNotIncludeArchives::class])

@@ -7,9 +7,9 @@ import com.tngtech.archunit.junit.AnalyzeClasses
 import com.tngtech.archunit.junit.ArchTest
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes
 import de.blume2000.finden.architecture.onion.OnionTest.Companion.BOUNDED_CONTEXT_PACKAGE
-import javax.enterprise.context.ApplicationScoped
-import javax.enterprise.context.Dependent
-import javax.inject.Singleton
+import jakarta.enterprise.context.ApplicationScoped
+import jakarta.enterprise.context.Dependent
+import jakarta.inject.Singleton
 
 @AnalyzeClasses(packages = [BOUNDED_CONTEXT_PACKAGE],
   importOptions = [DoNotIncludeTests::class, DoNotIncludeArchives::class])

@@ -13,7 +13,7 @@ import io.quarkus.mongodb.panache.kotlin.PanacheMongoRepositoryBase
 import mu.KLogging
 import org.bson.conversions.Bson
 import org.jmolecules.ddd.annotation.Repository
-import javax.enterprise.context.ApplicationScoped
+import jakarta.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 @DefaultBean
