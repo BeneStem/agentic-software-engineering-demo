@@ -2,7 +2,7 @@ package de.blume2000.util
 
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager
 import org.eclipse.microprofile.config.ConfigProvider
-import org.testcontainers.containers.KafkaContainer
+import org.testcontainers.kafka.ConfluentKafkaContainer
 import org.testcontainers.containers.MongoDBContainer
 import org.testcontainers.utility.DockerImageName
 
@@ -10,9 +10,8 @@ class TestContainers : QuarkusTestResourceLifecycleManager {
   private val useTestContainers =
     ConfigProvider.getConfig().getOptionalValue("b2k.testing.integration.use-testcontainers", Boolean::class.java)
       .orElse(true)
-  private val mongoDBContainer = MongoDBContainer(DockerImageName.parse("mongo:6.0"))
-  //  TODO fix deprecation
-  private val kafka = KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.4.0"))
+  private val mongoDBContainer = MongoDBContainer(DockerImageName.parse("mongo:8.0.12"))
+  private val kafka = ConfluentKafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.9.2"))
 
   override fun start(): Map<String, String> {
 

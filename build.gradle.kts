@@ -6,9 +6,7 @@ import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.extensions.DetektExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.owasp.dependencycheck.gradle.extension.AnalyzerExtension
 import java.io.InputStream
 import java.net.URI
 import java.nio.file.Files
@@ -114,11 +112,10 @@ dependencies {
 
   detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.8")
 
-  // implementation("io.quarkus:quarkus-logging-sentry") // TODO: Check if this extension exists in Quarkus 3.x
+  implementation("io.quarkiverse.loggingsentry:quarkus-logging-sentry:2.1.6")
 }
 
 allOpen {
-  annotation("io.quarkus.arc.config.ConfigProperties")
   annotation("jakarta.ws.rs.Path")
   annotation("jakarta.enterprise.context.ApplicationScoped")
   annotation("jakarta.inject.Singleton")
@@ -130,7 +127,6 @@ allOpen {
 
 noArg {
   annotation("de.blume2000.util.NoArg")
-  annotation("io.quarkus.arc.config.ConfigProperties")
   annotation("jakarta.persistence.Entity")
   annotation("io.quarkus.mongodb.panache.MongoEntity")
 }
@@ -144,12 +140,12 @@ jacoco {
 }
 
 dependencyCheck {
-  analyzers(closureOf<AnalyzerExtension> {
+  analyzers {
     assemblyEnabled = false
-    failBuildOnCVSS = 5F
-    failOnError = true
-    suppressionFile = "./gradle/config/suppressions.xml"
-  })
+  }
+  failBuildOnCVSS = 5F
+  failOnError = true
+  suppressionFile = "./gradle/config/suppressions.xml"
 }
 
 java {
@@ -158,14 +154,12 @@ java {
 }
 
 sourceSets {
-//  create("integrationTest") {
-//    withConvention(KotlinSourceSet::class) {
-//      kotlin.srcDir("$projectDir/src/integrationTest/kotlin")
-//      resources.srcDir("$projectDir/src/integrationTest/resources")
-//      compileClasspath += sourceSets["main"].output + sourceSets["test"].output + configurations["testRuntimeClasspath"]
-//      runtimeClasspath += output + compileClasspath + sourceSets["test"].runtimeClasspath
-//    }
-//  }
+  named("integrationTest") {
+    java.srcDir("$projectDir/src/integrationTest/kotlin")
+    resources.srcDir("$projectDir/src/integrationTest/resources")
+    compileClasspath += sourceSets["main"].output + sourceSets["test"].output + configurations["testRuntimeClasspath"]
+    runtimeClasspath += output + compileClasspath + sourceSets["test"].runtimeClasspath
+  }
 }
 
 tasks {
@@ -182,6 +176,8 @@ tasks {
   }
 
   register<Test>("unitTest") {
+    testClassesDirs = sourceSets["test"].output.classesDirs
+    classpath = sourceSets["test"].runtimeClasspath
     useJUnitPlatform {
       includeTags("unit")
     }
@@ -189,6 +185,8 @@ tasks {
     finalizedBy(jacocoTestReport)
   }
   register<Test>("integrationTest") {
+    testClassesDirs = sourceSets["integrationTest"].output.classesDirs
+    classpath = sourceSets["integrationTest"].runtimeClasspath
     systemProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager")
     useJUnitPlatform {
       includeTags("integration")

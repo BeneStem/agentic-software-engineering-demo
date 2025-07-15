@@ -57,7 +57,7 @@ data class MongoProdukt @BsonCreator constructor(
         listOf()
       },
       verfügbarkeiten = if (this.verfuegbarkeiten != null) {
-        this.verfuegbarkeiten.map {
+        this.verfuegbarkeiten.mapNotNull {
           if (it.bestellschlussUTC != null) {
             ProduktVerfügbarkeit(
               liefertag = Liefertag(it.liefertag),
@@ -66,7 +66,7 @@ data class MongoProdukt @BsonCreator constructor(
           } else {
             null
           }
-        }.filterNotNull()
+        }
       } else {
         emptyList()
       }

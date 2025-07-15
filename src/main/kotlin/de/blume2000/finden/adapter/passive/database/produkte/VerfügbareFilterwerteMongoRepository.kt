@@ -81,11 +81,11 @@ class VerfügbareFilterwerteMongoRepository : PanacheMongoRepositoryBase<MongoPr
           "preis",
           Accumulators.min(
             MongoPreisBereichQueryResult::minPreis.name,
-            "\$${MongoProdukt::preis.name}.${MongoPreis::bruttoBetragDecimal.name}"
+            $$"$$${MongoProdukt::preis.name}.$${MongoPreis::bruttoBetragDecimal.name}"
           ),
           Accumulators.max(
             MongoPreisBereichQueryResult::maxPreis.name,
-            "\$${MongoProdukt::preis.name}.${MongoPreis::bruttoBetragDecimal.name}"
+            $$"$$${MongoProdukt::preis.name}.$${MongoPreis::bruttoBetragDecimal.name}"
           )
         ),
       ), MongoPreisBereichQueryResult::class.java
@@ -131,7 +131,7 @@ class VerfügbareFilterwerteMongoRepository : PanacheMongoRepositoryBase<MongoPr
       listOf(
         Aggregates.match(produkteFilter),
         Aggregates.project(BsonDocument(MongoProdukt::verfuegbarkeiten.name, BsonBoolean.TRUE)),
-        Aggregates.unwind("\$${MongoProdukt::verfuegbarkeiten.name}"),
+        Aggregates.unwind($$"$$${MongoProdukt::verfuegbarkeiten.name}"),
         Aggregates.match(
           Filters.eq(
             "${MongoProdukt::verfuegbarkeiten.name}.${MongoVerfügbarkeit::liefertag.name}",

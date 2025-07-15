@@ -902,7 +902,7 @@ internal class ProdukteResourceTest {
         200
       ),
       Arguments.of(
-        listOf(SorteDTO(name = "Something not in '^[a-zA-Z0-9äöüÄÖÜß ]+\$'")),
+        listOf(SorteDTO(name = "Something not in '^[a-zA-Z0-9äöüÄÖÜß ]+$'")),
         emptyList<FarbeDTO>(),
         emptyList<KlassifikationDTO>(),
         null,
@@ -923,7 +923,7 @@ internal class ProdukteResourceTest {
       ),
       Arguments.of(
         emptyList<SorteDTO>(),
-        listOf(FarbeDTO(name = "Something not in '^[a-zäöüß]+\$'")),
+        listOf(FarbeDTO(name = "Something not in '^[a-zäöüß]+$'")),
         emptyList<KlassifikationDTO>(),
         null,
         null,
@@ -944,7 +944,7 @@ internal class ProdukteResourceTest {
       Arguments.of(
         emptyList<SorteDTO>(),
         emptyList<FarbeDTO>(),
-        listOf(KlassifikationDTO(name = "Klassifikation", id = "Something not in '^(\\d)+\$'")),
+        listOf(KlassifikationDTO(name = "Klassifikation", id = "Something not in '^(\\d)+$'")),
         null,
         null,
         emptyList<ProduktnummerDTO>(),
@@ -1007,7 +1007,7 @@ internal class ProdukteResourceTest {
         emptyList<KlassifikationDTO>(),
         null,
         null,
-        listOf(ProduktnummerDTO(nummer = "Something not in '^(\\d)+\$'")),
+        listOf(ProduktnummerDTO(nummer = "Something not in '^(\\d)+$'")),
         null,
         400
       ),

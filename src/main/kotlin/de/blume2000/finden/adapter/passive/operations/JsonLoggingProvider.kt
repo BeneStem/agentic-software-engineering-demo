@@ -19,7 +19,6 @@ import jakarta.interceptor.Interceptor.Priority.PLATFORM_AFTER
 @Alternative
 @Priority(PLATFORM_AFTER)
 @Unremovable
-@Suppress("unused")
 class JsonLoggingProvider(
     @param:ConfigProperty(name = "b2k.gcp-project.environment")
     private val environment: String,

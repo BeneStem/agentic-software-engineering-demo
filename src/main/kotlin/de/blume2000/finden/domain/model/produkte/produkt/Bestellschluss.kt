@@ -14,7 +14,7 @@ data class Bestellschluss(private val init: OffsetDateTime) {
     return value.isBefore(OffsetDateTime.now(value.offset).withNano(0))
   }
 
-  override fun equals(other: Any?) = (other is Bestellschluss) && other.value == value
+  override fun equals(other: Any?) = (other is Bestellschluss) && other.value.isEqual(value)
   override fun hashCode() = value.hashCode()
   override fun toString() = value.toString()
 

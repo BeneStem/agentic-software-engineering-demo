@@ -17,7 +17,8 @@ quarkus:
       type: fast-jar
   http:
     port: ${PORT:8081}
-    cors: true
+    cors:
+      enabled: true
   resteasy:
     gzip:
       enabled: true

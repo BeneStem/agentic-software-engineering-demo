@@ -48,7 +48,7 @@ class ProdukteResource(
   @Produces("application/json")
   @Counted(value = "http/holeProdukte/requests/count")
   @Timed(value = "http/holeProdukte/requests/timer", percentiles = [0.50, 0.95, 0.99])
-  fun holeProdukte(cmsProdukteFilterDTO: CmsProdukteFilterDTO) =
+  fun holeProdukte(cmsProdukteFilterDTO: CmsProdukteFilterDTO): Response =
     when (validate(cmsProdukteFilterDTO, "holeProdukte")) {
       ValidationStatus.BAD_REQUEST -> Response.status(Status.BAD_REQUEST).build()
       ValidationStatus.OK -> Response.ok(
@@ -65,7 +65,7 @@ class ProdukteResource(
   @Produces("application/json")
   @Counted(value = "http/holeProdukteMitVerfuegbarenFilterwerten/requests/count")
   @Timed(value = "http/holeProdukteMitVerfuegbarenFilterwerten/requests/timer", percentiles = [0.50, 0.95, 0.99])
-  fun holeProdukteMitVerfügbarenFilterwerten(produkteFilterDTO: ProdukteFilterDTO) =
+  fun holeProdukteMitVerfügbarenFilterwerten(produkteFilterDTO: ProdukteFilterDTO): Response =
     when (validate(produkteFilterDTO, "holeProdukteMitVerfügbarenFilterwerten")) {
       ValidationStatus.BAD_REQUEST -> Response.status(Status.BAD_REQUEST).build()
       ValidationStatus.OK -> Response.ok(
