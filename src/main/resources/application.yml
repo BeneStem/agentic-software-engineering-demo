@@ -19,24 +19,18 @@ quarkus:
     port: ${PORT:8081}
     cors:
       enabled: true
-  resteasy:
-    gzip:
-      enabled: true
+    enable-compression: true
+  devservices:
+    enabled: false
   log:
-    console:
-      json:
-        ~: false
-        fields:
-          level:
-            enabled: false
-          message:
-            enabled: false
-          stack-trace:
-            enabled: false
-          logger-class-name:
-            enabled: false
-          logger-name:
-            enabled: false
+    json:
+      console:
+        enable: false
+      additional-field:
+        serviceName:
+          value: "${quarkus.application.name}"
+        environment:
+          value: "${quarkus.profile:dev}"
   micrometer:
     export:
       stackdriver:
@@ -49,13 +43,15 @@ quarkus:
     server-selection-timeout: PT5S
     credentials:
       auth-source: admin
+  index-dependency:
+    mu-kotlin-logging:
+      group-id: "io.github.microutils"
+      artifact-id: "kotlin-logging-jvm"
 
 "%dev":
   quarkus:
     application:
       name: local-finden-backend
-    devservices:
-      enabled: false
   mongodb:
     connection-string: mongodb://localhost:27017
 
@@ -68,7 +64,5 @@ quarkus:
     application:
       name: test-finden-backend
       version: test
-    devservices:
-      enabled: false
     mongodb:
       database: "finden-test"

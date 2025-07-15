@@ -16,6 +16,9 @@ import io.quarkus.mongodb.panache.common.MongoEntity
 import io.quarkus.mongodb.panache.kotlin.PanacheMongoEntityBase
 import org.bson.codecs.pojo.annotations.BsonCreator
 import org.bson.codecs.pojo.annotations.BsonProperty
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
+import java.util.Date
 
 @MongoEntity(collection = MONGO_COLLECTION)
 data class MongoProdukt @BsonCreator constructor(
@@ -61,7 +64,9 @@ data class MongoProdukt @BsonCreator constructor(
           if (it.bestellschlussUTC != null) {
             ProduktVerfügbarkeit(
               liefertag = Liefertag(it.liefertag),
-              bestellschluss = Bestellschluss(it.bestellschlussUTC)
+              bestellschluss = Bestellschluss(
+                OffsetDateTime.ofInstant(it.bestellschlussUTC.toInstant(), ZoneOffset.UTC)
+              )
             )
           } else {
             null
@@ -93,7 +98,7 @@ data class MongoProdukt @BsonCreator constructor(
         verfuegbarkeiten = produkt.verfügbarkeiten.map {
           MongoVerfügbarkeit(
             liefertag = it.liefertag.value,
-            bestellschlussUTC = it.bestellschluss.value
+            bestellschlussUTC = Date.from(it.bestellschluss.value.toInstant())
           )
         }
       )

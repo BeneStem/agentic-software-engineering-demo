@@ -48,11 +48,11 @@ dependencies {
   implementation("org.jmolecules:jmolecules-ddd:1.10.0")
   implementation("io.quarkus:quarkus-arc")
 
-  implementation("io.quarkus:quarkus-resteasy-mutiny")
+  implementation("io.quarkus:quarkus-rest")
   implementation("io.quarkus:quarkus-smallrye-fault-tolerance")
   implementation("io.quarkus:quarkus-elytron-security-properties-file")
 
-  implementation("io.quarkus:quarkus-resteasy-jackson")
+  implementation("io.quarkus:quarkus-rest-jackson")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3")
   implementation("com.christophsturm:filepeek:0.1.3")
 
@@ -195,21 +195,6 @@ tasks {
     finalizedBy(jacocoTestReport)
   }
 
-  register("downloadSchemas") {
-    val schemasToDownload = listOf("produkte-value", "verfuegbarkeiten-value")
-
-    schemasToDownload.forEach {
-      val request = URI("${System.getenv("AIVEN_SCHEMA_REGISTRY_URL")}/subjects/$it/versions/latest").toURL().openConnection()
-      val schemaDir = "$projectDir/src/main/avro/downloaded_schemas"
-
-      request.setRequestProperty("Authorization", "Basic ${Base64.getEncoder().encodeToString("${System.getenv("AIVEN_SCHEMA_REGISTRY_USER")}:${System.getenv("AIVEN_SCHEMA_REGISTRY_PASSWORD")}".toByteArray())}")
-
-      val jsonResponse = JsonSlurper().parseText(String((request.content as InputStream).readAllBytes())) as Map<*, *>
-
-      Files.createDirectories(Paths.get(schemaDir))
-      File(schemaDir, "$it.avsc").writeText(jsonResponse["schema"].toString())
-    }
-  }
 
   jacocoTestReport {
     executionData.setFrom(fileTree(layout.buildDirectory).include("/jacoco/*.exec"))

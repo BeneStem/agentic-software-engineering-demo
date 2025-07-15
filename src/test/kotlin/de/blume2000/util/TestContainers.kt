@@ -10,8 +10,8 @@ class TestContainers : QuarkusTestResourceLifecycleManager {
   private val useTestContainers =
     ConfigProvider.getConfig().getOptionalValue("b2k.testing.integration.use-testcontainers", Boolean::class.java)
       .orElse(true)
-  private val mongoDBContainer = MongoDBContainer(DockerImageName.parse("mongo:8.0.12"))
-  private val kafka = ConfluentKafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.9.2"))
+  private val mongoDBContainer = MongoDBContainer(DockerImageName.parse("mongo"))
+  private val kafka = ConfluentKafkaContainer(DockerImageName.parse("confluentinc/cp-kafka"))
 
   override fun start(): Map<String, String> {
 
@@ -28,7 +28,9 @@ class TestContainers : QuarkusTestResourceLifecycleManager {
   }
 
   override fun stop() {
-    mongoDBContainer.close()
-    kafka.close()
+    if (useTestContainers) {
+      mongoDBContainer.close()
+      kafka.close()
+    }
   }
 }
