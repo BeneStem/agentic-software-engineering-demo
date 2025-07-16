@@ -59,71 +59,6 @@
       },
       {
         "id": 2,
-        "title": "Implement Content Sanitization Service",
-        "description": "Create a service to sanitize HTML content and prevent XSS vulnerabilities in product descriptions",
-        "details": "Create BeschreibungSanitizationService in the application layer at src/main/kotlin/application/service/BeschreibungSanitizationService.kt. Use a library like OWASP Java HTML Sanitizer or JSoup for HTML sanitization. Configure allowed HTML tags if any (likely none for product descriptions). Implement methods to remove script tags, event handlers, and other potentially dangerous content. Make the service injectable using @ApplicationScoped annotation.",
-        "testStrategy": "Test various XSS attack vectors including: script tags, onclick handlers, javascript: URLs, encoded attacks, nested tags. Verify that legitimate content is preserved while dangerous content is removed. Test edge cases like very long strings, special characters, and unicode. Use parameterized tests for comprehensive coverage.",
-        "priority": "high",
-        "dependencies": [],
-        "status": "pending",
-        "subtasks": [
-          {
-            "id": 1,
-            "title": "Set up sanitization service with annotations and DI",
-            "description": "Create the BeschreibungSanitizationService class in the application layer with proper Quarkus annotations for dependency injection",
-            "dependencies": [],
-            "details": "Create src/main/kotlin/application/service/BeschreibungSanitizationService.kt. Add @ApplicationScoped annotation for CDI. Define the service interface with sanitize() method signature. Set up the basic class structure with proper imports and package declaration. Ensure the service follows hexagonal architecture principles by placing it in the application layer.",
-            "status": "pending",
-            "testStrategy": ""
-          },
-          {
-            "id": 2,
-            "title": "Integrate HTML sanitization library",
-            "description": "Add and configure OWASP Java HTML Sanitizer or JSoup library for HTML sanitization capabilities",
-            "dependencies": [
-              1
-            ],
-            "details": "Add the chosen library dependency to build.gradle.kts (OWASP Java HTML Sanitizer recommended for security focus). Configure the sanitizer policy to disallow all HTML tags for product descriptions. Set up proper imports and create a sanitizer instance as a class member. Consider using @PostConstruct for initialization if complex configuration is needed.",
-            "status": "pending",
-            "testStrategy": ""
-          },
-          {
-            "id": 3,
-            "title": "Implement core sanitization methods",
-            "description": "Create the main sanitization logic with proper configuration for product description requirements",
-            "dependencies": [
-              2
-            ],
-            "details": "Implement sanitize(input: String): String method that removes all HTML tags, JavaScript, and potentially dangerous content. Configure the sanitizer to preserve plain text while removing: script tags, event handlers (onclick, onload, etc.), javascript: URLs, data: URLs, style attributes, and embedded content. Add logging for sanitization events. Handle edge cases like null/empty strings gracefully.",
-            "status": "pending",
-            "testStrategy": ""
-          },
-          {
-            "id": 4,
-            "title": "Add comprehensive XSS attack vector handling",
-            "description": "Enhance sanitization to handle advanced XSS attack patterns and encoding tricks",
-            "dependencies": [
-              3
-            ],
-            "details": "Implement protection against: encoded attacks (HTML entity encoding, URL encoding, Unicode encoding), nested tag attacks, attribute-based XSS, CSS-based attacks, SVG/XML injection, malformed HTML that could bypass sanitizers. Add specific handling for common evasion techniques. Create helper methods for different attack vector categories. Document each protection mechanism with examples.",
-            "status": "pending",
-            "testStrategy": ""
-          },
-          {
-            "id": 5,
-            "title": "Create extensive test suite for attack patterns",
-            "description": "Develop comprehensive tests covering all known XSS attack vectors and edge cases",
-            "dependencies": [
-              4
-            ],
-            "details": "Create BeschreibungSanitizationServiceTest using JUnit 5 and parameterized tests. Test categories: basic XSS (<script>alert('xss')</script>), event handlers (<img onerror=alert(1)>), encoded attacks (&#60;script&#62;), malformed HTML, very long strings (>10k chars), unicode attacks, null/empty inputs, legitimate content preservation. Use OWASP XSS Filter Evasion Cheat Sheet as reference. Aim for 100% code coverage with mutation testing.",
-            "status": "pending",
-            "testStrategy": ""
-          }
-        ]
-      },
-      {
-        "id": 3,
         "title": "Update Produkt Entity with Beschreibung Field",
         "description": "Modify the existing Produkt entity to include the new Beschreibung value object field",
         "details": "Update the Produkt entity in src/main/kotlin/domain/model/Produkt.kt to include a beschreibung field of type Beschreibung. Ensure the entity remains a data class for immutability. Update any existing factory methods or builders. Consider making the field nullable for backward compatibility during migration, then make it required after migration completes. Ensure proper MongoDB field mapping with appropriate annotations.",
@@ -168,145 +103,7 @@
         ]
       },
       {
-        "id": 4,
-        "title": "Create Database Migration Script",
-        "description": "Develop MongoDB migration scripts to add the beschreibung field to existing products with default values",
-        "details": "Create a migration script in src/main/resources/db/migration/ that adds the beschreibung field to all existing products in the MongoDB collection. Set default value as an empty embedded document {value: ''}. Use MongoDB's updateMany operation for efficiency. Include rollback script to remove the field if needed. Consider using a migration tool like Mongock or implement a custom migration runner that tracks applied migrations.",
-        "testStrategy": "Test migration on a copy of production data. Verify all existing documents receive the new field with correct default value. Test rollback functionality. Measure migration performance on large datasets. Ensure idempotency - running migration multiple times should be safe.",
-        "priority": "high",
-        "dependencies": [
-          3
-        ],
-        "status": "pending",
-        "subtasks": [
-          {
-            "id": 1,
-            "title": "Research and Select Migration Tooling",
-            "description": "Evaluate migration tools (Mongock vs custom) and set up chosen solution with proper configuration",
-            "dependencies": [],
-            "details": "Research Mongock framework capabilities for MongoDB migrations. Compare with custom migration runner implementation. Consider factors: migration tracking, rollback support, Spring/Quarkus integration, version control, and team familiarity. Set up chosen tool with configuration for MongoDB connection, migration package scanning, and changelog tracking. Create base migration structure in src/main/resources/db/migration/.",
-            "status": "pending",
-            "testStrategy": ""
-          },
-          {
-            "id": 2,
-            "title": "Implement Forward Migration Script",
-            "description": "Write the migration script to add beschreibung field with proper error handling and progress tracking",
-            "dependencies": [
-              1
-            ],
-            "details": "Create migration script V001__add_beschreibung_field.js (or appropriate format for chosen tool). Implement updateMany operation to add beschreibung: {value: ''} to all products. Add error handling for connection failures, timeout scenarios, and partial updates. Implement progress logging for large datasets. Include pre-migration validation checks (collection exists, field doesn't already exist). Handle edge cases like documents with existing beschreibung fields.",
-            "status": "pending",
-            "testStrategy": ""
-          },
-          {
-            "id": 3,
-            "title": "Create Rollback Script and Test Scenarios",
-            "description": "Implement rollback functionality with comprehensive testing of various failure scenarios",
-            "dependencies": [
-              2
-            ],
-            "details": "Create rollback script V001__rollback_beschreibung_field.js to remove the field using $unset operation. Test rollback scenarios: partial migration failure, mid-migration interruption, rollback after successful migration, and rollback on empty collection. Verify data integrity after rollback. Test rollback performance on large datasets. Ensure rollback is also idempotent and handles missing fields gracefully.",
-            "status": "pending",
-            "testStrategy": ""
-          },
-          {
-            "id": 4,
-            "title": "Implement Migration Tracking and Idempotency",
-            "description": "Add migration history tracking and ensure migrations can be safely run multiple times",
-            "dependencies": [
-              2,
-              3
-            ],
-            "details": "Create migration_history collection to track applied migrations with timestamp, duration, and status. Implement checksum validation to detect migration file changes. Add pre-migration check to skip if already applied. Implement locking mechanism to prevent concurrent migration execution. Add migration status reporting (pending, running, completed, failed, rolled_back). Test idempotency by running migration multiple times and verifying no duplicate operations.",
-            "status": "pending",
-            "testStrategy": ""
-          },
-          {
-            "id": 5,
-            "title": "Create Performance Tests for Large Datasets",
-            "description": "Develop performance benchmarks and tests for migration on production-scale data",
-            "dependencies": [
-              2,
-              3,
-              4
-            ],
-            "details": "Create test datasets: 10K, 100K, 1M documents. Implement performance test suite measuring migration duration, memory usage, and database load. Test with various MongoDB configurations (replica sets, sharded clusters). Monitor index rebuild impact during migration. Set performance thresholds: <5min for 1M documents. Test migration under concurrent read/write load. Document performance characteristics and optimization opportunities.",
-            "status": "pending",
-            "testStrategy": ""
-          },
-          {
-            "id": 6,
-            "title": "Document and Integrate with CI/CD Pipeline",
-            "description": "Create comprehensive documentation and add migration validation to deployment pipeline",
-            "dependencies": [
-              5
-            ],
-            "details": "Write migration runbook documenting: prerequisites, execution steps, monitoring, rollback procedures, and troubleshooting. Create CI/CD pipeline stage for migration validation on staging environment. Add pre-deployment checks: migration not already applied, database connectivity, sufficient permissions. Implement post-deployment validation: field exists on sample documents, indexes rebuilt. Document migration timing windows and coordination with deployments. Add alerts for migration failures.",
-            "status": "pending",
-            "testStrategy": ""
-          }
-        ]
-      },
-      {
-        "id": 5,
-        "title": "Add MongoDB Text Index for Search",
-        "description": "Create a text index on the beschreibung.value field to enable efficient text search functionality",
-        "details": "Create index using MongoDB command: db.produkte.createIndex({'beschreibung.value': 'text'}). Add this to the migration script or application startup. Configure index options for case-insensitive search and language settings (likely German). Consider compound indexes if searching across multiple fields. Monitor index build time and impact on write performance.",
-        "testStrategy": "Verify index creation using db.produkte.getIndexes(). Test search performance with and without index using explain(). Measure query performance on datasets of varying sizes. Test that index improves search speed to meet <200ms requirement. Verify case-insensitive search works correctly.",
-        "priority": "high",
-        "dependencies": [
-          4
-        ],
-        "status": "pending",
-        "subtasks": [
-          {
-            "id": 1,
-            "title": "Create MongoDB text index with German language support",
-            "description": "Create a text index on beschreibung.value field with proper configuration for German language and case-insensitive search",
-            "dependencies": [],
-            "details": "Execute MongoDB command to create text index: db.produkte.createIndex({'beschreibung.value': 'text'}, {default_language: 'german', strength: 1}). The strength: 1 setting enables case-insensitive search. Verify index creation with db.produkte.getIndexes(). Document the index structure and configuration options for future reference.",
-            "status": "pending",
-            "testStrategy": ""
-          },
-          {
-            "id": 2,
-            "title": "Integrate index creation into application startup or migration",
-            "description": "Add index creation logic to ensure the text index is created automatically during application startup or database migration",
-            "dependencies": [
-              1
-            ],
-            "details": "Implement index creation in the application's startup hook or migration script. For Quarkus, use @Startup annotation or implement a StartupEvent observer. Check if index exists before creating to make the operation idempotent. Add logging to track index creation status. Consider using MongoDB's createIndexes command with multiple index definitions if other indexes are needed.",
-            "status": "pending",
-            "testStrategy": ""
-          },
-          {
-            "id": 3,
-            "title": "Implement performance benchmarks and validation",
-            "description": "Create performance tests to validate that search queries meet the <200ms requirement with the text index",
-            "dependencies": [
-              1,
-              2
-            ],
-            "details": "Create benchmark tests using JUnit 5 and measure query execution time with various dataset sizes (1K, 10K, 100K products). Use MongoDB's explain() to verify index usage. Test different search patterns: single word, multiple words, partial matches. Compare performance with and without index. Set up CI pipeline to run performance tests and fail if <200ms threshold is exceeded.",
-            "status": "pending",
-            "testStrategy": ""
-          },
-          {
-            "id": 4,
-            "title": "Add index monitoring and write performance metrics",
-            "description": "Implement monitoring for text index performance and measure impact on write operations",
-            "dependencies": [
-              3
-            ],
-            "details": "Add metrics collection using Micrometer (Quarkus standard) to track: search query response times, index hit ratio, write operation latency with index present. Create alerts for performance degradation. Monitor index size growth over time. Implement a dashboard or logging to track these metrics. Consider adding index usage statistics to application health checks.",
-            "status": "pending",
-            "testStrategy": ""
-          }
-        ]
-      },
-      {
-        "id": 6,
+        "id": 3,
         "title": "Update ProduktRepository with Search Methods",
         "description": "Enhance the repository layer with methods to search products by description content",
         "details": "Update ProduktRepository in src/main/kotlin/infrastructure/persistence/ProduktRepository.kt. Implement findByBeschreibungContains() method using MongoDB regex queries with case-insensitive option. Use proper parameterization to prevent injection. Consider pagination for large result sets. Implement efficient queries that leverage the text index. Handle special characters in search terms properly.",
@@ -364,7 +161,7 @@
         ]
       },
       {
-        "id": 7,
+        "id": 4,
         "title": "Enhance ProduktService with Beschreibung Operations",
         "description": "Update the application service layer to handle CRUD operations with the new beschreibung field",
         "details": "Modify ProduktService in src/main/kotlin/application/service/ProduktService.kt. Add methods for creating/updating products with descriptions. Integrate BeschreibungSanitizationService for content sanitization before persistence. Add findByBeschreibungContains() method that delegates to repository. Implement proper error handling and validation. Ensure transactional consistency where needed.",
@@ -421,7 +218,7 @@
         ]
       },
       {
-        "id": 8,
+        "id": 5,
         "title": "Create ProduktDto with Beschreibung Field",
         "description": "Define or update the Data Transfer Object to include the beschreibung field for API communication",
         "details": "Create or update ProduktDto in src/main/kotlin/application/dto/ProduktDto.kt. Include beschreibung as a String field (not the value object). Add appropriate JSON annotations if needed. Consider validation annotations like @Size(max=500) and @NotBlank. Ensure the DTO follows the existing naming conventions and structure patterns in the codebase.",
@@ -465,7 +262,7 @@
         ]
       },
       {
-        "id": 9,
+        "id": 6,
         "title": "Implement ProduktMapper for DTO Conversion",
         "description": "Create mapper functions to convert between Produkt entity and ProduktDto, handling the Beschreibung value object conversion",
         "details": "Create ProduktMapper in src/main/kotlin/application/mapper/ProduktMapper.kt. Implement toDto() method that extracts the string value from Beschreibung value object. Implement toEntity() method that creates Beschreibung value object from DTO string. Handle null cases appropriately. Consider using MapStruct if already in use, otherwise implement as simple Kotlin functions. Ensure the mapper is injectable.",
@@ -509,7 +306,7 @@
         ]
       },
       {
-        "id": 10,
+        "id": 7,
         "title": "Update REST Endpoints for Beschreibung Support",
         "description": "Modify the ProduktResource REST controller to handle beschreibung in requests and responses, including search functionality",
         "details": "Update ProduktResource in src/main/kotlin/infrastructure/web/ProduktResource.kt. Modify GET endpoint to accept 'beschreibung_contains' query parameter. Update POST/PUT endpoints to accept beschreibung in request body. Integrate with ProduktService and ProduktMapper. Implement proper error handling and return appropriate HTTP status codes. Add OpenAPI annotations for documentation.",
@@ -578,100 +375,6 @@
             "testStrategy": ""
           }
         ]
-      },
-      {
-        "id": 11,
-        "title": "Implement Comprehensive Test Suite",
-        "description": "Create unit, integration, and end-to-end tests for the complete beschreibung feature",
-        "details": "Create test classes following the existing test structure. Unit tests for value object, services, mappers using JUnit 5 and Mockk. Integration tests for repository using TestContainers. API tests using REST Assured. End-to-end tests simulating complete workflows. Aim for >90% code coverage. Include performance tests to validate <300ms API response time and <200ms search query time.",
-        "testStrategy": "Follow test pyramid: many unit tests, fewer integration tests, minimal E2E tests. Use given-when-then format for test names. Create test fixtures for common test data. Use parameterized tests for edge cases. Include negative tests for error scenarios. Set up continuous integration to run all tests automatically.",
-        "priority": "high",
-        "dependencies": [
-          10
-        ],
-        "status": "pending",
-        "subtasks": [
-          {
-            "id": 1,
-            "title": "Create Unit Test Suite for Domain and Application Layers",
-            "description": "Build comprehensive unit tests for all new beschreibung-related components including value objects, services, and mappers",
-            "dependencies": [],
-            "details": "Create unit tests using JUnit 5 and Mockk for: 1) BeschreibungTest.kt for value object validation, edge cases, and immutability. 2) BeschreibungSanitizationServiceTest.kt for XSS prevention scenarios and sanitization logic. 3) ProduktMapperTest.kt for bidirectional DTO conversion. 4) Any domain services related to beschreibung. Use parameterized tests for edge cases, given-when-then format for test names, and test fixtures for common test data. Aim for 100% code coverage on these core components.",
-            "status": "pending",
-            "testStrategy": ""
-          },
-          {
-            "id": 2,
-            "title": "Implement Integration Tests with TestContainers",
-            "description": "Create integration tests for repository layer and MongoDB persistence using TestContainers",
-            "dependencies": [],
-            "details": "Set up TestContainers for MongoDB integration testing. Create ProduktRepositoryIntegrationTest.kt to test: 1) Saving and retrieving Produkt entities with beschreibung field. 2) Search queries that include beschreibung content. 3) Index performance for text search on beschreibung. 4) Data migration scenarios. 5) Concurrent access patterns. Use @QuarkusTest and @TestProfile for proper test isolation. Verify MongoDB field mapping and persistence behavior.",
-            "status": "pending",
-            "testStrategy": ""
-          },
-          {
-            "id": 3,
-            "title": "Build REST API Tests with REST Assured",
-            "description": "Create comprehensive API tests for all search endpoints that handle beschreibung data",
-            "dependencies": [
-              1,
-              2
-            ],
-            "details": "Implement REST API tests using REST Assured and Quarkus test framework. Test scenarios: 1) Search endpoints with beschreibung in query parameters. 2) Product retrieval with beschreibung field in response. 3) Error handling for invalid beschreibung data. 4) Content-Type and response format validation. 5) API versioning compatibility. 6) Rate limiting behavior. Include tests for both successful and error scenarios, verify JSON envelope format, and test security headers.",
-            "status": "pending",
-            "testStrategy": ""
-          },
-          {
-            "id": 4,
-            "title": "Create End-to-End Test Scenarios",
-            "description": "Develop comprehensive E2E tests simulating complete user workflows from search to product details",
-            "dependencies": [
-              3
-            ],
-            "details": "Build E2E tests using Playwright for critical user journeys: 1) User searches for products and views beschreibung in results. 2) Filtering products based on beschreibung content. 3) Product detail page displaying sanitized beschreibung. 4) Search result pagination with beschreibung excerpts. 5) Mobile responsive behavior for beschreibung display. Create page objects for maintainability, test data setup/teardown procedures, and cross-browser testing configurations.",
-            "status": "pending",
-            "testStrategy": ""
-          },
-          {
-            "id": 5,
-            "title": "Add Performance Tests and Benchmarks",
-            "description": "Implement performance tests to validate response time requirements and system behavior under load",
-            "dependencies": [
-              3
-            ],
-            "details": "Create performance test suite using Gatling or k6: 1) Baseline performance tests for single-user scenarios (<300ms API response). 2) Load tests with 100+ concurrent users searching with beschreibung. 3) Stress tests to find system breaking points. 4) Soak tests for memory leak detection. 5) Database query performance tests (<200ms for search). Monitor CPU usage, memory consumption, and response time percentiles (P50, P95, P99). Create performance regression detection thresholds.",
-            "status": "pending",
-            "testStrategy": ""
-          },
-          {
-            "id": 6,
-            "title": "Set Up Code Coverage and CI Integration",
-            "description": "Configure code coverage reporting and integrate all test suites into GitLab CI pipeline",
-            "dependencies": [
-              1,
-              2,
-              3,
-              4,
-              5
-            ],
-            "details": "Configure JaCoCo for backend code coverage and NYC/Istanbul for frontend. Set up GitLab CI stages: 1) Unit tests with >90% coverage requirement. 2) Integration tests with TestContainers in CI. 3) API tests in isolated environment. 4) E2E tests with Playwright in Docker. 5) Performance tests with automatic failure on regression. 6) Security scanning with OWASP dependency check. Create coverage badges, test reports in merge requests, and automatic test failure notifications. Configure test parallelization for faster CI runs.",
-            "status": "pending",
-            "testStrategy": ""
-          }
-        ]
-      },
-      {
-        "id": 12,
-        "title": "Add Security and Performance Validation",
-        "description": "Implement security testing for XSS prevention and performance testing under load",
-        "details": "Create security tests to verify XSS prevention using OWASP testing guide. Implement performance tests using Gatling or JMeter to simulate load. Test with 100+ concurrent users. Monitor memory usage and response times. Add rate limiting to search endpoints using Quarkus rate limiting features. Implement monitoring hooks for production observability. Document security measures and performance characteristics.",
-        "testStrategy": "Security: Use OWASP XSS filter evasion cheat sheet for test cases. Automated security scanning with OWASP ZAP. Performance: Load test with gradual user increase. Measure P95 response times. Test search performance with various query complexities. Stress test to find breaking points. Verify rate limiting works correctly.",
-        "priority": "high",
-        "dependencies": [
-          11
-        ],
-        "status": "pending",
-        "subtasks": []
       }
     ],
     "metadata": {
