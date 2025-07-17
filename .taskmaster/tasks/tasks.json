@@ -106,8 +106,8 @@
         "id": 7,
         "title": "Update REST Endpoints for Beschreibung Support",
         "description": "Modify the ProduktResource REST controller to handle beschreibung in requests and responses, including search functionality",
-        "details": "Update ProduktResource in src/main/kotlin/infrastructure/web/ProduktResource.kt. Modify GET endpoint to accept 'beschreibung_contains' query parameter. Update POST/PUT endpoints to accept beschreibung in request body. Integrate with ProduktService and ProduktMapper. Implement proper error handling and return appropriate HTTP status codes. Add OpenAPI annotations for documentation.",
-        "testStrategy": "Integration tests for all endpoints using REST Assured. Test GET with and without search filters. Test POST/PUT with valid and invalid descriptions. Verify proper HTTP status codes and error messages. Test query parameter handling and encoding. Performance test to ensure <300ms response time.",
+        "details": "Update ProduktResource in src/main/kotlin/infrastructure/web/ProduktResource.kt. Modify GET endpoint to accept 'beschreibung_contains' query parameter. Implement proper error handling and return appropriate HTTP status codes. Add OpenAPI annotations for documentation.",
+        "testStrategy": "Integration tests for all endpoints using REST Assured. Test GET with and without search filters. Verify proper HTTP status codes and error messages. Test query parameter handling and encoding. Performance test to ensure <300ms response time.",
         "priority": "high",
         "dependencies": [
           7,
@@ -126,15 +126,6 @@
           },
           {
             "id": 2,
-            "title": "Update POST/PUT endpoints for beschreibung handling",
-            "description": "Modify POST and PUT endpoints in ProduktResource to accept and process the beschreibung field in request/response DTOs",
-            "dependencies": [],
-            "details": "Update ProduktDto to include beschreibung field. Modify createProduct() and updateProduct() methods to handle the new field. Ensure the beschreibung is properly mapped through ProduktMapper. Validate that beschreibung meets the length requirements (10-5000 characters) at the REST layer. Return appropriate validation errors in the response.",
-            "status": "pending",
-            "testStrategy": ""
-          },
-          {
-            "id": 3,
             "title": "Add comprehensive OpenAPI documentation",
             "description": "Document all endpoint changes with proper OpenAPI annotations including the new beschreibung field and search parameter",
             "dependencies": [
@@ -146,7 +137,7 @@
             "testStrategy": ""
           },
           {
-            "id": 4,
+            "id": 3,
             "title": "Implement proper error handling and HTTP status codes",
             "description": "Add comprehensive error handling for all beschreibung-related operations with appropriate HTTP status codes and error messages",
             "dependencies": [
@@ -158,7 +149,7 @@
             "testStrategy": ""
           },
           {
-            "id": 5,
+            "id": 4,
             "title": "Create comprehensive REST Assured integration tests",
             "description": "Develop integration tests covering all REST endpoint scenarios including search, CRUD operations, error cases, and performance validation",
             "dependencies": [
@@ -167,7 +158,7 @@
               3,
               4
             ],
-            "details": "Test GET endpoint with various search queries including special characters and umlauts. Test POST/PUT with valid beschreibung and edge cases (min/max length). Verify 400 responses for invalid input and XSS attempts. Test pagination and empty result handling. Measure and assert response times < 300ms. Test concurrent requests for thread safety. Verify OpenAPI documentation accuracy.",
+            "details": "Test GET endpoint with various search queries including special characters and umlauts. Verify 400 responses for invalid input and XSS attempts. Test pagination and empty result handling. Measure and assert response times < 300ms. Test concurrent requests for thread safety. Verify OpenAPI documentation accuracy.",
             "status": "pending",
             "testStrategy": ""
           }
