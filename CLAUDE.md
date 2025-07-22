@@ -81,7 +81,7 @@ This guide outlines the development standards, coding conventions, and contribut
 **🔄 TDD Cycle:** 0. Clear conversation w/ `/clear` | 1. Task Setup: `task-master next` → select task | `task-master show <task-id>` → review req | `task-master set-status --id=<task-id> --status=in-progress` | Auto-persona selection (🎨/🔧/🛡️/📊/⚡) | 2. Subtask Iteration: For each subtask (`<task-id>.1`, `<task-id>.2`, etc.): a. **RED:** Write failing BDD test (📊 QA persona auto-enhances test strategy) | b. **GREEN:** Minimal code to pass test w/ persona-guided impl | c. **REFACTOR:** Improve code (auto-quality analysis w/ refactorer persona) | d. **DOCUMENT:** `task-master update-subtask --id=<task-id>.<subtask-id> --prompt="notes"` | e. **COMMIT:** Atomic commit w/ pre-commit val | f. **MEMORY:** Capture patterns, problems, solutions in dev episode | 3. Task Completion: Integration testing across subtasks | Final refactoring for consistency | Store completion insights & learnings | `task-master set-status --id=<task-id> --status=done` | 4. Commit & Push: Final commit & push changes |
 Follow Quality Gates (pre-commit, pre-merge, pre-deploy)
 
-**🔧 Runtime:** Use `sdk use java 21.0.7-tem` for all operations
+**🔧 Runtime:** Use `sdk use java 21.0.8-tem` for all operations
 
 **💻 Git Workflow:** Conventional Commits (`feat:`, `fix:`, `refactor:`, `security:`, `perf:` w/ task IDs), Atomic Commits (single logical change per commit), Branch Naming (`feature/`, `bugfix/`, `security/`, `perf/`) | SuperClaude v3 Integration: Use `/git` commands for commit msg generation | Leverage `--persona-scribe` for professional commit messages | Apply `--seq` for complex merge conflict resolution
 
