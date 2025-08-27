@@ -1,6 +1,81 @@
-# Development Guide: Finden Self-Contained System
+# Finden Self-Contained System | Development Guide
+
+@README.md
+@package.json
 
 Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self-contained system w/ development standards, coding conventions, contribution guidelines
+
+## Table of Contents
+
+- [System Overview](#-system-overview)
+- [Commands Reference](#-commands-reference)
+- [Core Directives](#-core-directives-non-negotiable)
+- [Development Principles](#-core-development-principles)
+- [System Architecture](#️-system-architecture)
+- [Technology Stack](#-technology-stack)
+- [Development Standards](#-development-standards)
+- [Security & Quality](#️-security--quality)
+- [Development Workflow](#-development-workflow)
+- [Self-Learning & Memory](#-self-learning--memory)
+- [Symbol Legend](#-symbol-legend)
+
+## 🎯 System Overview
+
+### Self-Contained System (SCS)
+
+**Finden SCS**: Autonomous unit (UI + business logic + DB) → handles product search end-to-end
+
+**SCS Components**:
+
+- **Search Service**: Product search, classification, filtering
+- **Adjacent Systems**: User Management, Order Processing, Product Management
+- **Database**: Collections (products, classifications, search_analytics, availability_cache)
+- **API**: Base `/api/v1/search`, JSON envelope responses, OpenAPI docs `/api/docs`
+- **Events**: Kafka topics (product.updated, pricing.changed, availability.changed, search.performed)
+- **Caching**: Application (classification hierarchy), Database (WiredTiger), CDN (static assets)
+
+**🏗️ Pattern**: Onion/Hexagonal + DDD | **🎯 Required Indexes**: klassifikationId+active, price+currency, availability, text search
+
+## 📋 Commands Reference
+
+### Local Development
+
+```bash
+# Backend
+./gradlew build              # Build project
+./gradlew unitTest           # Unit tests
+./gradlew integrationTest    # Integration tests
+./gradlew detekt             # Code analysis
+./gradlew bootRun            # Start backend
+
+# Frontend
+npm install                  # Install dependencies
+npm run dev                  # Development server
+npm run build                # Production build
+npm run test                 # Unit tests
+npm run lint                 # ESLint check
+npm run e2e                  # Playwright E2E tests
+
+# Quality Gates
+./gradlew check              # Full quality check
+npm run ci                   # Frontend CI pipeline
+```
+
+### Task Management
+
+```bash
+# Task Master Integration
+task-master next             # Get next prioritized task
+task-master show <id>        # Show task details
+task-master set-status --id=<id> --status=in-progress
+task-master update-subtask --id=<id>.<sub> --prompt="notes"
+```
+
+### Runtime Environment
+
+```bash
+sdk use java 21.0.8-tem     # Java version (MANDATORY)
+```
 
 ## 🚨 Core Directives (Non-Negotiable)
 
@@ -67,10 +142,9 @@ Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self
 **Review Cycle**: For each completed task, ask systematically:
 
 - "What's good?" (successful elements) | "What's broken?" (clear failures) | "What works but shouldn't?" (false positives) | "What doesn't work but pretends to?" (hidden issues)
-  **Rule**: Make corrections after each review → continue until 10 clean iterations with no issues
-  **Standards**: Never mark complete until 100/100 match w/ user intent | Maintain context across reviews | Document changes/reasoning | Quality > speed
 
-## ⚠️ Red Flags & Troubleshooting
+**Rule**: Make corrections after each review → continue until 10 clean iterations with no issues
+**Standards**: Never mark complete until 100/100 match w/ user intent | Maintain context across reviews | Document changes/reasoning | Quality > speed
 
 ### Red Flags (Immediate Correction Required)
 
@@ -90,7 +164,7 @@ Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self
 - Marking tasks complete without achieving 100/100 score
 - Ignoring edge cases or error conditions
 
-### When You Get Stuck (5-Step Systematic Process)
+### When You Get Stuck (5-Step Process)
 
 **STOP → INVESTIGATE → SIMPLIFY → CLARIFY → SEARCH**
 
@@ -100,22 +174,9 @@ Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self
 4. **Ask for Clarification**: Don't guess requirements → communicate gaps directly
 5. **Check Existing Code**: Similar problem already solved in codebase?
 
-**Reality Check Protocol**: Verify assumptions about external systems/APIs → Test actual integration points (not assumed behavior) → Document what works/doesn't w/ evidence → Request user guidance when requirements conflict w/ technical reality
+## 🏗️ System Architecture
 
-**Technical Constraints**:
-
-- **Context Preservation**: Maintain full context across all operations and iterations
-- **Artifact Management**: Use consistent UUIDs for improved artifacts, new UUIDs for unrelated artifacts
-- **Language Guidelines**: Strictly adhere to specified language/framework requirements
-- **NO THEATER**: If integration fails, library incompatible, requirement infeasible → state immediately and clearly
-
-## 🏗️ Technical Architecture
-
-### SCS Principles
-
-**Finden SCS**: Autonomous unit (UI + business logic + DB) → handles product search end-to-end
-
-**Core Rules**:
+### SCS Communication Principles
 
 - **UI Ownership**: Own web interface, NO shared UI components across SCS boundaries
 - **Data Autonomy**: Dedicated DB per SCS, NO direct DB access between systems
@@ -123,17 +184,9 @@ Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self
 - **Deployment**: Independent deployment, NO coordination required
 - **Security**: Auth/authz = infrastructure responsibility
 
-### Tech Stack
-
-**Backend**: Kotlin(JVM) + Quarkus (≠Spring) + MongoDB+Panache + Gradle+Kotlin DSL + Kafka+Avro
-**Frontend**: TypeScript(strict) + Vue.js+Composition API (≠Options API) + Vuex + Fastify SSR + Vue CLI+Webpack + Axios (≠fetch)
-
-**🏗️ Pattern**: Onion/Hexagonal + DDD | **API**: `/api/v1/search` + JSON envelope + OpenAPI docs `/api/docs`
-**🎯 Required Indexes**: klassifikationId+active, price+currency, availability, text search
-
 ### Architecture Layers
 
-**🏗️ Onion/Hexagonal**:
+**🏗️ Onion/Hexagonal Pattern**:
 
 - **Domain (Core)**: Entities, value objects, domain services, repository interfaces | ✅ Immutable, zero deps | ❌ Framework annotations, infrastructure concerns | 📁 model/, service/, repository/, exception/
 - **Application**: Use cases, DTOs, mappers, coordination | ✅ Orchestrate domain, external contracts | ❌ Direct DB access | 📁 usecase/, dto/, mapper/, service/
@@ -146,9 +199,35 @@ Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self
 - **Data Access**: HTTP clients, API abstractions, data transformation
 - **Dependencies**: Presentation → Composables → API (strict) | ❌ Direct API calls from components, Options API | 📁 apps/, shared/, api/, composables/, store/
 
+## 🔧 Technology Stack
+
+### Backend Stack (MANDATORY)
+
+- **Language**: Kotlin (JVM)
+- **Framework**: Quarkus (≠Spring)
+- **Database**: MongoDB + Panache Kotlin
+- **Build**: Gradle + Kotlin DSL
+- **Messaging**: Kafka + Avro
+
+### Frontend Stack (MANDATORY)
+
+- **Language**: TypeScript (strict mode)
+- **Framework**: Vue.js + Composition API (≠Options API)
+- **State**: Vuex
+- **SSR**: Fastify
+- **Build**: Vue CLI + Webpack
+- **HTTP**: Axios (≠fetch)
+
+### ❌ FORBIDDEN Technologies
+
+- Spring Framework (use Quarkus)
+- Vue.js Options API (use Composition API)
+- Direct MongoDB drivers (use Panache)
+- fetch API (use Axios)
+
 ## 📊 Development Standards
 
-### File Naming
+### File Naming & Structure
 
 **Backend**: PascalCase w/ suffixes (`UserService`, `ProductRepository`) + lowercase packages
 **Frontend**: PascalCase components (`ProductCard.vue`) + camelCase composables w/ `use` prefix + lowercase dirs w/ hyphens
@@ -156,7 +235,7 @@ Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self
 ### Coding Standards
 
 **🔧 Kotlin/Backend**:
-✅ `val` > `var` | Immutable data classes w/ `copy()` | Safe operators (`?.`, `?:`) | Functional ops (`map`/`filter`/`fold`) | Specific exceptions w/ context | Pure domain functions | Val early/fail fast | Resource cleanup
+✅ `val` > `var` | Immutable data classes w/ `copy()` | Safe operators (`?.`, `?:`) | Functional ops (`map`/`filter`/`fold`) | Specific exceptions w/ context | Pure domain functions | Fail fast/validate early | Resource cleanup
 ❌ Force unwrapping | Imperative loops | Side effects in domain | Resource leaks
 
 **🎨 Vue.js/Frontend**:
@@ -167,7 +246,7 @@ Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self
 
 ## 🛡️ Security & Quality
 
-### Security Scope
+### Security Boundaries
 
 **Infrastructure**: Auth/authz handled by infrastructure (SCS MUST NEVER implement)
 **SCS Responsibility**: Input validation + data protection + business logic security only
@@ -176,14 +255,22 @@ Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self
 **Injection Prevention**: Parameterized queries only (NO string concatenation for DB ops)
 **System Isolation**: Enforce SCS boundaries | NO shared DB schemas | Eventual consistency for cross-SCS sync
 
-### Testing & Performance
+### Testing Strategy
 
-**📊 Testing Stack**: Backend: JUnit 5 + Mockk + TestContainers + ArchUnit | Frontend: Jest + Vue Test Utils + Playwright
+**📊 Testing Stack**:
+
+- **Backend**: JUnit 5 + Mockk + TestContainers + ArchUnit
+- **Frontend**: Jest + Vue Test Utils + Playwright
+
 **Standards**: ATDD/BDD (Given-When-Then) | 80% coverage min | Complete isolation | Unit (fast) + Integration (TestContainers) + E2E (user journeys) + Architecture (layer validation)
 
-**⚡ Performance**: Efficient algorithms (NO O(n²)+) | Use functional ops | Proper indexes on all queries | API P95 < 300ms | Core Web Vitals optimization | Lazy loading + route splitting | Bounded data loading
+### Performance Standards
 
-### Quality Gates (3-Stage)
+**⚡ Algorithm**: Efficient O(n) algorithms (NO O(n²)+) | Use functional ops | Proper indexes on all queries
+**⚡ API**: P95 < 300ms for all queries | Bounded data loading | JSON envelope responses
+**⚡ Frontend**: Core Web Vitals optimization | Lazy loading + route splitting | Shallow references for performance
+
+### Quality Gates (3-Stage Process)
 
 1. **Local**: Unit tests + lint + build (`unitTest`, `integrationTest`, `detekt`, `build`)
 2. **Pre-Merge**: Integration tests + arch compliance + code review + SCS pattern compliance
@@ -193,22 +280,81 @@ Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self
 
 ## 🔄 Development Workflow
 
-### Personas & Runtime
+### SuperClaude Integration
 
-**Auto-Activation**: Frontend files → 🎨 | API/server/DB → 🔧 | Tests → 📊 | Architecture/design → 🏗️ | Input validation → 🛡️ | Optimization → ⚡
+**Auto-Persona Activation**: Frontend files → 🎨 | API/server/DB → 🔧 | Tests → 📊 | Architecture/design → 🏗️ | Input validation → 🛡️ | Optimization → ⚡
 **Runtime**: `sdk use java 21.0.8-tem` for all operations
 
-### Task Flow
+### Daily Development Loop (TDD + Task-Master)
 
-1. **Setup**: `task-master next` → `task-master show <task-id>` → `task-master set-status --id=<task-id> --status=in-progress`
-2. **TDD Per Subtask**: RED (failing BDD test) → GREEN (minimal code) → REFACTOR (improve) → DOCUMENT (`update-subtask`) → COMMIT (atomic) → MEMORY (capture patterns)
-3. **Complete**: Integration testing → final refactoring → `set-status done` → commit & push
+**0. Conversation Setup**: Clear current conversation with `/clear` command
 
-### Standards
+**1. Task Setup**:
 
-**💻 Git**: Conventional commits (`feat:`, `fix:`, `refactor:`, `security:`, `perf:`) + atomic commits + branch naming (`feature/`, `bugfix/`, `security/`, `perf/`)
+- `task-master next` → select prioritized task
+- `task-master show <task-id>` → review requirements
+- `task-master set-status --id=<task-id> --status=in-progress`
+- Auto-persona selection based on context (Frontend/Backend/Security/QA/Performance)
+
+**2. Subtask Iteration (TDD Cycle)**:
+For each subtask (`<task-id>.1`, `<task-id>.2`, etc.):
+a. **RED:** Write failing BDD test (QA persona auto-enhances test strategy)
+b. **GREEN:** Minimal code to pass test with persona-guided implementation
+c. **REFACTOR:** Improve code (auto-quality analysis with refactorer persona)
+d. **DOCUMENT:** `task-master update-subtask --id=<task-id>.<subtask-id> --prompt="notes"`
+e. **MEMORY:** Capture patterns, problems, solutions in development episode
+f. **COMMIT:** Atomic commit with pre-commit validation (security, performance, architecture)
+
+**3. Task Completion**:
+
+- Integration testing across subtasks
+- Final refactoring for consistency
+- Store completion insights and learnings
+- `task-master set-status --id=<task-id> --status=done`
+
+**4. Commit & Push**:
+
+- Final commit with pre-commit validation
+- Push changes
+
+### Git Workflow
+
+**💻 Git**: Conventional commits (`feat:`, `fix:`, `refactor:`, `security:`, `perf:` w/ task IDs) + atomic commits + branch naming (`feature/`, `bugfix/`, `security/`, `perf/`)
+
+**SuperClaude Git Integration**:
+
+- Use `/git` commands for commit message generation
+- Leverage `--persona-scribe` for professional commit messages
+- Apply `--seq` for complex merge conflict resolution
+
+### AI Behavior & Context Management
+
 **🤖 AI Rules**: Never assume context (ask questions) | Never hallucinate libraries (verify first) | Confirm paths/classes exist | Mark tasks complete immediately | Document blockers
+
+**Context Optimization**:
+
+- Use `--uc` for token optimization when context usage >75%
+- Apply `--delegate` for large codebase analysis (>50 files)
+- Use `--wave-mode` for complex multi-stage operations
+- Leverage `--seq` for systematic analysis and debugging
+- Use `--c7` for documentation and framework pattern lookups
+
+**PRD Integration**: Extract domain entities from PRDs | Map features to application services | Assess architecture impact | Ensure PRD terminology matches domain model | Identify bounded context boundaries
+
+## 🧠 Self-Learning & Memory
+
 **🧠 Memory**: Store episodes w/ patterns/problems/solutions | Capture anti-patterns | Record perf/arch decisions | Evolve CLAUDE.md based on patterns
+
+### CLAUDE.md Evolution
+
+**Self-Learning Cycle**:
+
+- Weekly analysis of memory patterns (>3 occurrences)
+- Auto-update FORBIDDEN Anti-Patterns based on real issues
+- Refine standards based on proven practices
+- Generate PR for team review of memory-driven improvements
+
+**Context Management**: Maintain full context across all operations and iterations | Use consistent UUIDs for improved artifacts, new UUIDs for unrelated artifacts | Strictly adhere to specified language/framework requirements
 
 ## 📖 Symbol Legend
 
@@ -219,4 +365,4 @@ Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self
 
 ---
 
-*Finden Development Guide v6.0 | Self-Contained System | Evidence-based practices | Token-optimized*
+*Finden Development Guide v7.0 | Self-Contained System | Evidence-based practices | Token-optimized | SuperClaude Integrated*
