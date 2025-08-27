@@ -7,169 +7,122 @@
 
 Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self-contained system w/ development standards, coding conventions, contribution guidelines
 
-## 📋 Table of Contents
+## 📖 Symbol Legend
 
-1. [🚀 Quick Start](#quick-start) - Environment & Commands
-2. [🚨 Core Directives](#core-directives) - Non-negotiable rules
-3. [🏗️ System Architecture](#system-architecture) - SCS patterns & tech stack
-4. [🛡️ Security & Quality](#security-quality) - Standards & testing
-5. [🔄 Development Workflow](#development-workflow) - Daily TDD cycle
-6. [🔍 Troubleshooting](#troubleshooting) - Common issues & debug patterns
+**Flow & Logic**: → (leads to) | ⇒ (transforms to) | ← (rollback) | ⇄ (bidirectional) | & (and) | | (or) | : (define) | » (sequence) | ∴ (therefore) | ∵ (because) | ≡ (equivalent) | ≈ (approximately) | ≠ (not equal)
 
-## 🚀 Quick Start
+**Status & Progress**: ✅ completed/passed | ❌ failed/error | ⚠️ warning | ℹ️ info | 🔄 in progress | ⏳ waiting/pending | 🚨 critical/urgent | 🎯 target/goal | 📊 metrics/data | 💡 insight/learning
 
-**Project Context**: Finden SCS handles anonymous product search end-to-end with autonomous UI + business logic + database. Part of microservices architecture using Kafka+Avro for communication.
+**Technical Domains**: 🏗️ Architecture/System | 🎨 Frontend/Design | 🔧 Backend/API | 🛡️ Security/Safety | ⚡ Performance/Speed | 📊 Quality/Analysis | 🔍 Investigation | 🧩 Components | 🌐 Network/Web | 📦 Deployment | 💻 Git/VCS | 🧠 Memory/Learning | 🤖 AI/Automation
 
-### Environment Setup (MANDATORY ORDER)
+**Abbreviations**: cfg (configuration) | impl (implementation) | arch (architecture) | perf (performance) | req (requirements) | val (validation) | std (standards) | qual (quality) | sec (security) | ops (operations) | env (environment) | deps (dependencies)
 
-```bash
-# 1. Java version - REQUIRED before any Gradle commands
-sdk use java 21.0.8-tem
+## 🎯 System Overview
 
-# 2. Environment files (copy from examples)
-cp .env.example .env
-cp .env.fastify.example .env.fastify
-cp frontend/.env.example frontend/.env
+**Finden SCS**: Autonomous product search service handling end-to-end anonymous search with dedicated UI + business logic + MongoDB database. Part of microservices ecosystem communicating via Kafka+Avro.
 
-# 3. Dependencies
-npm ci
-husky install
+**🧩 Components**:
 
-# 4. Schema download (requires AIVEN env vars)
-export AIVEN_SCHEMA_REGISTRY_USER=erkunden-finden-backend-produkte-consumer
-export AIVEN_SCHEMA_REGISTRY_URL=https://entscheiden-kafka-cluster-entscheiden-dev-project.aivencloud.com:20609
-export AIVEN_SCHEMA_REGISTRY_PASSWORD=<PASSWORD>
-./gradlew downloadSchemas
+- **Search Service**: Product search, classification, filtering w/ text indexing
+- **Database**: MongoDB collections (products, classifications, search_analytics, availability_cache)
+- **API**: REST endpoints `/api/v1/search`, JSON envelope responses, OpenAPI docs `/api/docs`
+- **Events**: Kafka topics (product.updated, pricing.changed, availability.changed, search.performed)
+- **Caching**: Application (classification hierarchy), Database (WiredTiger), CDN (static assets)
 
-# 5. Start Docker containers
-docker-compose -f docker/docker-compose.yaml up -d
-```
-
-### Essential Commands (VERIFIED)
-
-```bash
-# Development
-npm run dev              # Frontend development server (port 8082)
-./gradlew quarkusDev     # Backend development server (port 8081)
-npm run server           # SSR production server
-
-# Testing
-npm run test             # Frontend: lint + unit tests
-npm run unitTest         # Frontend unit tests only
-./gradlew test           # Backend unit tests
-
-# Quality
-npm run lint             # ESLint + Stylelint + Vue lint
-./gradlew detekt         # Kotlin static analysis
-./gradlew check          # Full backend quality check
-
-# Build
-npm run build            # Full frontend build (client + server + SSR)
-./gradlew build          # Backend build
-
-# Task Management (task-master CLI available)
-task-master next         # Get next prioritized task
-task-master show <id>    # Show task details
-task-master set-status --id=<id> --status=in-progress
-task-master update-subtask --id=<id>.<sub> --prompt="notes"
-```
+**🎯 Required Indexes**: klassifikationId+active, price+currency, availability fields, text search
 
 ## 🚨 Core Directives (Non-Negotiable)
 
-### AI Behavior: Truth-First Evidence-Based Development
+### Principle 0: Radical Candor—Truth Above All
 
-**Core Principles**:
+**ABSOLUTE TRUTHFULNESS**: State only verified facts | NEVER simulate functionality without explicit approval
+**EVIDENCE-BASED**: >90% confidence → proceed | 70-90% → state uncertainty | <70% → request clarification
+**NO ILLUSIONS**: API doesn't exist? System inaccessible? → State facts clearly, request clarification
 
-- **ABSOLUTE TRUTHFULNESS**: State only verified facts | NEVER simulate functionality without explicit approval
-- **EVIDENCE-BASED**: >90% confidence = proceed | 70-90% = state uncertainty | <70% = request clarification
-- **TDD MANDATORY**: RED (failing test) → GREEN (minimal code) → REFACTOR → repeat
-- **100/100 QUALITY**: Functionality (40%) + Integration (30%) + Code Quality (20%) + Performance (10%)
+### TDD + 100/100 Quality Standard (MANDATORY)
 
-**Critical Rules (Zero Tolerance)**:
+**TDD Cycle**: RED (failing test) → GREEN (minimal code) → REFACTOR → repeat continuously
+**Quality Formula**: Functionality (40%) + Integration (30%) + Code Quality (20%) + Performance (10%) = 100/100
+**Rule**: Score < 100 → document gaps → write failing test → repeat until perfect
 
-**NEVER**:
+### Critical Constraints (Zero Tolerance)
 
-- Create mocks/simulations without explicit approval
-- Skip the 100/100 quality standard or assume APIs exist without verification
-- Use forbidden tech: Spring Framework (use Quarkus), fetch API (use Axios), Vue Options API (use Composition)
-- Share UI components across SCS boundaries or access other SCS databases directly
-- Store personal data in SCS (anonymous search only) or use string concatenation for DB queries
-- Log sensitive information, credentials, or proceed without verifying API/library existence
+**❌ FORBIDDEN**:
 
-**ALWAYS**:
+- Spring Framework (use Quarkus) | fetch API (use Axios) | Vue Options API (use Composition)
+- Cross-SCS UI sharing or direct DB access | Personal data storage | String concatenation for DB queries
+- Mocks without approval | Logging sensitive info | Assuming unverified APIs
 
-- Use `sdk use java 21.0.8-tem` before any Gradle operations
-- Write tests first, verify before coding, document blockers honestly
-- Follow SCS patterns: Kafka+Avro communication, autonomous UI+logic+DB per service
-- Implement authentication/authorization via infrastructure (never in SCS code)
+**✅ MANDATORY**:
 
-### Task Execution: Goal-Driven Until Complete
+- `sdk use java 21.0.8-tem` before Gradle operations
+- Write tests first → verify → document blockers honestly
+- SCS autonomy: Kafka+Avro communication only | Auth/authz via infrastructure only
 
-**Process**: Reality Check → TDD Cycle → Quality Assessment → Repeat until 100/100
-**Exit Conditions**: ✅ Complete success | ❌ Fundamental constraints | 🔄 Need clarification
-**Emergency Pattern**: STOP → INVESTIGATE → SIMPLIFY → CLARIFY → SEARCH
+### Emergency Pattern (When Stuck >30min)
+
+**STOP → INVESTIGATE → SIMPLIFY → CLARIFY → SEARCH**
+
+1. Stop coding | 2. Use debugger/logs | 3. Write minimal test | 4. Ask for help | 5. Check patterns
 
 ## 🏗️ System Architecture
 
-### Self-Contained System (SCS) Principles
+### SCS Communication Principles
 
-**Finden SCS**: Autonomous product search with own UI + business logic + MongoDB database
+**🏗️ SCS Pattern**: UI ownership (no shared components) | Data autonomy (dedicated DB) | Async communication (Kafka+Avro only) | Independent deployment | Infrastructure auth/authz
 
-**Core SCS Rules**:
+### Technology Stack (MANDATORY)
 
-- **UI Ownership**: Own web interface, NO shared components across SCS boundaries
-- **Data Autonomy**: Dedicated MongoDB, NO direct DB access between systems
-- **Communication**: Async Kafka+Avro only (≠direct API calls between services)
-- **Deployment**: Independent deployment, NO coordination required
-- **Security**: Infrastructure handles auth/authz, SCS focuses on business logic
-
-### Technical Stack (MANDATORY)
-
-**Backend**: Kotlin + Quarkus (≠Spring) + MongoDB Panache + Gradle + Kafka+Avro
-**Frontend**: TypeScript + Vue.js Composition API (≠Options) + Vuex + Fastify SSR + Axios (≠fetch)
+**🔧 Backend**: Kotlin + Quarkus (≠Spring) + MongoDB Panache + Gradle + Kafka+Avro
+**🎨 Frontend**: TypeScript + Vue.js Composition API (≠Options) + Vuex + Fastify SSR + Axios (≠fetch)
 
 ### Architecture Layers
 
-**Backend (Hexagonal)**:
+**🔧 Backend (Hexagonal/Onion)**:
 
-- **Domain**: Pure business logic, zero external dependencies
-- **Application**: Use cases, DTOs, depends only on domain interfaces
-- **Adapter**: REST controllers, DB adapters, implements domain interfaces
+- **Domain**: Pure business logic, zero dependencies | 📁 model/, service/, repository/, exception/
+- **Application**: Use cases, DTOs, mappers | 📁 usecase/, dto/, mapper/, service/
+- **Adapter**: REST controllers, DB adapters | 📁 web/, persistence/, messaging/, external/
 
-**Frontend (3-Layer)**:
+**🎨 Frontend (3-Layer)**:
 
-- **Presentation**: Vue components, UI rendering only
-- **Business**: Composables for reactive logic & state, NO direct API calls
-- **Data**: HTTP clients, API abstractions, centralized communication
+- **Presentation**: Vue components (UI only) | 📁 apps/, shared/
+- **Business**: Composables (reactive logic) | 📁 composables/
+- **Data**: HTTP clients, API abstractions | 📁 api/, store/
 
-**Dependency Flow**: Presentation → Composables → API (strict enforcement)
+**Dependencies**: Domain ← Application ← Adapter | Presentation → Business → Data
 
-## 🏆 Development Standards & Conventions
+## 📊 Development Standards
 
-### Core Development Principles
+### Core Principles
 
 1. **One Feature at a Time**: Complete single feature before next | NO FEATURE CREEP
-2. **Fail Fast**: Proactive failure detection | Test edge cases | Aggressive validation
+2. **Fail Fast**: Proactive failure detection → Test edge cases → Aggressive validation
 3. **Measure First**: Functionality before optimization | NO PREMATURE OPTIMIZATION
 
-### File Naming & Code Conventions
+### Convention Conformance Protocol
 
-**Backend**: PascalCase w/ suffixes (`UserService`, `ProductRepository`) + lowercase packages
-**Frontend**: PascalCase components (`ProductCard.vue`) + camelCase composables w/ `use` prefix + lowercase dirs w/ hyphens
+**EXAMINE FIRST**: Before adding new code → analyze existing patterns → understand conventions → conform to established approaches
 
-**Convention Rule**: EXAMINE FIRST → analyze existing patterns → conform to established approaches → NO INVENTION
+**Discovery Workflow**:
 
-### Coding Standards
+1. **Pattern Analysis**: Search similar implementations → identify naming patterns → understand architectural decisions
+2. **Convention Mapping**: Document discovered conventions → note deviations → understand rationale
+3. **Conformance Implementation**: Apply patterns → maintain consistency → extend logically
 
-**Kotlin/Backend**:
-✅ `val` > `var` | Immutable data classes w/ `copy()` | Safe operators (`?.`, `?:`) | Functional ops | Pure domain functions
-❌ Force unwrapping | Imperative loops | Side effects in domain | Resource leaks
+**🔧 Kotlin/Backend Standards**:
 
-**Vue.js/Frontend**:
-✅ Composition API + TypeScript interfaces | Single responsibility components | Semantic HTML + BEM + scoped styles
-❌ Options API | Direct API calls from components | Business logic in components
+- **File Naming**: PascalCase w/ suffixes (`UserService`, `ProductRepository`) + lowercase packages
+- **✅ Required**: `val` > `var` | Immutable data classes w/ `copy()` | Safe operators (`?.`, `?:`) | Functional ops | Pure domain functions
+- **❌ Forbidden**: Force unwrapping | Imperative loops | Side effects in domain | Resource leaks
 
-### Red Flag Patterns (STOP Immediately)
+**🎨 Vue.js/Frontend Standards**:
+
+- **File Naming**: PascalCase components (`ProductCard.vue`) + camelCase composables w/ `use` prefix + lowercase dirs w/ hyphens
+- **✅ Required**: Composition API + TypeScript interfaces | Single responsibility components | Semantic HTML + BEM + scoped styles
+- **❌ Forbidden**: Options API | Direct API calls from components | Business logic in components
+
+### 🚨 Red Flags (STOP Immediately)
 
 - "Let me create a mock" → Verify real integration first
 - "I'll assume this API works" → Test actual behavior
@@ -179,97 +132,104 @@ task-master update-subtask --id=<id>.<sub> --prompt="notes"
 
 ## 🛡️ Security & Quality
 
-### Security Model
+### Security Boundaries
 
-- **Infrastructure Handles**: Auth/authz (SCS NEVER implements authentication)
-- **SCS Responsibility**: Input validation + business logic security only
-- **Data Protection**: Anonymous search only | NO personal data storage | GDPR compliance
-- **Injection Prevention**: Parameterized queries only | NO string concatenation for DB operations
+**Infrastructure**: Auth/authz handled by infrastructure (SCS NEVER implements authentication)
+**SCS Responsibility**: Input validation + business logic security + data protection
+**🛡️ Requirements**: Anonymous search only | NO personal data storage | GDPR compliance | Parameterized queries only
 
-### Testing Strategy & Coverage
+### Testing Stack & Standards
 
-**Backend**: JUnit 5 + Mockk (unit) | TestContainers + MongoDB (integration) | ArchUnit (architecture)
-**Frontend**: Jest + Vue Test Utils (unit) | Playwright (E2E + visual)
-
-**Coverage**: 80% unit, 70% integration, 100% critical paths (domain logic, security)
-**Format**: BDD/ATDD with Given-When-Then structure
+**🔧 Backend**: JUnit 5 + Mockk + TestContainers + ArchUnit | **🎨 Frontend**: Jest + Vue Test Utils + Playwright
+**Coverage**: 80% unit | 70% integration | 100% critical paths | **Format**: BDD/ATDD (Given-When-Then)
 
 ### Performance Standards
 
-- **Algorithms**: O(n) efficient, NO O(n²)+ | Use functional operations | Proper DB indexes
-- **API**: P95 < 300ms | Bounded data loading | JSON envelope responses
-- **Frontend**: Core Web Vitals | Lazy loading + route splitting
+**⚡ Algorithm**: O(n) efficient (NO O(n²)+) | Functional operations | Proper DB indexes
+**⚡ API**: P95 < 300ms | Bounded data loading | JSON envelope responses
+**⚡ Frontend**: Core Web Vitals | Lazy loading + route splitting
 
-### Quality Gates
+### Quality Gates (3-Stage)
 
-1. **Local**: Unit tests + lint + build
+1. **Local**: Unit tests + lint + build (`test`, `detekt`, `lint`)
 2. **Pre-Merge**: Integration tests + architecture compliance + code review
-3. **Pre-Deploy**: E2E tests + performance tests + security validation
+3. **Pre-Deploy**: E2E tests + performance validation + security scan
 
 ## 🔄 Development Workflow
 
+### SuperClaude Integration
+
+**🤖 Auto-Persona Activation**: Frontend files → 🎨 | API/server/DB → 🔧 | Tests → 📊 | Architecture/design → 🏗️ | Security → 🛡️ | Performance → ⚡
+
 ### Daily TDD + Task Management Loop
 
-**Setup**: Start with `/clear` command for clean context
+**0. Conversation Setup**: Clear context with `/clear` command
 
-**1. Task Selection**:
+**1. Task Setup**:
 
 - `task-master next` → select prioritized task
 - `task-master show <task-id>` → review requirements
 - `task-master set-status --id=<task-id> --status=in-progress`
-- Auto-persona selection based on context (Frontend/Backend/Security/QA/Performance)
+- Auto-persona selection based on file patterns & task context
 
-**2. TDD Cycle** (for each subtask):
+**2. Subtask Iteration (TDD Cycle)**:
+For each subtask (`<task-id>.1`, `<task-id>.2`, etc.):
 a. **RED**: Write failing BDD test (Given-When-Then format)
-b. **GREEN**: Minimal code to pass test
-c. **REFACTOR**: Clean up while keeping tests green
-d. **DOCUMENT**: `task-master update-subtask --id=<task-id>.<sub> --prompt="notes"`
-e. **MEMORY:** Capture patterns, problems, solutions in development episode
-f. **COMMIT**: Atomic commit with validation hooks
+b. **GREEN**: Minimal code to pass test w/ persona-guided implementation
+c. **REFACTOR**: Clean code w/ auto-quality analysis
+d. **DOCUMENT**: `task-master update-subtask --id=<task-id>.<subtask> --prompt="notes"`
+e. **MEMORY**: Capture patterns, problems, solutions in development episode
+f. **COMMIT**: Atomic commit w/ pre-commit validation
 
-**3. Completion**:
+**3. Task Completion**:
 
-- Integration testing across all subtasks
+- Integration testing across subtasks
 - Final refactoring for consistency
-- Store completion insights and learnings
+- Store completion insights & learnings
 - `task-master set-status --id=<task-id> --status=done`
-- Push changes
 
-### Git & Commit Standards
+### AI Behavior & Context Management
 
-**Format**: Conventional commits (`feat:`, `fix:`, `refactor:`, `security:`, `perf:`)
-**Branches**: `feature/`, `bugfix/`, `security/`, `perf/` with task IDs
+**🤖 AI Rules**: Never assume context (ask questions) | Never hallucinate libraries (verify first) | Confirm paths/classes exist | Mark tasks complete immediately | Document blockers
+
+**Context Optimization**:
+
+- Use `--uc` for token optimization when context >75%
+- Apply `--delegate` for large codebase analysis (>50 files)
+- Use `--wave-mode` for complex multi-stage operations
+- Leverage `--seq` for systematic analysis & debugging
+- Use `--c7` for documentation & framework patterns
+
+### Git Workflow
+
+**💻 Format**: Conventional commits (`feat:`, `fix:`, `refactor:`, `security:`, `perf:` w/ task IDs)
+**Branches**: `feature/`, `bugfix/`, `security/`, `perf/` + task IDs
 **Policy**: Atomic commits + pre-commit hooks (husky validates security, performance, architecture)
 
-## 🔍 Troubleshooting & Common Issues
+## 🧠 Self-Learning & Memory
+
+### Memory Capture
+
+**🧠 Development Episodes**: Store patterns, problems, solutions during TDD cycles
+**📊 Anti-Pattern Detection**: Capture recurring issues & prevention methods
+**🏗️ Architecture Decisions**: Record performance metrics & architectural choices
+
+### CLAUDE.md Evolution
+
+**Self-Learning Cycle**:
+
+- Weekly analysis of memory patterns (>3 occurrences)
+- Auto-update FORBIDDEN Anti-Patterns based on real issues
+- Refine standards based on proven practices
+- Generate recommendations for team review
+
+**Context Management**: Maintain full context across operations | Use consistent UUIDs for improved artifacts | Strictly adhere to language/framework requirements
+
+## 🔍 Troubleshooting
 
 ### Quick Diagnostics
 
 **Environment Check**: Java version (`sdk current java` = 21.0.8-tem) | Docker running | Ports 8080-8082 available
-**Dependencies**: `npm ci && husky install` | AIVEN env vars set | Schema downloaded (`./gradlew downloadSchemas`)
-
-### Common Build/Runtime Issues
-
-**Backend Build Fails**:
-
-```bash
-./gradlew clean build --stacktrace    # Full rebuild with details
-# Check: AIVEN env vars, MongoDB connection in .env, Java version
-```
-
-**Frontend Build Fails**:
-
-```bash
-rm -rf node_modules package-lock.json && npm ci    # Clean install
-npx tsc --noEmit                                    # Check TypeScript errors
-```
-
-**Runtime Connection Issues**:
-
-- **MongoDB**: Check `.env` credentials, Docker container running
-- **Kafka**: Verify broker config in `application.yml`
-- **Frontend API**: Check `VUE_APP_PRODUKTE_API_HOST` in `frontend/.env`
-- **SSR**: Verify Fastify server config, build artifacts exist
 
 ### Debug Process
 
@@ -283,4 +243,4 @@ Document: Goal + attempts + actual vs expected results + environment + next step
 
 ---
 
-*Finden Development Guide v11.0 | Self-Contained System | Evidence-based practices | Optimized for AI collaboration*
+*Finden Development Guide v12.0 | Self-Contained System | Optimized for SuperClaude | Token-efficient | Evidence-based practices*
