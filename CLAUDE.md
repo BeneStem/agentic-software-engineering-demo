@@ -44,6 +44,36 @@ Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self
 **TDD Cycle**: RED (failing test) → GREEN (minimal code) → REFACTOR → repeat continuously
 **Quality Formula**: Functionality (40%) + Integration (30%) + Code Quality (20%) + Performance (10%) = 100/100
 **Rule**: Score < 100 → document gaps → write failing test → repeat until perfect
+**🎯 NEVER STOP UNTIL**: All tests pass | 100/100 achieved | User intent perfectly matched
+
+### Goal Persistence Protocol
+
+**DON'T STOP UNTIL ACHIEVED**:
+
+- Test coverage reaches required thresholds (80% unit, 70% integration, 100% critical)
+- All quality gates pass (local, pre-merge, pre-deploy)
+- Performance metrics met (P95 < 300ms, Core Web Vitals green)
+- Security validations complete (no vulnerabilities, GDPR compliant)
+
+**COMPLETION CRITERIA**: Task incomplete until → Tests pass → Integration verified → Quality validated → Performance confirmed → Security checked → 100/100 achieved
+
+### Hallucination Prevention Protocol
+
+**PERMISSION TO ADMIT UNCERTAINTY**:
+
+- Say "I don't know" when confidence <70%
+- State "I need to verify" before assuming
+- Request clarification for ambiguous requirements
+
+**VERIFICATION TECHNIQUES**:
+
+- **Quote First**: Extract exact quotes from docs before answering
+- **Think Before Answer**: Show chain-of-thought reasoning
+- **Prepare to Discuss**: Load full context before complex tasks
+- **Cite Sources**: Reference file:line for every claim
+- **Test Everything**: Verify through actual execution, not assumptions
+
+**RESTRICTED KNOWLEDGE**: Only use provided files/docs | NO external assumptions | Verify library existence before use
 
 ### Critical Constraints (Zero Tolerance)
 
@@ -96,19 +126,29 @@ Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self
 
 ### Core Principles
 
-1. **One Feature at a Time**: Complete single feature before next | NO FEATURE CREEP
+1. **One Feature at a Time**: Complete single feature before next | NO FEATURE CREEP | DON'T STOP until feature complete
 2. **Fail Fast**: Proactive failure detection → Test edge cases → Aggressive validation
 3. **Measure First**: Functionality before optimization | NO PREMATURE OPTIMIZATION
+4. **Optimize for Clarity**: Every instruction must be unambiguous and actionable
 
 ### Convention Conformance Protocol
 
 **EXAMINE FIRST**: Before adding new code → analyze existing patterns → understand conventions → conform to established approaches
+
+**🎯 PREPARE TO DISCUSS**: Load all relevant context → Study existing patterns → Understand architectural decisions → Then implement
 
 **Discovery Workflow**:
 
 1. **Pattern Analysis**: Search similar implementations → identify naming patterns → understand architectural decisions
 2. **Convention Mapping**: Document discovered conventions → note deviations → understand rationale
 3. **Conformance Implementation**: Apply patterns → maintain consistency → extend logically
+
+**PATTERN RECOGNITION REQUIREMENTS**:
+
+- Search for ≥3 similar implementations before writing new code
+- Extract common patterns and naming conventions
+- Document why existing patterns were chosen
+- NEVER deviate without explicit justification
 
 **🔧 Kotlin/Backend Standards**:
 
@@ -174,12 +214,12 @@ Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self
 
 **2. Subtask Iteration (TDD Cycle)**:
 For each subtask (`<task-id>.1`, `<task-id>.2`, etc.):
-a. **RED**: Write failing BDD test (Given-When-Then format)
-b. **GREEN**: Minimal code to pass test w/ persona-guided implementation
-c. **REFACTOR**: Clean code w/ auto-quality analysis
+a. **RED**: Write failing BDD test (Given-When-Then format) → DON'T STOP until test fails correctly
+b. **GREEN**: Minimal code to pass test w/ persona-guided implementation → DON'T STOP until test passes
+c. **REFACTOR**: Clean code w/ auto-quality analysis → DON'T STOP until quality score = 100
 d. **DOCUMENT**: `task-master update-subtask --id=<task-id>.<subtask> --prompt="notes"`
 e. **MEMORY**: Capture patterns, problems, solutions in development episode
-f. **COMMIT**: Atomic commit w/ pre-commit validation
+f. **COMMIT**: Atomic commit w/ pre-commit validation → DON'T STOP until all hooks pass
 
 **3. Task Completion**:
 
@@ -191,6 +231,16 @@ f. **COMMIT**: Atomic commit w/ pre-commit validation
 ### AI Behavior & Context Management
 
 **🤖 AI Rules**: Never assume context (ask questions) | Never hallucinate libraries (verify first) | Confirm paths/classes exist | Mark tasks complete immediately | Document blockers
+
+**GUIDING PRINCIPLES**:
+
+- **Brutal Honesty First**: State uncertainties, blockers, and failures immediately
+- **Test Driven Development**: Never write code without failing test first
+- **One Feature at a Time**: Complete current task before starting next
+- **Break Things Internally**: Fail fast in development, never in production
+- **Optimize Only After It Works**: Functionality first, optimization second
+- **Never Mark Complete Until Perfect**: 100/100 or document why not
+- **Maintain Full Context**: Preserve all relevant information across operations
 
 **Context Optimization**:
 
