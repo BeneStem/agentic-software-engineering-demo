@@ -74,6 +74,26 @@
 - **Token Efficiency**: Uses Context7 for documentation patterns and Sequential for systematic analysis
 - **Approach**: Analyzes what makes good documentation, identifies missing elements, brainstorms improvement strategies (similar to quality-assurance-expert but for documentation)
 
+### **api-design-consultant** (NEW - P2)
+
+- **Purpose**: Research API patterns, discuss contract design, advise on versioning strategies
+- **Model**: Sonnet | **Color**: Teal
+- **Tools**: `Read, Grep, mcp__context7__get-library-docs, WebSearch`
+- **Auto-trigger**: API design discussions, breaking change analysis
+- **Output**: API design patterns analysis, versioning strategies, contract recommendations
+- **Token Efficiency**: Context7 for API patterns, WebSearch for latest practices
+- **Approach**: Discusses API philosophy and best practices without implementing
+
+### **naming-convention-advisor** (NEW - P3)
+
+- **Purpose**: Research naming patterns, suggest consistent conventions, discuss clarity
+- **Model**: Haiku | **Color**: Lavender
+- **Tools**: `Read, Grep, mcp__sequential__sequentialthinking`
+- **Auto-trigger**: New file/class/method creation, refactoring discussions
+- **Output**: Naming pattern analysis with consistency recommendations
+- **Token Efficiency**: Lightweight model for quick naming advice
+- **Approach**: Helps discuss what makes names clear and maintainable
+
 ---
 
 ## 4. Performance & Optimization ⚡
@@ -87,6 +107,26 @@
 - **Output**: Enhanced prompts with context optimization recommendations
 - **Token Efficiency**: 30-50% reduction through intelligent compression
 
+### **performance-strategy-researcher** (NEW - P2)
+
+- **Purpose**: Research optimization approaches, analyze trade-offs, discuss bottlenecks
+- **Model**: Sonnet | **Color**: Magenta
+- **Tools**: `Read, Grep, mcp__sequential__sequentialthinking, WebSearch`
+- **Auto-trigger**: Performance discussions, optimization planning
+- **Output**: Performance strategy options with trade-off analysis
+- **Token Efficiency**: Research-based optimization guidance
+- **Approach**: Discusses performance philosophy before implementation
+
+### **caching-strategy-advisor** (NEW - P2)
+
+- **Purpose**: Research caching patterns, discuss invalidation strategies, advise on levels
+- **Model**: Sonnet | **Color**: Amber
+- **Tools**: `Read, Grep, mcp__sequential__sequentialthinking`
+- **Auto-trigger**: Performance optimization, scalability discussions
+- **Output**: Caching strategy analysis with pros/cons for each approach
+- **Token Efficiency**: Focused caching research without implementation
+- **Approach**: Helps decide what/when/how to cache
+
 ---
 
 ## 5. Learning & Memory 🧠
@@ -99,6 +139,98 @@
 - **Auto-trigger**: Task completion, retrospectives, significant learnings
 - **Output**: Structured memory entries with patterns and improvement recommendations
 - **Token Efficiency**: Lightweight model builds reusable knowledge base
+
+---
+
+## 6. Security & Compliance 🛡️
+
+### **security-threat-researcher** (NEW - P1)
+
+- **Purpose**: Research threat models, discuss attack vectors, advise on mitigations
+- **Model**: Sonnet | **Color**: Crimson
+- **Tools**: `Read, Grep, WebSearch, mcp__sequential__sequentialthinking`
+- **Auto-trigger**: Security reviews, threat modeling sessions
+- **Output**: Threat analysis with mitigation strategies and risk assessments
+- **Token Efficiency**: Focused security research without implementation
+- **Approach**: Discusses security concerns without implementing fixes
+
+### **compliance-requirements-advisor** (NEW - P2)
+
+- **Purpose**: Research compliance requirements, discuss implications, advise on approaches
+- **Model**: Sonnet | **Color**: Navy
+- **Tools**: `Read, WebSearch, mcp__context7__get-library-docs`
+- **Auto-trigger**: GDPR/regulatory discussions, data handling decisions
+- **Output**: Compliance requirements analysis with implementation implications
+- **Token Efficiency**: Research-based compliance guidance
+- **Approach**: Helps understand what compliance means for the project
+
+---
+
+## 7. Architecture & Design 🏗️
+
+### **architecture-patterns-researcher** (NEW - P1)
+
+- **Purpose**: Research architectural patterns, discuss trade-offs, advise on approaches
+- **Model**: Opus | **Color**: Indigo
+- **Tools**: `Read, Grep, mcp__sequential__sequentialthinking, mcp__context7__get-library-docs`
+- **Auto-trigger**: Architecture decisions, pattern discussions, design reviews
+- **Output**: Pattern analysis with trade-offs, applicability assessment
+- **Token Efficiency**: Deep architectural research with pattern coordination
+- **Approach**: Discusses architectural philosophy and pattern fitness
+
+### **database-schema-advisor** (NEW - P2)
+
+- **Purpose**: Research schema patterns, discuss normalization, advise on indexing
+- **Model**: Sonnet | **Color**: Emerald
+- **Tools**: `Read, Grep, mcp__sequential__sequentialthinking`
+- **Auto-trigger**: Database design, schema changes, query optimization
+- **Output**: Schema design analysis with performance implications
+- **Token Efficiency**: Database-focused research and analysis
+- **Approach**: Helps discuss data modeling decisions
+
+### **event-flow-analyst** (NEW - P2)
+
+- **Purpose**: Analyze event flows, research patterns, discuss choreography vs orchestration
+- **Model**: Sonnet | **Color**: Coral
+- **Tools**: `Read, Grep, mcp__sequential__sequentialthinking`
+- **Auto-trigger**: Kafka/event-driven discussions, async pattern decisions
+- **Output**: Event flow analysis with pattern recommendations
+- **Token Efficiency**: Event-driven architecture research
+- **Approach**: Helps understand event-driven implications
+
+---
+
+## 8. Development Workflow 🔄
+
+### **code-review-discussion-facilitator** (NEW - P1)
+
+- **Purpose**: Research review best practices, facilitate discussions, suggest focus areas
+- **Model**: Sonnet | **Color**: Olive
+- **Tools**: `Read, Grep, mcp__sequential__sequentialthinking`
+- **Auto-trigger**: Code review preparation, PR discussions
+- **Output**: Review checklist with discussion points and focus areas
+- **Token Efficiency**: Structured review guidance
+- **Approach**: Facilitates productive review discussions
+
+### **technical-debt-analyst** (NEW - P2)
+
+- **Purpose**: Research debt patterns, analyze impact, discuss prioritization
+- **Model**: Sonnet | **Color**: Bronze
+- **Tools**: `Read, Grep, mcp__jetbrains__get_file_problems`
+- **Auto-trigger**: Refactoring discussions, debt prioritization
+- **Output**: Technical debt analysis with impact assessment and prioritization
+- **Token Efficiency**: Systematic debt analysis with JetBrains integration
+- **Approach**: Helps decide what debt to address when
+
+### **migration-strategy-consultant** (NEW - P3)
+
+- **Purpose**: Research migration patterns, discuss strategies, advise on approaches
+- **Model**: Sonnet | **Color**: Copper
+- **Tools**: `Read, WebSearch, mcp__sequential__sequentialthinking`
+- **Auto-trigger**: Version upgrades, framework migrations, dependency updates
+- **Output**: Migration strategy analysis with risk assessment
+- **Token Efficiency**: Migration-focused research and risk analysis
+- **Approach**: Discusses migration philosophy and approaches
 
 ---
 
@@ -116,15 +248,28 @@
 - **Agent Coordination**: 30-40% reduction through delegation
 - **Pattern Reuse**: 20-30% reduction through memory synthesis
 - **Context Optimization**: 25-35% reduction through prompt enhancement
-- **Parallel Processing**: 40-60% faster execution through orchestration
+- **Research Delegation**: 40-50% reduction by delegating research to specialized advisors
+- **Parallel Research**: Multiple advisors can research simultaneously
+- **Knowledge Caching**: Research results reusable across sessions
 
 ### Implementation Priority Matrix
 
 ```
-P0 (Critical - 2 weeks): code-base-researcher, review-expert, problem-diagnostics-expert, memory-synthesis-agent
-P1 (High - 4 weeks): refactoring-expert, documentation-advisor, prompt-enhancement-specialist, security-vulnerability-scanner
-P2 (Medium - 8 weeks): dependency-impact-analyzer, test-coverage-optimizer, api-contract-generator, pattern-library-curator, deployment-orchestrator
-P3 (Low - 12+ weeks): commit-message-crafter, parallel-task-orchestrator, compliance-auditor, infrastructure-cost-analyzer
+P0 (Critical - 2 weeks):
+code-base-researcher, review-expert, problem-diagnostics-expert, memory-synthesis-agent
+
+P1 (High - 4 weeks):
+refactoring-expert, documentation-advisor, prompt-enhancement-specialist,
+test-strategy-advisor, security-threat-researcher, architecture-patterns-researcher,
+code-review-discussion-facilitator
+
+P2 (Medium - 8 weeks):
+dependency-impact-analyzer, api-design-consultant, performance-strategy-researcher,
+caching-strategy-advisor, compliance-requirements-advisor, database-schema-advisor,
+event-flow-analyst, technical-debt-analyst
+
+P3 (Low - 12+ weeks):
+naming-convention-advisor, migration-strategy-consultant
 ```
 
 ---
