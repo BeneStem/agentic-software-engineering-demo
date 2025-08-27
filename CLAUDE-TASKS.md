@@ -64,16 +64,15 @@
 
 ## 3. Documentation & Communication 📚
 
-[//]: # (TODO this agent should not WRITE the documentation it should HELP brainstorming about documentation. what is a good documentation, what is missing, etc... similar to the existing quality-assurance-expert)
+### **documentation-advisor** (Existing - P1)
 
-### **documentation-expert** (Existing - P1)
-
-- **Purpose**: Documentation generation and maintenance assistance
+- **Purpose**: Documentation quality analysis and brainstorming assistance
 - **Model**: Sonnet | **Color**: Purple
-- **Tools**: `Read, Write, mcp__context7__get-library-docs, mcp__sequential__sequentialthinking`
-- **Auto-trigger**: API changes, new features, documentation requests
-- **Output**: Structured documentation with proper formatting and examples
-- **Token Efficiency**: Uses Context7 for documentation patterns
+- **Tools**: `Read, Grep, mcp__context7__get-library-docs, mcp__sequential__sequentialthinking`
+- **Auto-trigger**: API changes, new features, documentation requests, documentation quality reviews
+- **Output**: Documentation quality assessment with gaps, recommendations, and improvement strategies
+- **Token Efficiency**: Uses Context7 for documentation patterns and Sequential for systematic analysis
+- **Approach**: Analyzes what makes good documentation, identifies missing elements, brainstorms improvement strategies (similar to quality-assurance-expert but for documentation)
 
 ---
 
@@ -123,7 +122,7 @@
 
 ```
 P0 (Critical - 2 weeks): code-base-researcher, review-expert, problem-diagnostics-expert, memory-synthesis-agent
-P1 (High - 4 weeks): refactoring-expert, documentation-expert, prompt-enhancement-specialist, security-vulnerability-scanner
+P1 (High - 4 weeks): refactoring-expert, documentation-advisor, prompt-enhancement-specialist, security-vulnerability-scanner
 P2 (Medium - 8 weeks): dependency-impact-analyzer, test-coverage-optimizer, api-contract-generator, pattern-library-curator, deployment-orchestrator
 P3 (Low - 12+ weeks): commit-message-crafter, parallel-task-orchestrator, compliance-auditor, infrastructure-cost-analyzer
 ```
