@@ -26,10 +26,76 @@ Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self
 
 **MCP Server Usage Rules**:
 
-- **ALWAYS** use `mcp__jetbrains__*` tools for file/folder operations when available
+- **ALWAYS** use `mcp__jetbrains__*` tools for file/folder operations, especially editing and writing when available
 - **Context7** for Quarkus/Vue.js documentation and patterns
 - **Sequential** for complex debugging, system analysis, TDD workflows
 - **TaskMaster** for project management and task breakdown
+
+## 🔧 CLI Tools & System Commands
+
+**Available System Tools** (verified on this environment):
+
+### Version Management
+
+- **`sdk`** - SDKMan for Java version management | **MANDATORY**: `sdk use java 21.0.8-tem` before Gradle ops
+- **`sdk current java`** - Check active Java version | **`sdk list java`** - Show available versions
+
+### Build & Package Management
+
+- **`npm`** - Node.js package manager | **`npm ci`** - Install exact deps | **`npm run [script]`** - Run package.json scripts
+- **`./gradlew`** - Gradle wrapper (project-local) | **`./gradlew quarkusDev`** - Start backend dev mode
+- **`brew`** - macOS package manager | **`brew ls`** - List installed packages
+
+### Database & Services
+
+- **`mongosh`** - MongoDB Shell | Connect to local/remote MongoDB instances
+- **`docker`** - Container management | **`docker-compose`** - Multi-container orchestration
+- **`docker-compose -f docker/docker-compose.yaml up -d`** - Start local MongoDB/Kafka
+
+### Development Tools
+
+- **`git`** - Version control | Conventional commits required (`feat:`, `fix:`, `refactor:`)
+- **`gh`** - GitHub CLI | **`gh pr create`** - Create PRs | **`gh issue list`** - Manage issues
+- **`tree`** - Directory structure visualization | **`tree -I node_modules`** - Exclude dirs
+- **`ripgrep (rg)`** - Fast file content search | **`rg "pattern" --type js`** - Search JS files
+- **`fd`** - Fast file name search | **`fd "*.vue" src/`** - Find Vue files
+
+### Text Processing & HTTP
+
+- **`jq`** - JSON processing | **`curl | jq '.'`** - Pretty-print JSON responses
+- **`curl`** - HTTP client | **`curl -X POST -H "Content-Type: application/json"`**
+- **`sed`**, **`awk`**, **`grep`** - Text manipulation (prefer `rg` over `grep`)
+
+### Container & Orchestration
+
+- **`kubectl`** - Kubernetes cluster management | **`kubectl get pods`** - List pods
+- **`helm`** - Kubernetes package management | **`helm upgrade --install`**
+
+### Project-Specific Commands
+
+```bash
+# MANDATORY Java setup
+sdk use java 21.0.8-tem
+
+# Backend setup & run
+./gradlew downloadSchemas    # Fetch Avro schemas (requires AIVEN_* env vars)
+./gradlew quarkusDev        # Start backend on :8081
+
+# Frontend setup & run
+npm ci                      # Install exact dependencies
+npm run dev                 # Start frontend on :8082
+
+# Local services
+docker-compose -f docker/docker-compose.yaml up -d    # Start MongoDB/Kafka
+docker-compose -f docker/docker-compose.yaml down     # Stop & remove containers
+
+# Quality gates
+./gradlew test detekt build         # Backend: unit tests, lint, build
+npm run test                        # Frontend: lint + unit tests
+npm run unitTest -- -u             # Update test snapshots
+```
+
+**🚨 Tool Hierarchy**: JetBrains MCP > Native Claude Tools > CLI commands above > Raw bash (last resort)
 
 ## 📖 Symbol Legend
 
