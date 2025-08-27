@@ -15,7 +15,4 @@
     - intj
     - radical candor
     - communication style
-2. Setup hooks
-3. Available CLI tools
-4. Principles like SOLID, clean-code, 12-factor app, documentation & commenting, functional programming, etc...
-5.
+2. Available CLI tools

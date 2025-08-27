@@ -95,6 +95,37 @@ Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self
 
 1. Stop coding | 2. Use debugger/logs | 3. Write minimal test | 4. Ask for help | 5. Check patterns
 
+## 🏛️ Software Engineering Principles
+
+### CUPID Properties (Joyful Code)
+
+**🧩 Composable**: Small surface area | Minimal dependencies | Intention-revealing | Easy to combine
+**🔧 Unix Philosophy**: Do one thing well | Specific, well-defined purpose | Outside-in perspective
+**📊 Predictable**: Does what it looks like | Consistent behavior | No surprises | Easy to confirm
+**🎯 Idiomatic**: Feels familiar | Language/framework conventions | Team patterns
+**🌐 Domain-based**: Minimize cognitive distance | Domain language in code | Business-aligned
+
+### Clean Code Practices
+
+**Self-Documenting Code**: Clear naming > comments | Structure reveals intent | Function size <20 lines
+**Boy Scout Rule**: Leave code cleaner than found | Continuous improvement | Refactor ruthlessly
+**Comment Philosophy**: Code failure → comment | Explain "why" not "what" | Remove commented code
+
+### 12-Factor App (Cloud-Native)
+
+**☁️ Codebase**: One repo, many deploys | Git as single source
+**📦 Dependencies**: Explicit declaration | package.json, build.gradle | No implicit deps
+**⚙️ Config**: Environment variables only | NO hardcoded values | Per-environment cfg
+**🔗 Backing Services**: MongoDB as attached resource | Kafka as message broker
+**🔄 Build/Release/Run**: Strict separation | CI/CD pipeline | Immutable releases
+**🎯 Processes**: Stateless execution | NO sticky sessions | Share-nothing
+**🌐 Port Binding**: Self-contained services | Export via port binding
+**📈 Concurrency**: Horizontal scaling | Process model | Multiple instances
+**⚡ Disposability**: Fast startup <10s | Graceful shutdown | Robust against failure
+**🔄 Dev/Prod Parity**: Minimize gaps | Same backing services | Same deployment process
+**📋 Logs**: Event streams to stdout | Structured logging | NO log files
+**🔧 Admin**: One-off processes | Separate admin tasks | Same codebase
+
 ## 🏗️ System Architecture
 
 ### SCS Communication Principles
@@ -122,6 +153,34 @@ Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self
 
 **Dependencies**: Domain ← Application ← Adapter | Presentation → Business → Data
 
+### CUPID Architecture Integration
+
+**🧩 Composable Design**:
+
+- Small surface area: <5 public methods per class | Minimal external dependencies
+- Intention-revealing: Clear naming for classes/methods | Self-documenting interfaces
+- Easy combination: Components work together without complex configuration
+
+**🔧 Unix Philosophy Application**:
+
+- Each service does ONE thing well | Clear, specific purpose per module
+- Domain services: Single business capability | Controllers: Single endpoint responsibility
+
+**📊 Predictable Behavior**:
+
+- Consistent error handling across layers | Standard response formats
+- No hidden side effects | Pure functions in domain layer
+
+**🎯 Idiomatic Implementation**:
+
+- Follow Kotlin/Vue.js conventions | Use established patterns from community
+- Consistent naming across codebase | Team-agreed patterns documented
+
+**🌐 Domain-based Organization**:
+
+- Package by feature, not layer | Business concepts in code structure
+- Domain language in class/method names | Business rules explicit in code
+
 ## 📊 Development Standards
 
 ### Core Principles
@@ -130,6 +189,31 @@ Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self
 2. **Fail Fast**: Proactive failure detection → Test edge cases → Aggressive validation
 3. **Measure First**: Functionality before optimization | NO PREMATURE OPTIMIZATION
 4. **Optimize for Clarity**: Every instruction must be unambiguous and actionable
+
+### Documentation Standards
+
+**📚 Documentation Hierarchy (STRICT ORDER)**:
+
+1. **Working Code**: Self-documenting through clear naming & structure
+2. **Tests**: Executable documentation (BDD format) → Given-When-Then
+3. **README.md**: Project setup & overview only
+4. **Markdown in /docs**: Detailed architecture, API specs, guides
+5. **Comments**: LAST RESORT - only for "why" not "what"
+
+**📝 Rules**:
+
+- NO comments for obvious code → code should explain itself
+- NO commented-out code → delete it (use Git history)
+- NO redundant documentation → tests ARE documentation
+- Code structure IS documentation → use clear naming & organization
+- Comments only when code cannot self-explain after all other options exhausted
+
+**🎯 Comment Standards**:
+
+- Explain intent, not implementation
+- Warning of consequences only
+- Legal/regulatory requirements only
+- Amplification of non-obvious business rules only
 
 ### Convention Conformance Protocol
 
@@ -164,11 +248,35 @@ Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self
 
 ### 🚨 Red Flags (STOP Immediately)
 
+**Development Anti-Patterns**:
+
 - "Let me create a mock" → Verify real integration first
 - "I'll assume this API works" → Test actual behavior
 - "This should be good enough" → Achieve 100/100 standard
 - "Skip tests for now" → TDD is mandatory
 - Writing >30 lines without tests → Run tests continuously
+
+**CUPID Violations**:
+
+- Large interfaces (>5 methods) → Break into smaller, composable pieces
+- Unclear naming → Make intention-revealing
+- Unpredictable behavior → Ensure consistent, obvious outcomes
+- Framework-specific code in domain → Keep domain pure
+- Technical language in business code → Use domain language
+
+**Clean Code Violations**:
+
+- Adding explanatory comments → Make code self-explaining first
+- Commented-out code → Delete it (use Git)
+- Long functions (>20 lines) → Break down into smaller functions
+- Nested conditions (>3 levels) → Extract methods or early returns
+
+**12-Factor Violations**:
+
+- Hardcoded configuration → Use environment variables
+- Stateful services → Make stateless
+- Direct file system usage → Treat as attached resource
+- Manual deployment steps → Automate everything
 
 ## 🛡️ Security & Quality
 
@@ -189,11 +297,39 @@ Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self
 **⚡ API**: P95 < 300ms | Bounded data loading | JSON envelope responses
 **⚡ Frontend**: Core Web Vitals | Lazy loading + route splitting
 
+### 12-Factor App Compliance
+
+**☁️ Cloud-Native Validation Checklist**:
+
+- Codebase: ✅ Single Git repo | ✅ Multiple environment deploys
+- Dependencies: ✅ package.json + build.gradle explicit | ❌ NO global dependencies
+- Config: ✅ Environment variables | ❌ NO hardcoded config
+- Backing Services: ✅ MongoDB/Kafka as attached resources
+- Build/Release/Run: ✅ CI/CD pipeline separation | ✅ Immutable releases
+- Processes: ✅ Stateless services | ❌ NO session storage
+- Port Binding: ✅ Self-contained services | ✅ Export via port binding
+- Concurrency: ✅ Horizontal scaling ready | ✅ Process model
+- Disposability: ✅ Fast startup/shutdown | ✅ Graceful termination
+- Dev/Prod Parity: ✅ Same backing services | ✅ Same deployment
+- Logs: ✅ stdout streams | ✅ Structured logging
+- Admin: ✅ One-off processes | ✅ Same codebase
+
 ### Quality Gates (3-Stage)
 
-1. **Local**: Unit tests, lint, build (Backend: `unitTest`, `integrationTest`, `detekt`, `build` | Frontend: `install`, `lint`, `unitTest`, `build`)
-2. **Pre-Merge**: Integration tests w/ TestContainers, arch compliance val, code review approval, SCS comm pattern compliance
-3. **Pre-Deploy**: E2E tests w/ Playwright, perf tests under load, sec val, Docker image build & push, K8s deployment val
+1. **Local**: Unit tests, lint, build + CUPID validation + Clean code checks + Documentation hierarchy compliance
+  - Backend: `unitTest`, `integrationTest`, `detekt`, `build`
+  - Frontend: `install`, `lint`, `unitTest`, `build`
+  - Principles: CUPID property check, comment ratio <5%, function size <20 lines
+
+2. **Pre-Merge**: Integration tests + Architecture compliance + 12-Factor validation + Code review
+  - TestContainers integration tests, arch compliance validation
+  - CUPID composability check, 12-factor compliance scan
+  - Code review approval, SCS communication pattern compliance
+
+3. **Pre-Deploy**: E2E tests + Performance + Security + Cloud-native compliance
+  - E2E tests w/ Playwright, performance tests under load, security validation
+  - 12-factor deployment validation, stateless service verification
+  - Docker image build & push, K8s deployment validation
 
 ## 🔄 Development Workflow
 
@@ -264,6 +400,20 @@ f. **COMMIT**: Atomic commit w/ pre-commit validation → DON'T STOP until all h
 **📊 Anti-Pattern Detection**: Capture recurring issues & prevention methods
 **🏗️ Architecture Decisions**: Record performance metrics & architectural choices
 
+**🏛️ Principle Violation Tracking**:
+
+- **CUPID Violations**: Non-composable interfaces, unclear naming, unpredictable behavior
+- **Clean Code Issues**: Excessive comments, long functions, unclear intent
+- **12-Factor Deviations**: Configuration hardcoding, stateful services, manual processes
+- **Documentation Failures**: Comments before refactoring, missing tests, poor structure
+
+**🎯 Pattern Recognition Enhancement**:
+
+- Track successful CUPID implementations for reuse
+- Monitor clean code practices adoption rates
+- Record 12-factor compliance improvements over time
+- Analyze documentation hierarchy effectiveness
+
 ### CLAUDE.md Evolution
 
 **Self-Learning Cycle**:
@@ -272,6 +422,13 @@ f. **COMMIT**: Atomic commit w/ pre-commit validation → DON'T STOP until all h
 - Auto-update FORBIDDEN Anti-Patterns based on real issues
 - Refine standards based on proven practices
 - Generate recommendations for team review
+
+**Principle Evolution Tracking**:
+
+- CUPID property adherence metrics and improvement suggestions
+- Clean code practice effectiveness measurement
+- 12-factor compliance gaps and resolution patterns
+- Documentation hierarchy violations and corrections
 
 **Context Management**: Maintain full context across operations | Use consistent UUIDs for improved artifacts | Strictly adhere to language/framework requirements
 
