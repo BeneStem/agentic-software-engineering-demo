@@ -3,6 +3,7 @@ name: pattern-analyzer
 description: Use proactively for analyzing existing code patterns in the Finden project before implementing new code. Specialist for discovering ≥3 similar implementations, extracting conventions, documenting rationale, and providing conformance guidance.
 tools: Read, Grep, Glob, WebFetch, MultiEdit
 color: blue
+model: opus
 ---
 
 # Purpose

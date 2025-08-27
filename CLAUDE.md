@@ -43,6 +43,12 @@ Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self
 - **Usage**: `Task --subagent_type pattern-analyzer` BEFORE writing code
 - **Output**: JSON analysis with ≥3 pattern examples and conformance guidelines
 
+**📚 documentation-researcher** (MANDATORY for documentation tasks)
+
+- **Auto-trigger**: README updates, API documentation, architectural decisions, setup guides
+- **Usage**: `Task --subagent_type documentation-researcher` BEFORE documenting
+- **Output**: JSON research with internal/external docs, best practices, and actionable insights
+
 ## 🔧 CLI Tools & System Commands
 
 **Available System Tools** (verified on this environment):
@@ -358,6 +364,7 @@ npm run unitTest -- -u             # Update test snapshots
 - "Skip tests for now" → TDD is mandatory
 - Writing >30 lines without tests → Run tests continuously
 - "I'll manually search for patterns" → USE pattern-analyzer agent
+- "I'll do anything without researching" → USE documentation-researcher agent
 - "Skipping agent delegation" → Check decision tree
 
 **CUPID Violations**:
@@ -455,11 +462,12 @@ npm run unitTest -- -u             # Update test snapshots
 - `task-master set-status --id=<task-id> --status=in-progress`
 - Auto-persona selection based on file patterns & task context
 
-**2. Code Analysis** (JetBrains MCP):
+**2. Code Analysis & Research** (JetBrains MCP):
 
 - `mcp__jetbrains__list_directory_tree` → Explore project structure
 - `mcp__jetbrains__search_in_files_by_text` → Find similar implementations
 - `mcp__jetbrains__get_file_problems` → Identify existing issues
+- **RESEARCH**: Use documentation-researcher for API specs, framework patterns, and best practices
 
 **3. Subtask Iteration (TDD Cycle)**:
 For each subtask (`<task-id>.1`, `<task-id>.2`, etc.):
@@ -484,6 +492,7 @@ f. **COMMIT**: Atomic commit w/ pre-commit validation → DON'T STOP until all h
 **Performance Benefits**:
 
 - pattern-analyzer: Ensures consistency, prevents deviations
+- documentation-researcher: Ensures comprehensive docs, finds best practices
 
 **Integration Rules**:
 
@@ -518,7 +527,8 @@ f. **COMMIT**: Atomic commit w/ pre-commit validation → DON'T STOP until all h
 
 ```
 File Operations? → JetBrains MCP
-Documentation/Patterns? → Context7 MCP
+Patterns Analysis? → pattern-analyzer agent
+Documentation Research? → documentation-researcher agent
 Complex Analysis? → Sequential MCP
 Project Management? → TaskMaster MCP
 ```
