@@ -15,6 +15,9 @@
 - review expert / researcher
   - final checkup before push
   - analyze if everything is fine
+- problem research agent
+  - what is wrong with this code?
+  - why is it not running?
 - optimize token usage with agents
   - analyze if we can reduce context tokens with more / other subagents
 
