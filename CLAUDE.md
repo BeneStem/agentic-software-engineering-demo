@@ -31,6 +31,18 @@ Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self
 - **Sequential** for complex debugging, system analysis, TDD workflows
 - **TaskMaster** for project management and task breakdown
 
+## 🤖 Sub-Agent System Integration
+
+**MANDATORY SUB-AGENT USAGE**: Use specialized sub-agents proactively when their expertise matches the task.
+
+### Available Sub-Agents & Auto-Activation:
+
+**🔍 pattern-analyzer** (MANDATORY for new code)
+
+- **Auto-trigger**: ANY new implementation (Value Objects, Services, DTOs, Components)
+- **Usage**: `Task --subagent_type pattern-analyzer` BEFORE writing code
+- **Output**: JSON analysis with ≥3 pattern examples and conformance guidelines
+
 ## 🔧 CLI Tools & System Commands
 
 **Available System Tools** (verified on this environment):
@@ -345,6 +357,8 @@ npm run unitTest -- -u             # Update test snapshots
 - "This should be good enough" → Achieve 100/100 standard
 - "Skip tests for now" → TDD is mandatory
 - Writing >30 lines without tests → Run tests continuously
+- "I'll manually search for patterns" → USE pattern-analyzer agent
+- "Skipping agent delegation" → Check decision tree
 
 **CUPID Violations**:
 
@@ -464,6 +478,19 @@ f. **COMMIT**: Atomic commit w/ pre-commit validation → DON'T STOP until all h
 - Final refactoring for consistency
 - Store completion insights & learnings
 - `task-master set-status --id=<task-id> --status=done`
+
+### Sub-Agent Best Practices
+
+**Performance Benefits**:
+
+- pattern-analyzer: Ensures consistency, prevents deviations
+
+**Integration Rules**:
+
+- Sub-agents have no context - provide complete information
+- Use specific, detailed prompts
+- Review agent output before proceeding
+- Chain agents for complex workflows
 
 ### AI Behavior & Context Management
 
