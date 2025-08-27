@@ -123,6 +123,30 @@ sdk use java 21.0.8-tem     # Java version (MANDATORY)
 **No Proceeding**: NEVER proceed until 100/100 achieved
 **Gap Example**: "Score: 85/100. Code works but fails when external API returns 503 error. Edge case not handled."
 
+### Goal-Driven Execution Pattern
+
+**DON'T STOP UNTIL FULFILLED**: Set completion goal → persist until 100% achieved → no exceptions
+**Completion Criteria**: Measurable success metrics defined upfront → verified through testing → documented evidence required
+**Persistence Protocol**: Task remains active until ALL success criteria met → intermediate failures = investigate → adjust → continue
+
+**Exit Conditions**:
+- ✅ All tests pass + integration verified + performance meets standards + user requirements satisfied
+- ❌ Fundamental constraint violation (cannot be overcome with current resources)
+- 🔄 Escalation required (need user clarification/decision)
+
+**Example**: "Don't stop until search API responds <300ms with accurate results for 10K concurrent users, all tests pass, and integration works in production environment."
+
+### Prompt Optimization Guidelines
+
+**CLARITY IMPERATIVE**: All prompts MUST be descriptive, detailed, unambiguous → eliminate interpretation gaps
+**Structure Requirements**: Step-by-step instructions → measurable outcomes → clear success criteria → explicit failure handling
+
+**Optimized Pattern**:
+✅ "Write unit test for ProductService.search() that validates response time <100ms with mock MongoDB returning 1000 products, including edge cases for empty results and network timeouts"
+❌ "Write test for search functionality"
+
+**Required Elements**: Specific target + expected behavior + performance criteria + edge cases + success measurement
+
 ## 🏆 Core Development Principles
 
 ### Principle 1: One Feature at a Time
@@ -232,6 +256,23 @@ sdk use java 21.0.8-tem     # Java version (MANDATORY)
 **Backend**: PascalCase w/ suffixes (`UserService`, `ProductRepository`) + lowercase packages
 **Frontend**: PascalCase components (`ProductCard.vue`) + camelCase composables w/ `use` prefix + lowercase dirs w/ hyphens
 
+### Convention Conformance Protocol
+
+**EXAMINE FIRST**: Before adding new code → analyze existing patterns → understand conventions → conform to established approaches
+
+**Discovery Workflow**:
+1. **Pattern Analysis**: Search similar implementations in codebase → identify naming patterns → understand architectural decisions
+2. **Convention Mapping**: Document discovered conventions → note deviations → understand rationale behind patterns
+3. **Conformance Implementation**: Apply discovered patterns → maintain consistency → extend conventions logically
+
+**Rules**:
+- **NO INVENTION**: Use existing patterns before creating new ones
+- **CONSISTENCY**: New code MUST follow established conventions in same module/layer
+- **EVOLUTION**: Enhance patterns systematically → don't break existing conventions
+- **DOCUMENTATION**: Document and memorize new conventions when genuinely needed (rare)
+
+**Example**: Adding new composable? → Search existing `use*` files → follow same parameter patterns → use same return object structure → maintain same error handling approach
+
 ### Coding Standards
 
 **🔧 Kotlin/Backend**:
@@ -331,6 +372,27 @@ f. **COMMIT:** Atomic commit with pre-commit validation (security, performance, 
 
 **🤖 AI Rules**: Never assume context (ask questions) | Never hallucinate libraries (verify first) | Confirm paths/classes exist | Mark tasks complete immediately | Document blockers
 
+### Hallucination Prevention Framework
+
+**CONFIDENCE THRESHOLDS**: Only answer if confidence >90% → otherwise state "I don't know" or "I cannot verify"
+**RESEARCH FIRST**: For complex questions → use "Prepare to discuss" pattern → gather context → then respond with evidence
+**QUOTE-BASED GROUNDING**: For long documents (>20K tokens) → extract exact quotes → ground responses in actual text → never paraphrase without attribution
+**THINK-BEFORE-ANSWER**: Use step-by-step reasoning → show work → validate conclusions → admit uncertainties
+
+**Uncertainty Triggers**:
+- "I cannot verify this claim"
+- "Based on available evidence, I'm not certain"
+- "This requires verification beyond my current context"
+- "I need to investigate this claim before providing an answer"
+
+**Evidence Requirements**:
+- ✅ Verifiable through testing, documentation, or direct observation
+- ✅ Traceable to specific sources with exact quotes/references
+- ❌ Assumptions, generalizations, or "likely" scenarios
+- ❌ Information that cannot be validated in current context
+
+**Research Pattern**: Context gathering → evidence analysis → confidence assessment → qualified response with sources
+
 **Context Optimization**:
 
 - Use `--uc` for token optimization when context usage >75%
@@ -365,4 +427,4 @@ f. **COMMIT:** Atomic commit with pre-commit validation (security, performance, 
 
 ---
 
-*Finden Development Guide v7.0 | Self-Contained System | Evidence-based practices | Token-optimized | SuperClaude Integrated*
+*Finden Development Guide v8.0 | Self-Contained System | Evidence-based practices | Token-optimized | SuperClaude Integrated*
