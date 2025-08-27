@@ -49,6 +49,13 @@ Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self
 - **Usage**: `Task --subagent_type documentation-researcher` BEFORE documenting
 - **Output**: JSON research with internal/external docs, best practices, and actionable insights
 
+**🧪 quality-assurance-expert** (MANDATORY for test development)
+
+- **Auto-trigger**: Writing new tests, analyzing test coverage, improving test suites, TDD cycles
+- **Usage**: `Task --subagent_type quality-assurance-expert` BEFORE writing tests
+- **Output**: JSON analysis with test recommendations, edge cases, coverage strategies, BDD scenarios
+- **Sequential MCP**: Uses systematic analysis for complex test scenarios and coverage evaluation
+
 ## 🔧 CLI Tools & System Commands
 
 **Available System Tools** (verified on this environment):
@@ -365,6 +372,7 @@ npm run unitTest -- -u             # Update test snapshots
 - Writing >30 lines without tests → Run tests continuously
 - "I'll manually search for patterns" → USE pattern-analyzer agent
 - "I'll do anything without researching" → USE documentation-researcher agent
+- "Writing tests without analysis" → USE quality-assurance-expert agent
 - "Skipping agent delegation" → Check decision tree
 
 **CUPID Violations**:
@@ -401,6 +409,7 @@ npm run unitTest -- -u             # Update test snapshots
 
 **🔧 Backend**: JUnit 5 + Mockk + TestContainers + ArchUnit | **🎨 Frontend**: Jest + Vue Test Utils + Playwright
 **Coverage**: 80% unit | 70% integration | 100% critical paths | **Format**: BDD/ATDD (Given-When-Then)
+**Strategy**: Use quality-assurance-expert agent for comprehensive test analysis before implementation
 
 ### Performance Standards
 
@@ -432,6 +441,7 @@ npm run unitTest -- -u             # Update test snapshots
 - Backend: `unitTest`, `integrationTest`, `detekt`, `build`
 - Frontend: `install`, `lint`, `unitTest`, `build`
 - Principles: CUPID property check, comment ratio <5%, function size <20 lines
+- **Test Strategy**: quality-assurance-expert analysis required before test implementation
 
 2. **Pre-Merge**: Integration tests + Architecture compliance + 12-Factor validation + Code review
 
@@ -471,7 +481,7 @@ npm run unitTest -- -u             # Update test snapshots
 
 **3. Subtask Iteration (TDD Cycle)**:
 For each subtask (`<task-id>.1`, `<task-id>.2`, etc.):
-a. **RED**: Write failing BDD test (Given-When-Then format) → DON'T STOP until test fails correctly
+a. **RED**: Use quality-assurance-expert to analyze test requirements → Write failing BDD test (Given-When-Then format) → DON'T STOP until test fails correctly
 b. **GREEN**: Minimal code to pass test w/ persona-guided implementation → DON'T STOP until test passes
 c. **REFACTOR**: Clean code w/ auto-quality analysis → DON'T STOP until quality score = 100
 d. **DOCUMENT**: `task-master update-subtask --id=<task-id>.<subtask> --prompt="notes"`
@@ -482,7 +492,7 @@ f. **COMMIT**: Atomic commit w/ pre-commit validation → DON'T STOP until all h
 
 - Sequential: Complex debugging if needed
 - JetBrains: Code quality analysis
-- Integration testing across subtasks
+- Integration testing across subtasks (quality-assurance-expert for coverage validation)
 - Final refactoring for consistency
 - Store completion insights & learnings
 - `task-master set-status --id=<task-id> --status=done`
@@ -493,6 +503,7 @@ f. **COMMIT**: Atomic commit w/ pre-commit validation → DON'T STOP until all h
 
 - pattern-analyzer: Ensures consistency, prevents deviations
 - documentation-researcher: Ensures comprehensive docs, finds best practices
+- quality-assurance-expert: Ensures comprehensive test coverage, identifies edge cases, validates quality metrics
 
 **Integration Rules**:
 
@@ -529,6 +540,7 @@ f. **COMMIT**: Atomic commit w/ pre-commit validation → DON'T STOP until all h
 File Operations? → JetBrains MCP
 Patterns Analysis? → pattern-analyzer agent
 Documentation Research? → documentation-researcher agent
+Test Strategy & Coverage? → quality-assurance-expert agent
 Complex Analysis? → Sequential MCP
 Project Management? → TaskMaster MCP
 ```
