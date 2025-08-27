@@ -32,17 +32,6 @@
             "testStrategy": ""
           },
           {
-            "id": 3,
-            "title": "Add the sanitized() method signature that delegates to service",
-            "description": "Define a sanitized() method that will delegate the actual sanitization logic to a domain service",
-            "dependencies": [
-              1
-            ],
-            "details": "Add a method signature 'fun sanitized(): String' to the Beschreibung class. Since this is a value object in the domain layer, it should not directly depend on infrastructure services. Consider either accepting a sanitizer function as a parameter (functional approach) or defining an interface in the domain layer that will be implemented by the sanitization service. The method should return a sanitized version of the value without modifying the original immutable object.",
-            "status": "pending",
-            "testStrategy": ""
-          },
-          {
             "id": 4,
             "title": "Write comprehensive unit tests covering all edge cases",
             "description": "Create thorough unit tests for the Beschreibung value object covering validation, equality, and sanitization delegation",
