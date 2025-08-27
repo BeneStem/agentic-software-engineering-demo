@@ -7,6 +7,30 @@
 
 Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self-contained system w/ development standards, coding conventions, contribution guidelines
 
+## 🛠️ MCP Server Integration
+
+**Primary Tool Hierarchy** (MANDATORY):
+
+1. **JetBrains MCP** → File/folder operations, code navigation, IDE integration
+2. **Native Claude Tools** → Read, Edit, MultiEdit, Grep, Glob
+3. **Bash** → System operations, build commands (last resort)
+
+**Available MCP Servers**:
+
+- **🎯 jetbrains**: IDE integration, file operations, code analysis, refactoring
+- **📚 context7**: Library documentation, framework patterns, best practices
+- **🧠 sequential**: Complex analysis, systematic debugging, multi-step reasoning
+- **🌐 playwright**: E2E testing, browser automation, performance validation
+- **📊 taskmaster-ai**: Project management, task breakdown, estimation
+- **🐙 github**: Repository operations, PR management, issue tracking
+
+**MCP Server Usage Rules**:
+
+- **ALWAYS** use `mcp__jetbrains__*` tools for file/folder operations when available
+- **Context7** for Quarkus/Vue.js documentation and patterns
+- **Sequential** for complex debugging, system analysis, TDD workflows
+- **TaskMaster** for project management and task breakdown
+
 ## 📖 Symbol Legend
 
 **Flow & Logic**: → (leads to) | ⇒ (transforms to) | ← (rollback) | ⇄ (bidirectional) | & (and) | | (or) | : (define) | » (sequence) | ∴ (therefore) | ∵ (because) | ≡ (equivalent) | ≈ (approximately) | ≠ (not equal)
@@ -197,7 +221,7 @@ Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self
 1. **Working Code**: Self-documenting through clear naming & structure
 2. **Tests**: Executable documentation (BDD format) → Given-When-Then
 3. **README.md**: Project setup & overview only
-4. **Markdown in /docs**: Detailed architecture, API specs, guides
+4. **Markdown in /doc**: Detailed architecture, API specs, guides
 5. **Comments**: LAST RESORT - only for "why" not "what"
 
 **📝 Rules**:
@@ -317,38 +341,47 @@ Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self
 ### Quality Gates (3-Stage)
 
 1. **Local**: Unit tests, lint, build + CUPID validation + Clean code checks + Documentation hierarchy compliance
-  - Backend: `unitTest`, `integrationTest`, `detekt`, `build`
-  - Frontend: `install`, `lint`, `unitTest`, `build`
-  - Principles: CUPID property check, comment ratio <5%, function size <20 lines
+
+- Backend: `unitTest`, `integrationTest`, `detekt`, `build`
+- Frontend: `install`, `lint`, `unitTest`, `build`
+- Principles: CUPID property check, comment ratio <5%, function size <20 lines
 
 2. **Pre-Merge**: Integration tests + Architecture compliance + 12-Factor validation + Code review
-  - TestContainers integration tests, arch compliance validation
-  - CUPID composability check, 12-factor compliance scan
-  - Code review approval, SCS communication pattern compliance
+
+- TestContainers integration tests, arch compliance validation
+- CUPID composability check, 12-factor compliance scan
+- Code review approval, SCS communication pattern compliance
 
 3. **Pre-Deploy**: E2E tests + Performance + Security + Cloud-native compliance
-  - E2E tests w/ Playwright, performance tests under load, security validation
-  - 12-factor deployment validation, stateless service verification
-  - Docker image build & push, K8s deployment validation
 
-## 🔄 Development Workflow
+- E2E tests w/ Playwright, performance tests under load, security validation
+- 12-factor deployment validation, stateless service verification
+- Docker image build & push, K8s deployment validation
+
+## 🔄 Development Workflow (MCP-Integrated)
 
 ### SuperClaude Integration
 
 **🤖 Auto-Persona Activation**: Frontend files → 🎨 | API/server/DB → 🔧 | Tests → 📊 | Architecture/design → 🏗️ | Security → 🛡️ | Performance → ⚡
 
-### Daily TDD + Task Management Loop
+### Daily TDD + Task Management + MCP Server Loop
 
 **0. Conversation Setup**: Clear context with `/clear` command
 
-**1. Task Setup**:
+**1. Task Setup** (TaskMaster MCP):
 
 - `task-master next` → select prioritized task
 - `task-master show <task-id>` → review requirements
 - `task-master set-status --id=<task-id> --status=in-progress`
 - Auto-persona selection based on file patterns & task context
 
-**2. Subtask Iteration (TDD Cycle)**:
+**2. Code Analysis** (JetBrains MCP):
+
+- `mcp__jetbrains__list_directory_tree` → Explore project structure
+- `mcp__jetbrains__search_in_files_by_text` → Find similar implementations
+- `mcp__jetbrains__get_file_problems` → Identify existing issues
+
+**3. Subtask Iteration (TDD Cycle)**:
 For each subtask (`<task-id>.1`, `<task-id>.2`, etc.):
 a. **RED**: Write failing BDD test (Given-When-Then format) → DON'T STOP until test fails correctly
 b. **GREEN**: Minimal code to pass test w/ persona-guided implementation → DON'T STOP until test passes
@@ -357,8 +390,10 @@ d. **DOCUMENT**: `task-master update-subtask --id=<task-id>.<subtask> --prompt="
 e. **MEMORY**: Capture patterns, problems, solutions in development episode
 f. **COMMIT**: Atomic commit w/ pre-commit validation → DON'T STOP until all hooks pass
 
-**3. Task Completion**:
+**4. Validation & Task Completion** (Multiple MCP):
 
+- Sequential: Complex debugging if needed
+- JetBrains: Code quality analysis
 - Integration testing across subtasks
 - Final refactoring for consistency
 - Store completion insights & learnings
@@ -385,6 +420,15 @@ f. **COMMIT**: Atomic commit w/ pre-commit validation → DON'T STOP until all h
 - Use `--wave-mode` for complex multi-stage operations
 - Leverage `--seq` for systematic analysis & debugging
 - Use `--c7` for documentation & framework patterns
+
+### MCP Server Decision Tree
+
+```
+File Operations? → JetBrains MCP
+Documentation/Patterns? → Context7 MCP
+Complex Analysis? → Sequential MCP
+Project Management? → TaskMaster MCP
+```
 
 ### Git Workflow
 
@@ -442,7 +486,12 @@ f. **COMMIT**: Atomic commit w/ pre-commit validation → DON'T STOP until all h
 
 **STOP → INVESTIGATE → SIMPLIFY → CLARIFY → SEARCH**
 
-1. Stop coding | 2. Use debugger/logs | 3. Write minimal test | 4. Ask for help | 5. Check similar patterns
+1. Stop coding
+2. Use debugger/logs
+3. `mcp__jetbrains__get_file_problems` → Analyze issues
+4. `mcp__jetbrains__search_in_files_by_text` → Find patterns
+5. Write minimal test
+6. Ask for help
 
 ### When to Escalate (>30 min stuck)
 
