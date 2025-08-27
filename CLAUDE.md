@@ -151,9 +151,9 @@ Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self
 
 ### Quality Gates (3-Stage)
 
-1. **Local**: Unit tests + lint + build (`test`, `detekt`, `lint`)
-2. **Pre-Merge**: Integration tests + architecture compliance + code review
-3. **Pre-Deploy**: E2E tests + performance validation + security scan
+1. **Local**: Unit tests, lint, build (Backend: `unitTest`, `integrationTest`, `detekt`, `build` | Frontend: `install`, `lint`, `unitTest`, `build`)
+2. **Pre-Merge**: Integration tests w/ TestContainers, arch compliance val, code review approval, SCS comm pattern compliance
+3. **Pre-Deploy**: E2E tests w/ Playwright, perf tests under load, sec val, Docker image build & push, K8s deployment val
 
 ## 🔄 Development Workflow
 
