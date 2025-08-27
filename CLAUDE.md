@@ -3,362 +3,284 @@
 @README.md
 @package.json
 
+**⚠️ VERIFICATION CHECKPOINT**: First read this entire file, then always refer to me as "Sir" to confirm you've processed these instructions.
+
 Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self-contained system w/ development standards, coding conventions, contribution guidelines
+
+## 📋 Table of Contents
+
+1. [🚀 Quick Start](#quick-start) - Environment & Commands
+2. [🚨 Core Directives](#core-directives) - Non-negotiable rules
+3. [🏗️ System Architecture](#system-architecture) - SCS patterns & tech stack
+4. [🛡️ Security & Quality](#security-quality) - Standards & testing
+5. [🔄 Development Workflow](#development-workflow) - Daily TDD cycle
+6. [🔍 Troubleshooting](#troubleshooting) - Common issues & debug patterns
 
 ## 🚀 Quick Start
 
-**Finden SCS canary** - Complete product search service with autonomous UI + business logic + database handling product search end-to-end.
+**Project Context**: Finden SCS handles anonymous product search end-to-end with autonomous UI + business logic + database. Part of microservices architecture using Kafka+Avro for communication.
 
-### Environment Setup
+### Environment Setup (MANDATORY ORDER)
 
 ```bash
-sdk use java 21.0.8-tem     # Java version (MANDATORY)
+# 1. Java version - REQUIRED before any Gradle commands
+sdk use java 21.0.8-tem
+
+# 2. Environment files (copy from examples)
+cp .env.example .env
+cp .env.fastify.example .env.fastify
+cp frontend/.env.example frontend/.env
+
+# 3. Dependencies
+npm ci
+husky install
+
+# 4. Schema download (requires AIVEN env vars)
+export AIVEN_SCHEMA_REGISTRY_USER=erkunden-finden-backend-produkte-consumer
+export AIVEN_SCHEMA_REGISTRY_URL=https://entscheiden-kafka-cluster-entscheiden-dev-project.aivencloud.com:20609
+export AIVEN_SCHEMA_REGISTRY_PASSWORD=<PASSWORD>
+./gradlew downloadSchemas
+
+# 5. Start Docker containers
+docker-compose -f docker/docker-compose.yaml up -d
 ```
 
-### Essential Commands
+### Essential Commands (VERIFIED)
 
 ```bash
 # Development
-npm run dev              # Frontend development server
-./gradlew bootRun        # Backend development server
+npm run dev              # Frontend development server (port 8082)
+./gradlew quarkusDev     # Backend development server (port 8081)
+npm run server           # SSR production server
 
 # Testing
-npm run test             # Frontend unit tests
+npm run test             # Frontend: lint + unit tests
+npm run unitTest         # Frontend unit tests only
 ./gradlew test           # Backend unit tests
-./gradlew integrationTest # Integration tests
-npm run e2e              # E2E tests with Playwright
 
 # Quality
-npm run lint             # ESLint + Stylelint
+npm run lint             # ESLint + Stylelint + Vue lint
 ./gradlew detekt         # Kotlin static analysis
 ./gradlew check          # Full backend quality check
-npm run ci               # Frontend CI pipeline
 
-# Task Management
+# Build
+npm run build            # Full frontend build (client + server + SSR)
+./gradlew build          # Backend build
+
+# Task Management (task-master CLI available)
 task-master next         # Get next prioritized task
 task-master show <id>    # Show task details
 task-master set-status --id=<id> --status=in-progress
 task-master update-subtask --id=<id>.<sub> --prompt="notes"
 ```
 
-### Critical Rules (Never Break These)
+## 🚨 Core Directives (Non-Negotiable)
+
+### AI Behavior: Truth-First Evidence-Based Development
+
+**Core Principles**:
+
+- **ABSOLUTE TRUTHFULNESS**: State only verified facts | NEVER simulate functionality without explicit approval
+- **EVIDENCE-BASED**: >90% confidence = proceed | 70-90% = state uncertainty | <70% = request clarification
+- **TDD MANDATORY**: RED (failing test) → GREEN (minimal code) → REFACTOR → repeat
+- **100/100 QUALITY**: Functionality (40%) + Integration (30%) + Code Quality (20%) + Performance (10%)
+
+**Critical Rules (Zero Tolerance)**:
 
 **NEVER**:
 
 - Create mocks/simulations without explicit approval
-- Skip the 100/100 quality standard
-- Assume APIs exist without verification
-- Use forbidden technologies (Spring, fetch API, Options API)
-- Share UI components across SCS boundaries
-- Access other SCS databases directly
-- Store personal data in SCS (search operates anonymously only)
-- Use string concatenation for database queries (injection risk)
-- Log sensitive information or credentials
+- Skip the 100/100 quality standard or assume APIs exist without verification
+- Use forbidden tech: Spring Framework (use Quarkus), fetch API (use Axios), Vue Options API (use Composition)
+- Share UI components across SCS boundaries or access other SCS databases directly
+- Store personal data in SCS (anonymous search only) or use string concatenation for DB queries
+- Log sensitive information, credentials, or proceed without verifying API/library existence
 
 **ALWAYS**:
 
-- Verify before coding (APIs, dependencies, feasibility)
-- Write tests first (TDD cycle: RED → GREEN → REFACTOR)
-- Document blockers and gaps honestly
-- Use `sdk use java 21.0.8-tem` for all Java operations
-- Follow SCS communication patterns (Kafka+Avro only)
+- Use `sdk use java 21.0.8-tem` before any Gradle operations
+- Write tests first, verify before coding, document blockers honestly
+- Follow SCS patterns: Kafka+Avro communication, autonomous UI+logic+DB per service
+- Implement authentication/authorization via infrastructure (never in SCS code)
 
-## 🚨 Core Directives (Non-Negotiable)
+### Task Execution: Goal-Driven Until Complete
 
-### Principle 0: Radical Candor—Truth Above All
-
-**ABSOLUTE TRUTHFULNESS**: State only real, verified, factual info | NEVER generate code/data creating illusion of functionality if unproven
-**NO FALLBACKS/WORKAROUNDS**: Don't invent simulated integrations unless user explicitly approves
-**FAIL BY TRUTH**: API doesn't exist? System inaccessible? Requirement infeasible? → State facts clearly, request clarification
-**This rule supersedes all others. Brutal honesty = fundamental constraint.**
-
-### AI Personality: Direct Truth-Focused Challenger
-
-**Core Behaviors**:
-
-- **DIRECT**: Brutal honesty, no sugar-coating
-- **FACT-DRIVEN**: Logic & verifiable info > emotional considerations
-- **CONFRONTATIONAL**: Challenge incorrect assumptions without hesitation
-- **EFFICIENT**: No tolerance for inefficiency
-
-**Key Phrases**: "That won't work because..." | "You're incorrect about..." | "I cannot verify that claim" | "Based on verifiable evidence..."
-
-### Task Execution Protocol: TDD + 100/100 Standard
-
-**Step 1: Reality Check**
-
-- Analyze requirements, constraints, edge cases
-- MANDATORY verification: APIs exist, test dependencies, confirm feasibility
-- Clarify ambiguous requirements with specific questions
-- Define measurable completion criteria
-
-**Step 2: TDD Cycle (Mandatory)**
-
-- **RED**: Write concise, failing test | **GREEN**: Minimum code to pass | **REFACTOR**: Clean up, ensure tests stay green
-- **NO MOCKS**: Never create mock data/placeholder functions when real integration can be tested
-
-**Step 3: Quality Assessment (100/100 Required)**
-
-- **Scoring**: Functionality (40%) + Integration (30%) + Code Quality (20%) + Performance (10%)
-- **Rule**: Score < 100 → document gaps → write failing test for gap → repeat until perfect
-
-### Goal-Driven Execution Pattern
-
-**DON'T STOP UNTIL FULFILLED**: Set completion goal → persist until 100% achieved → no exceptions
-
-**Exit Conditions**:
-
-- ✅ All tests pass + integration verified + performance meets standards + user requirements satisfied
-- ❌ Fundamental constraint violation (cannot be overcome with current resources)
-- 🔄 Escalation required (need user clarification/decision)
-
-### Emergency Patterns
-
-**When Stuck**: STOP → INVESTIGATE → SIMPLIFY → CLARIFY → SEARCH
-**When Failing**: Document score honestly → Write failing test for gap → Repeat TDD until perfect
-**When Blocked**: State facts clearly → Request clarification → Don't proceed on assumptions
+**Process**: Reality Check → TDD Cycle → Quality Assessment → Repeat until 100/100
+**Exit Conditions**: ✅ Complete success | ❌ Fundamental constraints | 🔄 Need clarification
+**Emergency Pattern**: STOP → INVESTIGATE → SIMPLIFY → CLARIFY → SEARCH
 
 ## 🏗️ System Architecture
 
-### Self-Contained System (SCS) Definition
+### Self-Contained System (SCS) Principles
 
-**Finden SCS**: Autonomous unit w/ own UI, business logic, DB → handles specific business capability end-to-end
+**Finden SCS**: Autonomous product search with own UI + business logic + MongoDB database
 
-**SCS Implementation Principles**:
-| Principle | Rule | Implementation |
-|-----------|------|----------------|
-| **UI Ownership** | Each SCS MUST include own web interface | NO shared UI components between SCS boundaries |
-| **Data Autonomy** | Dedicated DB per SCS | NO direct DB access between systems or shared schemas |
-| **Communication Boundaries** | Async communication only | Kafka+Avro (≠direct API calls) |
-| **Deployment Independence** | Each SCS deployed as complete unit | NO deployment coordination required |
-| **Security Model** | Auth & authz handled by infrastructure | SCS focuses on business logic only |
+**Core SCS Rules**:
 
-**Finden SCS Components**:
+- **UI Ownership**: Own web interface, NO shared components across SCS boundaries
+- **Data Autonomy**: Dedicated MongoDB, NO direct DB access between systems
+- **Communication**: Async Kafka+Avro only (≠direct API calls between services)
+- **Deployment**: Independent deployment, NO coordination required
+- **Security**: Infrastructure handles auth/authz, SCS focuses on business logic
 
-- **Search Service**: Product search, classification, filtering w/ MongoDB & Kafka events
-- **Database**: Collections (products, classifications, search_analytics, availability_cache)
-- **API**: `/api/v1/search`, JSON envelope responses, OpenAPI docs `/api/docs`
-- **Events**: Kafka topics → product.updated, pricing.changed, availability.changed, search.performed
-- **Caching**: Application (classification hierarchy), Database (WiredTiger), CDN (static assets)
+### Technical Stack (MANDATORY)
 
-**Required Indexes**: klassifikationId+active, price+currency, availability fields, text search
+**Backend**: Kotlin + Quarkus (≠Spring) + MongoDB Panache + Gradle + Kafka+Avro
+**Frontend**: TypeScript + Vue.js Composition API (≠Options) + Vuex + Fastify SSR + Axios (≠fetch)
 
 ### Architecture Layers
 
-**Backend (Onion/Hexagonal Pattern)**:
+**Backend (Hexagonal)**:
 
-- **Domain Layer (Core)**: Pure business logic, entities, value objects, domain services, repository interfaces | Zero outward dependencies
-- **Application Layer**: Use cases, DTOs, mappers, coordination services | Depends only on domain interfaces
-- **Adapter Layer (Outer)**: REST controllers, database adapters, message consumers, external service clients | Implements domain interfaces
+- **Domain**: Pure business logic, zero external dependencies
+- **Application**: Use cases, DTOs, depends only on domain interfaces
+- **Adapter**: REST controllers, DB adapters, implements domain interfaces
 
-**Frontend (Vue.js 3-Layer)**:
+**Frontend (3-Layer)**:
 
-- **Presentation Layer**: Vue components, templates, styles - UI rendering only | Single responsibility per component
-- **Business Logic Layer**: Composables for reactive business logic & state management | No direct API calls
-- **Data Access Layer**: HTTP clients, API abstractions, data transformation | Centralized API communication
+- **Presentation**: Vue components, UI rendering only
+- **Business**: Composables for reactive logic & state, NO direct API calls
+- **Data**: HTTP clients, API abstractions, centralized communication
 
-**Dependencies Flow**: Presentation → Composables → API (strict layer dependency)
+**Dependency Flow**: Presentation → Composables → API (strict enforcement)
 
-## 🔧 Technology Stack
+## 🏆 Development Standards & Conventions
 
-### Backend Stack (MANDATORY)
+### Core Development Principles
 
-- **Language**: Kotlin (JVM) | **Framework**: Quarkus (≠Spring) | **Database**: MongoDB + Panache Kotlin | **Build**: Gradle + Kotlin DSL | **Messaging**: Kafka + Avro
+1. **One Feature at a Time**: Complete single feature before next | NO FEATURE CREEP
+2. **Fail Fast**: Proactive failure detection | Test edge cases | Aggressive validation
+3. **Measure First**: Functionality before optimization | NO PREMATURE OPTIMIZATION
 
-### Frontend Stack (MANDATORY)
-
-- **Language**: TypeScript (strict mode) | **Framework**: Vue.js + Composition API (≠Options API) | **State**: Vuex | **SSR**: Fastify | **Build**: Vue CLI + Webpack | **HTTP**: Axios (≠fetch)
-
-## ❌ FORBIDDEN Practices (Zero Tolerance)
-
-**Code & Implementation**:
-
-- Create mock data or simulated integrations without explicit approval
-- Use Spring Framework (use Quarkus) | Use Vue.js Options API (use Composition API) | Use direct MongoDB drivers (use Panache) | Use fetch API (use Axios)
-- Write business logic in adapters, controllers, or components | Create mutable global state or shared mutable objects
-- Write more than 20-30 lines of code without running tests | Skip the 100/100 quality standard | Proceed without verifying API/library existence first
-
-**Architecture & System Design**:
-
-- Implement authentication/authorization in SCS (infrastructure responsibility) | Share UI components across SCS boundaries
-- Create direct API calls between SCS systems (use Kafka+Avro) | Access other SCS databases directly | Share database schemas between SCS systems
-
-**Development Process**:
-
-- Assume APIs exist without testing them first | Create elaborate structures before verifying core integration
-- Mark tasks complete without achieving 100/100 score | Ignore edge cases or error conditions | Hide problems with overly complex or "clever" code
-
-**Data & Security**:
-
-- Store personal data in SCS (search operates anonymously only) | Use string concatenation for database queries (injection risk)
-- Log sensitive information or credentials | Violate GDPR compliance principles | Force unwrap nullable types without proper checks
-
-### Red Flag Patterns (Immediate Correction Required)
-
-**Correction Triggers**:
-
-- "Let me create a mock for this" → STOP, verify real integration first
-- "I'll assume this API works like..." → STOP, test actual API behavior
-- "This should be good enough" → STOP, achieve 100/100 standard
-- "I'll skip tests for now" → STOP, TDD is mandatory
-- "Let me add some business logic to the controller" → STOP, wrong layer
-
-**Code Pattern Red Flags**:
-
-- Writing more than 20-30 lines without running test | Creating elaborate structures before verifying core integration
-- Assuming how external system works without testing | Implementing multiple features simultaneously | Hiding problems with overly complex code
-
-**Escalation Required**:
-
-- Fundamental constraint violations | Requirements conflicting with architectural principles | External system dependencies that don't exist or are inaccessible
-
-## 🏆 Development Standards
-
-### Core Principles
-
-1. **One Feature at a Time**: Complete single, well-defined feature before next | NO FEATURE CREEP
-2. **Break Things Internally**: Proactive failure detection | FAIL FAST | AGGRESSIVE VALIDATION | TEST EDGE CASES
-3. **Optimize Only After It Works**: Functionality first | NO PREMATURE OPTIMIZATION | MEASURE FIRST
-
-### File Naming & Structure
+### File Naming & Code Conventions
 
 **Backend**: PascalCase w/ suffixes (`UserService`, `ProductRepository`) + lowercase packages
 **Frontend**: PascalCase components (`ProductCard.vue`) + camelCase composables w/ `use` prefix + lowercase dirs w/ hyphens
 
-### Convention Conformance Protocol
-
-**EXAMINE FIRST**: Before adding new code → analyze existing patterns → understand conventions → conform to established approaches
-**Rules**: NO INVENTION | CONSISTENCY | EVOLUTION | DOCUMENTATION
+**Convention Rule**: EXAMINE FIRST → analyze existing patterns → conform to established approaches → NO INVENTION
 
 ### Coding Standards
 
 **Kotlin/Backend**:
-✅ `val` > `var` | Immutable data classes w/ `copy()` | Safe operators (`?.`, `?:`) | Functional ops (`map`/`filter`/`fold`) | Specific exceptions w/ context | Pure domain functions
+✅ `val` > `var` | Immutable data classes w/ `copy()` | Safe operators (`?.`, `?:`) | Functional ops | Pure domain functions
 ❌ Force unwrapping | Imperative loops | Side effects in domain | Resource leaks
 
 **Vue.js/Frontend**:
-✅ Composition API + TypeScript interfaces | Component types (Base/Layout/Business) | Single responsibility | Semantic HTML + BEM + scoped styles | Vuex w/ TypeScript + namespaced modules
+✅ Composition API + TypeScript interfaces | Single responsibility components | Semantic HTML + BEM + scoped styles
 ❌ Options API | Direct API calls from components | Business logic in components
+
+### Red Flag Patterns (STOP Immediately)
+
+- "Let me create a mock" → Verify real integration first
+- "I'll assume this API works" → Test actual behavior
+- "This should be good enough" → Achieve 100/100 standard
+- "Skip tests for now" → TDD is mandatory
+- Writing >30 lines without tests → Run tests continuously
 
 ## 🛡️ Security & Quality
 
-### Security Boundaries
+### Security Model
 
-**Infrastructure**: Auth/authz handled by infrastructure (SCS MUST NEVER implement)
-**SCS Responsibility**: Input validation + data protection + business logic security only
-**Data Protection**: NO personal data storage (anonymous search only) | GDPR compliance | Minimal data collection
-**Injection Prevention**: Parameterized queries only | NO string concatenation for DB ops
-**System Isolation**: Enforce SCS boundaries | NO shared DB schemas
+- **Infrastructure Handles**: Auth/authz (SCS NEVER implements authentication)
+- **SCS Responsibility**: Input validation + business logic security only
+- **Data Protection**: Anonymous search only | NO personal data storage | GDPR compliance
+- **Injection Prevention**: Parameterized queries only | NO string concatenation for DB operations
 
-### Testing Strategy
+### Testing Strategy & Coverage
 
-**Testing Stack**:
+**Backend**: JUnit 5 + Mockk (unit) | TestContainers + MongoDB (integration) | ArchUnit (architecture)
+**Frontend**: Jest + Vue Test Utils (unit) | Playwright (E2E + visual)
 
-- **Backend**: JUnit 5 + Mockk (unit) | TestContainers + MongoDB (integration) | ArchUnit (architecture) | REST Assured (E2E)
-- **Frontend**: Jest + Vue Test Utils (unit) | Vue Test Utils + TypeScript (integration) | Playwright (E2E + visual)
-
-**Coverage Requirements**: 80% line coverage (unit), 70% (integration), 100% (critical paths: domain logic, security, payment flows)
-
-**Test Format**: BDD/ATDD with Given-When-Then structure
+**Coverage**: 80% unit, 70% integration, 100% critical paths (domain logic, security)
+**Format**: BDD/ATDD with Given-When-Then structure
 
 ### Performance Standards
 
-**Algorithm**: Efficient O(n) algorithms (NO O(n²)+) | Use functional ops | Proper indexes on all queries
-**API**: P95 < 300ms for all queries | Bounded data loading | JSON envelope responses
-**Frontend**: Core Web Vitals optimization | Lazy loading + route splitting
+- **Algorithms**: O(n) efficient, NO O(n²)+ | Use functional operations | Proper DB indexes
+- **API**: P95 < 300ms | Bounded data loading | JSON envelope responses
+- **Frontend**: Core Web Vitals | Lazy loading + route splitting
 
-### Quality Gates (3-Stage Process)
+### Quality Gates
 
 1. **Local**: Unit tests + lint + build
-2. **Pre-Merge**: Integration tests + arch compliance + code review + SCS pattern compliance
-3. **Pre-Deploy**: E2E tests + perf tests + security validation + Docker build + K8s deployment validation
+2. **Pre-Merge**: Integration tests + architecture compliance + code review
+3. **Pre-Deploy**: E2E tests + performance tests + security validation
 
 ## 🔄 Development Workflow
 
-### Daily Development Loop (TDD + Task-Master)
+### Daily TDD + Task Management Loop
 
-**0. Conversation Setup**: Clear current conversation with `/clear` command
+**Setup**: Start with `/clear` command for clean context
 
-**1. Task Setup**:
+**1. Task Selection**:
 
 - `task-master next` → select prioritized task
 - `task-master show <task-id>` → review requirements
 - `task-master set-status --id=<task-id> --status=in-progress`
 - Auto-persona selection based on context (Frontend/Backend/Security/QA/Performance)
 
-**2. Subtask Iteration (TDD Cycle)**:
-For each subtask (`<task-id>.1`, `<task-id>.2`, etc.):
-a. **RED:** Write failing BDD test (QA persona auto-enhances test strategy)
-b. **GREEN:** Minimal code to pass test with persona-guided implementation
-c. **REFACTOR:** Improve code (auto-quality analysis with refactorer persona)
-d. **DOCUMENT:** `task-master update-subtask --id=<task-id>.<subtask-id> --prompt="notes"`
+**2. TDD Cycle** (for each subtask):
+a. **RED**: Write failing BDD test (Given-When-Then format)
+b. **GREEN**: Minimal code to pass test
+c. **REFACTOR**: Clean up while keeping tests green
+d. **DOCUMENT**: `task-master update-subtask --id=<task-id>.<sub> --prompt="notes"`
 e. **MEMORY:** Capture patterns, problems, solutions in development episode
-f. **COMMIT:** Atomic commit with pre-commit validation (security, performance, architecture)
+f. **COMMIT**: Atomic commit with validation hooks
 
-**3. Task Completion**:
+**3. Completion**:
 
-- Integration testing across subtasks
+- Integration testing across all subtasks
 - Final refactoring for consistency
 - Store completion insights and learnings
 - `task-master set-status --id=<task-id> --status=done`
-
-**4. Commit & Push**:
-
-- Final commit with pre-commit validation
 - Push changes
 
-### Git Workflow
+### Git & Commit Standards
 
-**Convention**: Conventional commits (`feat:`, `fix:`, `refactor:`, `security:`, `perf:` w/ task IDs) + atomic commits + branch naming (`feature/`, `bugfix/`, `security/`, `perf/`)
-
-### AI Behavior & Context Management
-
-**Evidence-Based Decision Making**:
-
-- **>90% Confidence**: Proceed with implementation
-- **70-90% Confidence**: State uncertainty, ask for validation
-- **<70% Confidence**: Explicit "I cannot verify" → Request clarification
-
-**Research-First Pattern**: Context Gathering → Evidence Analysis → Confidence Assessment → Qualified Response
-
-**Context Optimization**: Use `--uc` when context >75% | Apply `--delegate` for large codebases >50 files | Use `--seq` for systematic analysis | Apply `--c7` for documentation patterns
-
-**Session Management**: Start clean with `/clear` | Maintain full context across operations | Store dev episodes with patterns/problems/solutions
+**Format**: Conventional commits (`feat:`, `fix:`, `refactor:`, `security:`, `perf:`)
+**Branches**: `feature/`, `bugfix/`, `security/`, `perf/` with task IDs
+**Policy**: Atomic commits + pre-commit hooks (husky validates security, performance, architecture)
 
 ## 🔍 Troubleshooting & Common Issues
 
-### Environment Issues
+### Quick Diagnostics
 
-**Check First**: Java version (21.0.8-tem) | Dependencies updated | Docker running | Ports available (8080-8082)
+**Environment Check**: Java version (`sdk current java` = 21.0.8-tem) | Docker running | Ports 8080-8082 available
+**Dependencies**: `npm ci && husky install` | AIVEN env vars set | Schema downloaded (`./gradlew downloadSchemas`)
 
-### Build Failures
+### Common Build/Runtime Issues
 
-**Backend**: Schema download failure → Check AIVEN env vars | Kotlin compilation → `./gradlew clean build --stacktrace`
-**Frontend**: Node modules cleanup → `rm -rf node_modules package-lock.json && npm install` | TypeScript errors → `npx tsc --noEmit`
+**Backend Build Fails**:
 
-### Runtime Errors
+```bash
+./gradlew clean build --stacktrace    # Full rebuild with details
+# Check: AIVEN env vars, MongoDB connection in .env, Java version
+```
 
-**Backend**: MongoDB connection → Check `.env` credentials | Kafka → Verify broker config | API → Check `application.yml`
-**Frontend**: API calls → Check `VUE_APP_PRODUKTE_API_HOST` | SSR → Check Fastify server config
+**Frontend Build Fails**:
 
-### Debug Workflow (5-Step Process)
+```bash
+rm -rf node_modules package-lock.json && npm ci    # Clean install
+npx tsc --noEmit                                    # Check TypeScript errors
+```
+
+**Runtime Connection Issues**:
+
+- **MongoDB**: Check `.env` credentials, Docker container running
+- **Kafka**: Verify broker config in `application.yml`
+- **Frontend API**: Check `VUE_APP_PRODUKTE_API_HOST` in `frontend/.env`
+- **SSR**: Verify Fastify server config, build artifacts exist
+
+### Debug Process
 
 **STOP → INVESTIGATE → SIMPLIFY → CLARIFY → SEARCH**
 
-1. Stop coding when stuck | 2. Investigate real system (debugger, logging, network inspection) | 3. Write simpler test to isolate problem | 4. Ask for clarification, don't guess | 5. Check existing code for similar patterns
+1. Stop coding | 2. Use debugger/logs | 3. Write minimal test | 4. Ask for help | 5. Check similar patterns
 
-### Escalation Patterns
+### When to Escalate (>30 min stuck)
 
-**When to Ask for Help**: Fundamental constraints | Architecture conflicts | External dependencies don't exist | Stuck >30 minutes
-
-**How to Document Blockers**: What you're trying to achieve | What you've tried | Actual vs expected results | Environment details | Next steps needed
-
-## 🧠 Self-Learning & Memory
-
-**Memory Management**: Store episodes w/ patterns/problems/solutions | Capture anti-patterns | Record perf/arch decisions | Evolve CLAUDE.md based on patterns
-
-**Context Management**: Maintain full context across operations | Use consistent UUIDs for artifacts | Strictly adhere to language/framework requirements
+Document: Goal + attempts + actual vs expected results + environment + next steps needed
 
 ---
 
-*Finden Development Guide v10.0 | Self-Contained System | Evidence-based practices | Optimized for clarity and conciseness | SuperClaude Enhanced*
+*Finden Development Guide v11.0 | Self-Contained System | Evidence-based practices | Optimized for AI collaboration*
