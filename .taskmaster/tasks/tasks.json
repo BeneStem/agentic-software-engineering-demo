@@ -28,7 +28,7 @@
               1
             ],
             "details": "Inside the data class, implement an init block using Kotlin's require() function to enforce validation rules. Check that the value is not blank using value.isNotBlank() and that it doesn't exceed 500 characters using value.length <= 500. Provide clear, descriptive error messages in German or English as per project standards (e.g., 'Beschreibung darf nicht leer sein' and 'Beschreibung darf maximal 500 Zeichen lang sein'). This ensures the value object cannot be instantiated with invalid data.",
-            "status": "done",
+            "status": "in-progress",
             "testStrategy": ""
           },
           {
@@ -156,7 +156,7 @@
     ],
     "metadata": {
       "created": "2025-07-16T18:27:44.586Z",
-      "updated": "2025-08-28T11:29:37.741Z",
+      "updated": "2025-08-28T11:30:10.644Z",
       "description": "Tasks for master context"
     }
   }
