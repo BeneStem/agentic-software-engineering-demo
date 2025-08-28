@@ -472,14 +472,14 @@ npm run unitTest -- -u             # Update test snapshots
 - `task-master set-status --id=<task-id> --status=in-progress`
 - Auto-persona selection based on file patterns & task context
 
-**2. Code Analysis & Research** (JetBrains MCP):
+**2. Each Subtask Code Analysis & Research** (JetBrains MCP):
 
 - `mcp__jetbrains__list_directory_tree` → Explore project structure
 - `mcp__jetbrains__search_in_files_by_text` → Find similar implementations
 - `mcp__jetbrains__get_file_problems` → Identify existing issues
 - **RESEARCH**: Use documentation-researcher for API specs, framework patterns, and best practices
 
-**3. Subtask Iteration (TDD Cycle)**:
+**3. Each Subtask Iteration (TDD Cycle)**:
 For each subtask (`<task-id>.1`, `<task-id>.2`, etc.):
 a. **RED**: Use quality-assurance-expert to analyze test requirements → Write failing BDD test (Given-When-Then format) → DON'T STOP until test fails correctly
 b. **GREEN**: Minimal code to pass test w/ persona-guided implementation → DON'T STOP until test passes
@@ -496,6 +496,7 @@ f. **COMMIT**: Atomic commit w/ pre-commit validation → DON'T STOP until all h
 - Final refactoring for consistency
 - Store completion insights & learnings
 - `task-master set-status --id=<task-id> --status=done`
+- Push changes
 
 ### Sub-Agent Best Practices
 
