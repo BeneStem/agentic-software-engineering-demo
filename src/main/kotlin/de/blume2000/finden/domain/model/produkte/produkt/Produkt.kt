@@ -15,8 +15,7 @@ data class Produkt(
   val pdsUrlSeoName: ProduktdetailseiteUrlSeoName,
   val farben: List<Produktfarbe>,
   val blumensorten: List<Blumensorte>,
-  val verfügbarkeiten: List<ProduktVerfügbarkeit>,
-  val beschreibung: Beschreibung? = null
+  val verfügbarkeiten: List<ProduktVerfügbarkeit>
 ) {
   init {
     if (!streichpreis.istGrößerAlsOderGleich(preis)) {
