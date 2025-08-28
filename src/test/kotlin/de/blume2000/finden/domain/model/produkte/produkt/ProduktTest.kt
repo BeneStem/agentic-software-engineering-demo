@@ -35,4 +35,25 @@ internal class ProduktTest {
         pdsPfad
     )
   }
+
+  @Test
+  internal fun `Erstelle Produkt mit Beschreibung`() {
+    // Given
+    val beschreibung = Beschreibung("Eine schöne Produktbeschreibung")
+
+    // When
+    val produkt = erstelleProdukt(beschreibung = beschreibung)
+
+    // Then
+    expectThat(produkt.beschreibung).isEqualTo(beschreibung)
+  }
+
+  @Test
+  internal fun `Erstelle Produkt ohne Beschreibung`() {
+    // Given/When
+    val produkt = erstelleProdukt()
+
+    // Then
+    expectThat(produkt.beschreibung).isEqualTo(null)
+  }
 }

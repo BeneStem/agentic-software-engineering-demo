@@ -9,7 +9,7 @@
         "testStrategy": "Write unit tests to verify: 1) Valid descriptions are accepted (edge cases: exactly 500 chars, 1 char), 2) Invalid descriptions throw exceptions (>500 chars, blank, null), 3) Sanitization method is called and returns expected results, 4) Value object equality and immutability work correctly. Use JUnit 5 with Kotlin test assertions.",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
+        "status": "in-progress",
         "subtasks": [
           {
             "id": 1,
@@ -17,7 +17,7 @@
             "description": "Set up the Beschreibung data class in the domain layer with correct package structure and basic Kotlin data class syntax",
             "dependencies": [],
             "details": "Create the file at src/main/kotlin/domain/model/Beschreibung.kt with proper package declaration (likely com.company.finden.domain.model). Define as a Kotlin data class with a single val property 'value' of type String. Ensure the class follows domain-driven design principles as a value object with immutability. Add appropriate imports and consider making the class final if not already implicit with data class.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -28,7 +28,7 @@
               1
             ],
             "details": "Inside the data class, implement an init block using Kotlin's require() function to enforce validation rules. Check that the value is not blank using value.isNotBlank() and that it doesn't exceed 500 characters using value.length <= 500. Provide clear, descriptive error messages in German or English as per project standards (e.g., 'Beschreibung darf nicht leer sein' and 'Beschreibung darf maximal 500 Zeichen lang sein'). This ensures the value object cannot be instantiated with invalid data.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -41,7 +41,7 @@
               3
             ],
             "details": "Create BeschreibungTest.kt in src/test/kotlin/domain/model/ using JUnit 5 and Mockk. Test cases should include: valid descriptions (1 char, 500 chars exactly, normal text), invalid descriptions (empty string, blank string, 501+ chars), null handling if applicable, data class equality and hashCode behavior, copy() function behavior, and sanitized() method delegation. Use parameterized tests for boundary value testing. Ensure tests follow BDD format with Given-When-Then structure as per project standards.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           }
         ]
@@ -156,7 +156,7 @@
     ],
     "metadata": {
       "created": "2025-07-16T18:27:44.586Z",
-      "updated": "2025-07-16T18:27:44.586Z",
+      "updated": "2025-08-28T11:29:37.741Z",
       "description": "Tasks for master context"
     }
   }
