@@ -81,7 +81,7 @@ When invoked, you must rigorously follow the Daily TDD + Task Management + MCP S
 ### 2.2 Research & Analysis (PARALLEL EXECUTION)
 **MANDATORY PARALLEL SUBAGENTS** - Launch simultaneously for optimal efficiency:
 
-**Parallel Group A - Documentation & Patterns**:
+**Single Research Group - All Research Agents**:
 - **documentation-researcher** (parallel): Documentation priority system:
   - **Primary**: `/docs/` internal documentation (ADRs, analysis docs, architecture)
   - **Secondary**: Framework documentation and external resources
@@ -90,16 +90,10 @@ When invoked, you must rigorously follow the Daily TDD + Task Management + MCP S
   - Cross-reference findings with ADRs and architectural documentation
   - Ensure pattern compliance with documented architectural decisions
   - Discover ≥3 similar implementations and extract conventions
-
-**Parallel Group B - Architecture & Quality**:
 - **architecture-advisor** (parallel): Design validation and standards enforcement:
   - Validate CUPID compliance and architectural standards
   - Ensure SCS boundaries and communication patterns are respected
   - Confirm 12-Factor App principles and technology stack alignment
-- **quality-assurance-expert** (parallel): Proactive quality analysis:
-  - Analyze existing test patterns and coverage strategies
-  - Identify quality gaps and improvement opportunities
-  - Prepare comprehensive test scenarios for upcoming implementation
 
 ## Phase 3: Subtask Iteration (Rigorous TDD Cycle)
 
@@ -108,7 +102,8 @@ For each subtask (`<task-id>.1`, `<task-id>.2`, etc.), **RIGOROUS ORDER**:
 
 ### a. RED Phase (Write Failing Tests)
 
-- **MANDATORY**: Use quality-assurance-expert to analyze test requirements
+- **MANDATORY EXECUTION**: quality-assurance-expert:
+  - **quality-assurance-expert**: Analyze test requirements and provide BDD scenarios
 - Write failing BDD test in Given-When-Then format
 - **DON'T STOP** until test fails correctly
 - Validate test failure message is meaningful
@@ -116,14 +111,14 @@ For each subtask (`<task-id>.1`, `<task-id>.2`, etc.), **RIGOROUS ORDER**:
 ### b. GREEN Phase (Minimal Implementation)
 
 - Write minimal code to pass test with persona-guided implementation
-- **MANDATORY**: Use architecture-advisor for design validation during implementation
 - **DON'T STOP** until test passes
 - Avoid any premature optimization
 - Ensure architectural compliance and CUPID principles
 
 ### c. REFACTOR Phase (Clean & Optimize)
 
-- **MANDATORY**: Use `Task --subagent_type refactoring-advisor` for structured refactoring guidance
+- **MANDATORY EXECUTION**: refactoring-advisor:
+  - **refactoring-advisor**: Provide structured refactoring guidance for quality improvement
 - Clean code with auto-quality analysis following refactoring recommendations
 - **DON'T STOP** until quality score = 100/100 (all 4 quality dimensions)
 - Maintain test coverage during refactoring (tests must continue passing)
@@ -146,7 +141,7 @@ For each subtask (`<task-id>.1`, `<task-id>.2`, etc.), **RIGOROUS ORDER**:
   - **Patterns Discovered**: New patterns found in codebase, reusable approaches
   - **Lessons Learned**: Key insights for future development
   - **Anti-patterns to Avoid**: What didn't work, pitfalls to prevent
-  - **Agile Retrospective**: 
+  - **Agile Retrospective**:
     - **What Went Well**: Technical achievements, process improvements, collaboration highlights
     - **What Could Be Improved**: Process inefficiencies, communication gaps, tool limitations
     - **4Ls Analysis**: Liked, Learned, Lacked, Longed For
@@ -175,25 +170,12 @@ For each subtask (`<task-id>.1`, `<task-id>.2`, etc.), **RIGOROUS ORDER**:
 ### 4.2 Comprehensive Validation (PARALLEL EXECUTION)
 **MANDATORY PARALLEL SUBAGENTS** - Launch simultaneously for thorough validation:
 
-**Parallel Group A - Quality & Standards**:
-- **quality-assurance-expert** (parallel): Coverage validation across subtasks:
-  - Verify test coverage meets thresholds (≥80% unit, ≥70% integration)
-  - Validate comprehensive edge case testing
-  - Confirm BDD scenarios match requirements
-- **architecture-advisor** (parallel): Final architecture compliance checks:
-  - Validate CUPID principles and clean architecture
-  - Confirm SCS boundaries and communication patterns
-  - Verify 12-Factor App compliance and technology stack alignment
-
-**Parallel Group B - Implementation Review**:
-- **review-critic** (parallel): Comprehensive implementation review:
+**Single Validation Group - All Validation Agents**:
+- **review-critic** (parallel): PRIMARY validation agent for task completion:
   - Verify code matches requirements and architectural patterns
   - Validate implementation against existing conventions
   - Ensure code quality and best practices compliance
-- **refactoring-advisor** (parallel): Final refactoring assessment:
-  - Identify remaining technical debt or quality issues
-  - Ensure consistency across all subtasks
-  - Validate 100/100 quality standard achievement
+  - Run comprehensive implementation review against task specifications
 
 ### 4.3 Completion & Storage (Sequential)
 5. **Knowledge Storage**: Store completion insights & learnings
@@ -215,46 +197,39 @@ For each subtask (`<task-id>.1`, `<task-id>.2`, etc.), **RIGOROUS ORDER**:
 - **COMMIT**: Memory captured, need atomic commits → Guide to Phase 3f (Commit - BLOCKING for Phase 4)
 - **VALIDATE**: All Phase 3 steps complete, need final validation → Guide to Phase 4
 - **COMPLETE**: All validation passed → Guide to next task selection
-- **🚨 POST-COMPLETION**: Task marked as done → **MANDATORY** next task guidance and workflow continuation
+- **POST-COMPLETION**: Task marked as done → **MANDATORY** next task guidance and workflow continuation
 
 ## Critical Subagent Coordination
 
 **Mandatory Subagent Usage** (NEVER skip these):
 
-**Phase 2 - PARALLEL EXECUTION GROUPS**:
-- **Parallel Group A**: documentation-researcher + pattern-analyzer (MANDATORY - simultaneous research)
+**Phase 2 - RESEARCH GROUP**:
+- **Single Research Group**: documentation-researcher + pattern-analyzer + architecture-advisor (MANDATORY - simultaneous research)
   - documentation-researcher: Internal `/docs/` priority, then external framework docs
   - pattern-analyzer: Documentation-enhanced analysis with ≥3 pattern discoveries
-- **Parallel Group B**: architecture-advisor + quality-assurance-expert (MANDATORY - simultaneous analysis)
   - architecture-advisor: Architecture decisions and design validation
-  - quality-assurance-expert: Proactive quality analysis and test strategy preparation
 
 **Phase 3 - TDD CYCLE INTEGRATION**:
-- **Phase 3a**: quality-assurance-expert (MANDATORY before writing tests)
-- **Phase 3b**: architecture-advisor (MANDATORY - design validation during implementation)
-- **Phase 3c**: refactoring-advisor (MANDATORY during REFACTOR phase when quality < 100/100)
+- **Phase 3a**: quality-assurance-expert (MANDATORY)
+- **Phase 3c**: refactoring-advisor (MANDATORY)
 
-**Phase 4 - PARALLEL VALIDATION GROUPS**:
-- **Parallel Group A**: quality-assurance-expert + architecture-advisor (MANDATORY - simultaneous validation)
-  - quality-assurance-expert: Coverage validation and comprehensive testing analysis
-  - architecture-advisor: Final architecture compliance and CUPID validation
-- **Parallel Group B**: review-critic + refactoring-advisor (MANDATORY - simultaneous review)
-  - review-critic: Comprehensive implementation review against requirements
-  - refactoring-advisor: Final refactoring assessment and quality standard verification
+**Phase 4 - VALIDATION GROUP**:
+- **Single Validation Group**: review-critic (MANDATORY)
+  - review-critic: PRIMARY validation agent for comprehensive implementation review
 
 **Documentation Integration Requirements**:
 
 - **documentation-researcher**: MUST consult `/docs/` directory first, including ADRs and analysis docs
 - **pattern-analyzer**: MUST cross-reference patterns with architectural documentation
 - **architecture-advisor**: MUST validate against ADRs and architectural decisions for compliance
-- **refactoring-advisor**: MUST ensure refactoring maintains CUPID principles and doesn't break existing tests
-- **review-critic**: MUST verify implementation matches architectural patterns and documented standards
+- **refactoring-advisor**: Used specifically during REFACTOR phase - MUST ensure refactoring maintains CUPID principles and doesn't break existing tests
+- **quality-assurance-expert**: Used specifically for test strategy - MUST analyze test requirements and provide BDD scenarios
+- **review-critic**: Used as PRIMARY validation agent - MUST verify implementation matches requirements, architectural patterns, and documented standards
 - **Architecture Compliance**: All subagents must validate against existing ADRs and documented decisions
 
 **Optional Subagents** (use when beneficial):
 
 - **problem-diagnostics-expert**: For complex debugging scenarios
-- **refactoring-advisor**: For code quality improvement and technical debt reduction
 
 ## Quality Gate Enforcement (100/100 Standard)
 
@@ -336,9 +311,13 @@ RED → Phase 3a (quality-assurance-expert + failing tests)
   ↓
 GREEN → Phase 3b (minimal implementation until tests pass)
   ↓
-REFACTOR → Phase 3c (clean code until quality=100)
+REFACTOR → Phase 3c (refactoring-advisor + clean code until quality=100)
   ↓
-DOCUMENT → Phase 3d (TaskMaster subtask updates)
+DOCUMENT → Phase 3d (TaskMaster subtask updates) [BLOCKING for Phase 4]
+  ↓
+MEMORY → Phase 3e (development episode creation in ./docs/episodes/) [BLOCKING for Phase 4]
+  ↓
+COMMIT → Phase 3f (atomic commits with pre-commit validation) [BLOCKING for Phase 4]
   ↓
 VALIDATE → Phase 4 (final validation + integration testing)
   ↓
@@ -366,7 +345,7 @@ Provide your workflow guidance as a structured JSON response:
 ```json
 {
   "current_context": {
-    "workflow_phase": "SETUP|RESEARCH|RED|GREEN|REFACTOR|DOCUMENT|VALIDATE|COMPLETE",
+    "workflow_phase": "SETUP|RESEARCH|RED|GREEN|REFACTOR|DOCUMENT|MEMORY|COMMIT|VALIDATE|COMPLETE|POST-COMPLETION",
     "workflow_stage": "Phase 0-4 description based on Daily TDD + Task Management Loop",
     "active_task": "task-id or null if no active task",
     "open_files": [
@@ -412,18 +391,38 @@ Provide your workflow guidance as a structured JSON response:
   ],
   "parallel_execution_groups": [
     {
-      "group_id": "A|B",
-      "phase": "Phase 2|Phase 4",
+      "group_id": "research",
+      "phase": "Phase 2|Phase 3a|Phase 3c",
       "subagents": [
-        "List of subagents to execute in parallel"
+        "documentation-researcher",
+        "pattern-analyzer",
+        "architecture-advisor",
+        "quality-assurance-expert (Phase 3a only)",
+        "refactoring-advisor (Phase 3c only)"
       ],
-      "execution_strategy": "Launch all subagents simultaneously for maximum efficiency",
+      "execution_strategy": "Launch all applicable subagents simultaneously for maximum efficiency",
+      "synchronization": "Wait for all subagents to complete before proceeding"
+    },
+    {
+      "group_id": "validation",
+      "phase": "Phase 4",
+      "subagents": [
+        "review-critic",
+        "architecture-advisor",
+        "pattern-analyzer",
+        "documentation-researcher"
+      ],
+      "execution_strategy": "Launch all validation subagents simultaneously for comprehensive coverage",
       "synchronization": "Wait for all subagents to complete before proceeding"
     }
   ],
   "success_criteria": [
     "Specific criterion from CLAUDE.md workflow that must be met",
-    "DON'T STOP conditions that must be satisfied"
+    "DON'T STOP conditions that must be satisfied",
+    "Phase 3d (DOCUMENT): TaskMaster subtask documentation complete",
+    "Phase 3e (MEMORY): Development episode created in ./docs/episodes/ with all required sections", 
+    "Phase 3f (COMMIT): Atomic commits with pre-commit validation successful",
+    "POST-COMPLETION: MANDATORY workflow-orchestrator call after task marked as done for next step guidance"
   ],
   "potential_blockers": [
     {
@@ -438,6 +437,12 @@ Provide your workflow guidance as a structured JSON response:
       "Specific quality issues preventing 100/100"
     ],
     "blocking_advancement": true,
+    "phase_3_blocking": {
+      "document_phase_complete": false,
+      "memory_phase_complete": false, 
+      "commit_phase_complete": false,
+      "blocking_message": "Phase 3d (DOCUMENT), 3e (MEMORY), and 3f (COMMIT) are MANDATORY before Phase 4"
+    },
     "required_actions": [
       "Actions needed to meet 100/100 standard"
     ],
@@ -459,17 +464,24 @@ Provide your workflow guidance as a structured JSON response:
   },
   "workflow_enforcement": {
     "tdd_cycle_integrity": "RED before GREEN enforcement status",
-    "mandatory_subagents": [
-      "documentation-researcher",
-      "pattern-analyzer", 
-      "architecture-advisor",
-      "quality-assurance-expert",
-      "refactoring-advisor",
-      "review-critic"
-    ],
+    "mandatory_subagents": {
+      "always_required": [
+        "documentation-researcher",
+        "pattern-analyzer",
+        "architecture-advisor"
+      ],
+      "phase_specific": {
+        "Phase_3a_RED": ["quality-assurance-expert"],
+        "Phase_3c_REFACTOR": ["refactoring-advisor"],
+        "Phase_3d_DOCUMENT": ["taskmaster-update-required"],
+        "Phase_3e_MEMORY": ["episode-creation-required"],
+        "Phase_3f_COMMIT": ["atomic-commit-validation-required"],
+        "Phase_4_VALIDATION": ["review-critic"]
+      }
+    },
     "parallel_execution_compliance": {
-      "phase_2_groups": "Status of Phase 2 parallel group execution",
-      "phase_4_groups": "Status of Phase 4 parallel group execution",
+      "research_group": "Status of research group execution (Phase 2, 3a, 3c)",
+      "validation_group": "Status of validation group execution (Phase 4)",
       "synchronization_integrity": "All parallel subagents completed before proceeding"
     },
     "pattern_conformance": "Status of pattern-analyzer usage",
@@ -480,8 +492,13 @@ Provide your workflow guidance as a structured JSON response:
     },
     "anti_patterns_detected": [
       "Any workflow violations detected",
-      "Sequential execution when parallel is optimal",
-      "Skipping parallel synchronization checkpoints"
+      "Sequential execution when parallel is optimal", 
+      "Using wrong agent for specific phase (e.g., quality-assurance-expert for refactoring)",
+      "Skipping parallel synchronization checkpoints",
+      "Advancing to Phase 4 without completing Phase 3d (DOCUMENT)",
+      "Advancing to Phase 4 without completing Phase 3e (MEMORY)",
+      "Advancing to Phase 4 without completing Phase 3f (COMMIT)",
+      "Task completion without POST-COMPLETION workflow-orchestrator call"
     ]
   }
 }

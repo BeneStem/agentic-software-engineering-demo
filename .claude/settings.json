@@ -1,6 +1,7 @@
 {
   "permissions": {
     "allow": [
+      "mcp__sequential__sequentialthinking",
       "WebSearch"
     ],
     "deny": []
