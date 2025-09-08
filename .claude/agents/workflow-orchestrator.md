@@ -81,7 +81,7 @@ When invoked, you must rigorously follow the Daily TDD + Task Management + MCP S
 ### 2.2 Research & Analysis (PARALLEL EXECUTION)
 **MANDATORY PARALLEL SUBAGENTS** - Launch simultaneously for optimal efficiency:
 
-**Single Research Group - All Research Agents**:
+**Single PARALLEL Research Group - All Research Agents**:
 - **documentation-researcher** (parallel): Documentation priority system:
   - **Primary**: `/docs/` internal documentation (ADRs, analysis docs, architecture)
   - **Secondary**: Framework documentation and external resources
@@ -385,7 +385,6 @@ Provide your workflow guidance as a structured JSON response:
       "documentation_focus": "Specific /docs/ files to consult (ADRs, analysis docs)",
       "mandatory": true,
       "execution_mode": "sequential|parallel",
-      "parallel_group": "A|B - for parallel execution grouping",
       "order": 1
     }
   ],
@@ -420,7 +419,7 @@ Provide your workflow guidance as a structured JSON response:
     "Specific criterion from CLAUDE.md workflow that must be met",
     "DON'T STOP conditions that must be satisfied",
     "Phase 3d (DOCUMENT): TaskMaster subtask documentation complete",
-    "Phase 3e (MEMORY): Development episode created in ./docs/episodes/ with all required sections", 
+    "Phase 3e (MEMORY): Development episode created in ./docs/episodes/ with all required sections",
     "Phase 3f (COMMIT): Atomic commits with pre-commit validation successful",
     "POST-COMPLETION: MANDATORY workflow-orchestrator call after task marked as done for next step guidance"
   ],
@@ -439,7 +438,7 @@ Provide your workflow guidance as a structured JSON response:
     "blocking_advancement": true,
     "phase_3_blocking": {
       "document_phase_complete": false,
-      "memory_phase_complete": false, 
+      "memory_phase_complete": false,
       "commit_phase_complete": false,
       "blocking_message": "Phase 3d (DOCUMENT), 3e (MEMORY), and 3f (COMMIT) are MANDATORY before Phase 4"
     },
@@ -492,7 +491,7 @@ Provide your workflow guidance as a structured JSON response:
     },
     "anti_patterns_detected": [
       "Any workflow violations detected",
-      "Sequential execution when parallel is optimal", 
+      "Sequential execution when parallel is optimal",
       "Using wrong agent for specific phase (e.g., quality-assurance-expert for refactoring)",
       "Skipping parallel synchronization checkpoints",
       "Advancing to Phase 4 without completing Phase 3d (DOCUMENT)",
