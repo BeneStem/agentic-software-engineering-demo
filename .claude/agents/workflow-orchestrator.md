@@ -195,8 +195,10 @@ For each subtask (`<task-id>.1`, `<task-id>.2`, etc.), **RIGOROUS ORDER**:
 - **RED**: Analysis done, need tests → Guide to Phase 3a (Write Tests)
 - **GREEN**: Tests failing, need implementation → Guide to Phase 3b (Implement)
 - **REFACTOR**: Tests passing, need optimization → Guide to Phase 3c (Refactor with refactoring-advisor)
-- **DOCUMENT**: Code complete, need documentation → Guide to Phase 3d (Document)
-- **VALIDATE**: Subtasks complete, need final validation → Guide to Phase 4
+- **DOCUMENT**: Code refactored, need documentation → Guide to Phase 3d (Document - BLOCKING for Phase 4)
+- **MEMORY**: Documentation complete, need knowledge capture → Guide to Phase 3e (Memory - BLOCKING for Phase 4)
+- **COMMIT**: Memory captured, need atomic commits → Guide to Phase 3f (Commit - BLOCKING for Phase 4)
+- **VALIDATE**: All Phase 3 steps complete, need final validation → Guide to Phase 4
 - **COMPLETE**: All validation passed → Guide to next task selection
 - **🚨 POST-COMPLETION**: Task marked as done → **MANDATORY** next task guidance and workflow continuation
 
@@ -304,7 +306,7 @@ For each subtask (`<task-id>.1`, `<task-id>.2`, etc.), **RIGOROUS ORDER**:
 - **Code Before Tests**: Immediately redirect to RED phase if implementation attempted first
 - **Skipping Pattern Analysis**: Block any new code without pattern-analyzer consultation
 - **Quality Gate Bypassing**: Prevent advancement with quality score <100
-- **Incomplete TDD Cycles**: Ensure full RED→GREEN→REFACTOR→DOCUMENT→MEMORY→COMMIT sequence
+- **Incomplete TDD Cycles**: Ensure full RED→GREEN→REFACTOR→DOCUMENT→MEMORY→COMMIT sequence - **BLOCKING advancement to Phase 4**
 - **MCP Tool Avoidance**: Enforce TaskMaster and JetBrains MCP usage per workflow phases
 - **🚨 POST-COMPLETION ORCHESTRATOR BYPASS**: **CRITICAL VIOLATION** - Task completion without calling workflow-orchestrator for next step guidance
 
@@ -337,7 +339,9 @@ COMPLETE → Task marked as done in TaskMaster
 - **Phase 3a**: Test requirements analyzed, BDD tests written and failing correctly
 - **Phase 3b**: Minimal code written, all tests passing, no premature optimization
 - **Phase 3c**: Code refactored and cleaned, quality score = 100/100
-- **Phase 3d**: Subtask documented via TaskMaster, patterns/decisions recorded
+- **🚨 Phase 3d BLOCKING**: Subtask documented via TaskMaster, patterns/decisions recorded - **MANDATORY before Phase 4**
+- **🚨 Phase 3e BLOCKING**: Development episodes captured, learnings stored - **MANDATORY before Phase 4**
+- **🚨 Phase 3f BLOCKING**: Atomic commits created with pre-commit validation - **MANDATORY before Phase 4**
 - **Phase 4**: Integration tests passing, final quality validation complete, task marked done
 
 ## Report / Response
