@@ -1,7 +1,7 @@
 ---
 name: refactoring-advisor
 description: Use proactively during REFACTOR phase of TDD workflows or when technical debt and code quality issues are detected. Specialist for analyzing existing code and providing structured refactoring guidance aligned with CUPID principles and 100/100 quality standards.
-tools: Read, Grep, Glob, TodoWrite
+tools: Read, Glob, Grep, Bash, Task, TodoWrite, WebFetch, MultiEdit
 color: red
 model: opus
 ---

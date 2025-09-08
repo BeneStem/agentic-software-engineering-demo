@@ -124,6 +124,10 @@ Development Task → workflow-orchestrator → Guided subagent coordination → 
 - **`ripgrep (rg)`** - Fast file content search | **`rg "pattern" --type js`** - Search JS files
 - **`fd`** - Fast file name search | **`fd "*.vue" src/`** - Find Vue files
 
+### Task Management
+
+- **`task-master`** - **CLI TOOL** for project task management | **NOT an MCP server** | **`task-master next`** - Get next prioritized task | **`task-master set-status --id=<id> --status=<status>`** - Update task status | **`task-master show <id>`** - View task details | **Use via bash commands, not MCP tools**
+
 ### Text Processing & HTTP
 
 - **`jq`** - JSON processing | **`curl | jq '.'`** - Pretty-print JSON responses
@@ -367,7 +371,7 @@ Test Strategy & Coverage? → quality-assurance-expert agent (MANDATORY via orch
 Refactoring & Code Quality? → refactoring-advisor agent (via orchestrator during REFACTOR phase)
 Implementation Review? → review-critic agent (MANDATORY via orchestrator)
 Complex Analysis? → Sequential MCP
-Project Management? → TaskMaster MCP (integrated in orchestrator workflow)
+Project Management? → TaskMaster CLI (integrated in orchestrator workflow)
 ```
 
 **Primary Rule**: ALWAYS start with workflow-orchestrator subagent for systematic guidance

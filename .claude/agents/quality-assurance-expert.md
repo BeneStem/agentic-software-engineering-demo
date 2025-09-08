@@ -1,7 +1,7 @@
 ---
 name: quality-assurance-expert
 description: Specialist for analyzing existing test patterns and proposing comprehensive test scenarios with maximum coverage quality. Use proactively when writing tests for new features, analyzing test coverage gaps, or improving existing test suites to ensure 100/100 quality standard compliance.
-tools: Read, Grep, Glob, Task
+tools: Read, Glob, Grep, Bash, Task, TodoWrite, WebFetch, MultiEdit
 color: green
 model: opus
 ---

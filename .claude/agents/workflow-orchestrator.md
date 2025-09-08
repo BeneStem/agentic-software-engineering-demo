@@ -1,7 +1,7 @@
 ---
 name: workflow-orchestrator
 description: Master coordination agent that guides development through optimal TDD workflow steps, quality gates, and best practices. Use proactively at the start of any development task and after each major step completion to ensure systematic progression and prevent workflow inefficiencies.
-tools: Read, Task
+tools: Read, Glob, Grep, Bash, Task, TodoWrite, WebFetch, MultiEdit
 color: purple
 model: opus
 ---
@@ -372,7 +372,7 @@ Provide your workflow guidance as a structured JSON response:
     "tdd_cycle_integrity": "RED before GREEN enforcement status",
     "mandatory_subagents": [
       "documentation-researcher",
-      "pattern-analyzer", 
+      "pattern-analyzer",
       "architecture-advisor",
       "quality-assurance-expert",
       "refactoring-advisor",
