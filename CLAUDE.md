@@ -384,7 +384,12 @@ Project Management? → TaskMaster CLI (integrated in orchestrator workflow)
 
 ### Memory Capture
 
-**🧠 Development Episodes**: Store patterns, problems, solutions during TDD cycles
+**🧠 Development Episodes**: Store patterns, problems, solutions during TDD cycles in `./docs/episodes/`
+- **File Format**: `YYYY-MM-DD-HH-MM-task-{task-id}-episode.md`
+- **Required Sections**: Context, Problem, Solution, Patterns Discovered, Lessons Learned, Anti-patterns to Avoid
+- **Usage**: Created during Phase 3e (MEMORY) of workflow-orchestrator TDD cycle
+- **Purpose**: Enable pattern analysis, knowledge transfer, and future development optimization
+
 **📊 Anti-Pattern Detection**: Capture recurring issues & prevention methods
 **🏗️ Architecture Decisions**: Record performance metrics & architectural choices
 

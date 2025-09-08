@@ -137,8 +137,17 @@ For each subtask (`<task-id>.1`, `<task-id>.2`, etc.), **RIGOROUS ORDER**:
 
 ### e. MEMORY Phase (Capture Knowledge)
 
-- Capture patterns, problems, solutions in development episode
-- Store learnings for future reference
+- **MANDATORY**: Create development episode in `./docs/episodes/` directory
+- **File Format**: `YYYY-MM-DD-HH-MM-task-{task-id}-episode.md` (e.g., `2025-01-15-14-30-task-123-episode.md`)
+- **Required Sections**:
+  - **Context**: Task description, requirements, and initial state
+  - **Problem**: Specific challenges encountered during development
+  - **Solution**: How problems were resolved, code patterns used
+  - **Patterns Discovered**: New patterns found in codebase, reusable approaches
+  - **Lessons Learned**: Key insights for future development
+  - **Anti-patterns to Avoid**: What didn't work, pitfalls to prevent
+- **DON'T STOP** until episode is created and stored in `./docs/episodes/`
+- Store learnings for future reference and pattern analysis
 
 ### f. COMMIT Phase (Atomic Commits)
 
@@ -340,7 +349,7 @@ COMPLETE → Task marked as done in TaskMaster
 - **Phase 3b**: Minimal code written, all tests passing, no premature optimization
 - **Phase 3c**: Code refactored and cleaned, quality score = 100/100
 - **🚨 Phase 3d BLOCKING**: Subtask documented via TaskMaster, patterns/decisions recorded - **MANDATORY before Phase 4**
-- **🚨 Phase 3e BLOCKING**: Development episodes captured, learnings stored - **MANDATORY before Phase 4**
+- **🚨 Phase 3e BLOCKING**: Development episode file created in `./docs/episodes/` with all required sections - **MANDATORY before Phase 4**
 - **🚨 Phase 3f BLOCKING**: Atomic commits created with pre-commit validation - **MANDATORY before Phase 4**
 - **Phase 4**: Integration tests passing, final quality validation complete, task marked done
 
