@@ -64,6 +64,9 @@ When invoked, you must follow these steps:
 - **FOLLOW BEHAVIORAL TESTING**: Focus on Given-When-Then scenarios, not implementation details
 - **TEST REAL-WORLD USAGE**: Verify requirements compliance and user experience
 - **AVOID ANTI-PATTERNS**: Never test language features, framework internals, or implementation details
+- **PROPERTY-BASED TESTING PRIORITY**: Prefer property-based tests over individual example-based tests when they can effectively validate the same behavior patterns
+- **AVOID TEST OVERLAP**: Ensure individual unit tests do not duplicate coverage provided by property-based tests - complement rather than repeat
+- **STRATEGIC TEST SELECTION**: Choose property-based tests for invariant validation, algorithmic correctness, and input space exploration; use example-based tests for specific edge cases and business scenarios
 - Prioritize critical path testing and business logic validation
 - Consider SCS boundaries and avoid cross-system test dependencies
 - Ensure CUPID principles compliance in test design (Composable, Unix-philosophy, Predictable, Idiomatic, Domain-based)
@@ -129,13 +132,25 @@ Provide your analysis in the following JSON structure:
     "quality_score": "current/target (e.g., 75/100)"
   },
   "test_recommendations": {
+    "property_based_tests": [
+      {
+        "description": "Property-based test scenario",
+        "property_invariant": "Mathematical or business invariant to verify",
+        "input_generators": "Data generation strategy",
+        "priority": "high|medium|low",
+        "covers_scenarios": [
+          "list of scenarios this property test covers"
+        ]
+      }
+    ],
     "unit_tests": [
       {
-        "description": "Test scenario description",
+        "description": "Specific example-based test scenario (only if not covered by property tests)",
         "given": "Initial conditions",
         "when": "Action performed",
         "then": "Expected outcome",
         "priority": "high|medium|low",
+        "complements_property_test": "Reference to related property test or 'none' if standalone",
         "edge_cases": [
           "boundary",
           "conditions"
@@ -162,10 +177,12 @@ Provide your analysis in the following JSON structure:
     ]
   },
   "implementation_guidance": {
+    "property_test_libraries": "Recommended property-based testing frameworks (e.g., fast-check for TypeScript, Kotest for Kotlin)",
     "mocking_strategy": "Mockk/Jest mocking approach",
-    "test_data": "Test data generation strategy",
+    "test_data": "Test data generation strategy (property generators vs. fixed examples)",
     "setup_teardown": "Resource management approach",
-    "assertions": "Assertion patterns and validation"
+    "assertions": "Assertion patterns and validation",
+    "test_organization": "How to structure property tests vs. example tests to avoid duplication"
   },
   "quality_metrics": {
     "coverage_targets": {

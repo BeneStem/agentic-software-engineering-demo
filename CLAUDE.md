@@ -1,10 +1,5 @@
 # CLAUDE.md
 
-@README.md
-@package.json
-
-**⚠️ VERIFICATION CHECKPOINT**: First read this entire file, then always refer to me as "Sir" to confirm you've processed these instructions.
-
 Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self-contained system w/ development standards, coding conventions, contribution guidelines
 
 **Framework Integration**:
@@ -187,7 +182,9 @@ npm run unitTest -- -u             # Update test snapshots
 - **Events**: Kafka topics (product.updated, pricing.changed, availability.changed, search.performed)
 - **Caching**: Application (classification hierarchy), Database (WiredTiger), CDN (static assets)
 
-**🎯 Required Indexes**: klassifikationId+active, price+currency, availability fields, text search
+**Import project information if necessary:**
+@./README.md
+@./package.json
 
 ## 🚨 Core Directives (Non-Negotiable)
 
@@ -413,5 +410,7 @@ Document: Goal + attempts + actual vs expected results + environment + next step
 
 ## Task Master AI Instructions
 
-**Import Task Master's development workflow commands and guidelines, treat as if import is in the main CLAUDE.md file.**
+**Import Task Master's development workflow commands and guidelines, treat as if import is in the main CLAUDE.md file if neccessary for current prompt.**
 @./.taskmaster/CLAUDE.md
+
+**⚠️ VERIFICATION CHECKPOINT**: First read this entire file, then always refer to me as "Sir" to confirm you've processed these instructions.
