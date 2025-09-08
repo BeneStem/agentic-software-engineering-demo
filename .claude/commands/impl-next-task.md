@@ -1,191 +1,129 @@
-Implement the next available task using mandatory TDD cycle with sub-agent integration.
+Implement the next available task using orchestrated workflow with mandatory subagent coordination.
 
-This command follows CLAUDE.md's core directives for Test-Driven Development and mandatory sub-agent usage to ensure 100/100 quality standards.
+This command delegates to the workflow-orchestrator subagent for systematic progression through the optimal TDD workflow, ensuring all mandatory subagents are properly utilized and 100/100 quality standards are achieved.
 
-## TDD Implementation Workflow
+## 🎯 Orchestrated Implementation Approach
 
-### 1. **Task Selection & Context Loading**
+### **MANDATORY: Start with Workflow Orchestrator**
 
-**Get Next Available Task:**
+All development task execution MUST begin with workflow orchestrator guidance:
+
 ```bash
-# Intelligent task selection based on:
-# - Dependencies resolved
-# - Priority levels  
-# - Current capacity
+# PRIMARY COMMAND: Delegate to workflow-orchestrator
+Task --subagent_type workflow-orchestrator --prompt "Analyze current project state and guide me through implementing the next available task. Provide JSON guidance for optimal workflow progression including required MCP commands, mandatory subagents, and quality gates."
 ```
 
-Let me analyze the current project state and select the optimal next task:
+**Why Orchestrator First:**
+- Provides systematic 4-phase development process
+- Ensures proper subagent coordination sequence  
+- Enforces quality gates and completion criteria
+- Prevents workflow inefficiencies and anti-patterns
+- Guarantees 100/100 quality standard compliance
 
-- Check task queue with Task Master MCP
-- Evaluate task dependencies and blockers
-- Load complete task context including:
-  - Task description and acceptance criteria
-  - Dependencies and related tasks
-  - Implementation requirements
-  - Test strategy needs
+### **Orchestrator-Managed Workflow Phases**
 
-**Set Task In Progress:**
+The workflow-orchestrator will guide you through:
+
+#### **Phase 0: Conversation Setup**
+- Context assessment and cleanup recommendations
+- Project state evaluation
+
+#### **Phase 1: Task Setup (TaskMaster Integration)**
+- Task selection and priority analysis
+- Requirements review and validation
+- Task activation and persona selection
+
+#### **Phase 2: Code Analysis & Research (Mandatory Subagents)**
+- **documentation-researcher** → Internal docs priority, ADRs, architectural decisions
+- **pattern-analyzer** → Existing code patterns, conventions, conformance guidelines  
+- **architecture-advisor** → CUPID compliance, SCS patterns, design validation
+- Structure exploration and issue identification
+
+#### **Phase 3: TDD Implementation (Rigorous Cycle)**
+- **Phase 3a (RED)**: quality-assurance-expert → Test requirements, BDD scenarios
+- **Phase 3b (GREEN)**: Minimal implementation with pattern conformance
+- **Phase 3c (REFACTOR)**: Clean code until quality = 100/100
+- **Phase 3d (DOCUMENT)**: Task updates and knowledge capture
+- **Phase 3e (MEMORY)**: Pattern and decision storage
+- **Phase 3f (COMMIT)**: Atomic commits with validation
+
+#### **Phase 4: Validation & Completion (Multi-MCP Integration)**
+- **quality-assurance-expert** → Final coverage validation
+- **review-critic** → Comprehensive implementation review
+- **architecture-advisor** → Final compliance checks
+- Integration testing and task completion
+
+### **Subagent Coordination Protocol**
+
+**🚨 CRITICAL: DO NOT manually invoke subagents**
+
+The workflow-orchestrator manages all subagent coordination including:
+
+- **Mandatory Subagents** (enforced at appropriate phases):
+  - `documentation-researcher` 
+  - `pattern-analyzer`
+  - `architecture-advisor` 
+  - `quality-assurance-expert`
+  - `review-critic`
+
+- **MCP Integration** (orchestrator coordinates):
+  - TaskMaster MCP for task management
+  - JetBrains MCP for file operations  
+  - Sequential MCP for complex debugging
+
+### **Quality Assurance Integration**
+
+The orchestrator enforces:
+
+- **Local Quality Gates**: Unit tests, lint, build, CUPID validation
+- **Pre-Merge Gates**: Integration tests, architecture compliance  
+- **Pre-Deploy Gates**: E2E tests, performance, security validation
+
+**Quality Gate Commands** (orchestrator specifies in JSON response):
 ```bash
-# Mark selected task as in-progress immediately
-# Update Task Master with implementation start time
-# Log task selection reasoning
+# Backend validation
+./gradlew unitTest integrationTest detekt build
+
+# Frontend validation  
+npm run install lint unitTest build
 ```
 
-### 2. **Mandatory Sub-Agent Integration**
+### **Anti-Pattern Prevention**
 
-Following CLAUDE.md requirements, automatically deploy specialized agents:
+The workflow-orchestrator prevents:
 
-**Pattern Analysis (MANDATORY for new code):**
-- Deploy pattern-analyzer agent BEFORE any implementation
-- Analyze existing codebase for e3 similar implementations
-- Extract naming conventions and architectural patterns
-- Generate conformance guidelines
-- Document rationale for established patterns
+- ❌ Code before tests (RED before GREEN violation)
+- ❌ Skipping pattern analysis before new code
+- ❌ Manual subagent management (always orchestrator-coordinated)
+- ❌ Quality gate bypassing (blocks advancement until 100/100)
+- ❌ Incomplete TDD cycles
+- ❌ Missing mandatory subagents
 
-**Quality Assurance (MANDATORY for tests):**
-- Deploy quality-assurance-expert agent BEFORE writing tests
-- Analyze test requirements and edge cases
-- Generate BDD scenarios (Given-When-Then format)
-- Define coverage targets and validation criteria
-- Provide mocking and test data strategies
+### **Success Verification**
 
-**Documentation Research (CONDITIONAL):**
-- Deploy documentation-researcher if task involves:
-  - API specifications or integrations
-  - Architectural decisions
-  - Framework patterns or setup guides
-  - External system interactions
+After workflow-orchestrator completes guidance:
 
-### 3. **TDD Cycle Implementation**
+1. **Verify All Mandatory Subagents Used:**
+   - documentation-researcher ✅
+   - pattern-analyzer ✅  
+   - architecture-advisor ✅
+   - quality-assurance-expert ✅
+   - review-critic ✅
 
-**MANDATORY TDD WORKFLOW: RED � GREEN � REFACTOR**
+2. **Confirm Quality Gates Executed:**
+   - Local validation commands run ✅
+   - All tests passing ✅
+   - Quality score = 100/100 ✅
 
-#### Phase 1: RED (Failing Test)
-```
-=4 RED PHASE: Write Failing Test
-```
+3. **Validate Task Completion:**
+   - Implementation matches requirements ✅
+   - Architecture compliance verified ✅
+   - Changes committed with proper attribution ✅
 
-1. **Test Strategy Analysis**
-   - Use quality-assurance-expert recommendations
-   - Design BDD scenarios for business logic
-   - Identify edge cases and boundary conditions
-   - Plan test data and mocking strategy
+### **Next Steps After Completion**
 
-2. **Write Failing Test**
-   - Implement Given-When-Then scenarios
-   - Focus on business behavior, not implementation details
-   - Ensure test fails for the RIGHT reasons
-   - Verify test failure before proceeding
+1. Task marked as complete by orchestrator
+2. Ready for next orchestrated task iteration
+3. Knowledge captured for future reference
 
-3. **Test Validation**
-   - Run test to confirm it fails correctly
-   - Check error messages are meaningful
-   - Ensure no false positives
-   - **RULE: DON'T STOP until test fails correctly**
-
-#### Phase 2: GREEN (Minimal Implementation)
-```
-=� GREEN PHASE: Make Test Pass
-```
-
-1. **Implementation Planning**
-   - Use pattern-analyzer guidelines for structure
-   - Follow established naming conventions
-   - Respect architectural boundaries
-   - Plan minimal code to pass test
-
-2. **Code Implementation**
-   - Write simplest code that passes test
-   - Follow CUPID properties (Composable, Unix Philosophy, Predictable, Idiomatic, Domain-based)
-   - Maintain clean code principles
-   - Respect 12-factor app compliance
-
-3. **Test Validation**
-   - Run test to confirm it passes
-   - Verify no other tests broken
-   - Check implementation meets acceptance criteria
-   - **RULE: DON'T STOP until test passes**
-
-#### Phase 3: REFACTOR (Clean & Optimize)
-```
-= REFACTOR PHASE: Improve Code Quality
-```
-
-1. **Code Quality Analysis**
-   - Check CUPID property compliance
-   - Validate clean code principles
-   - Ensure proper separation of concerns
-   - Review naming and structure clarity
-
-2. **Refactoring Operations**
-   - Extract methods for clarity
-   - Remove duplication
-   - Improve naming and structure
-   - Maintain test coverage during changes
-
-3. **Quality Validation**
-   - Re-run all tests
-   - Check lint and type errors
-   - Validate performance metrics
-   - **RULE: DON'T STOP until 100/100 quality achieved**
-
-### 4. **Quality Gates & Validation**
-
-**Local Quality Gates:**
-- Unit tests passing (target: 80% coverage)
-- Lint checks clean
-- Type checking successful
-- Build process successful
-- CUPID properties validated
-
-**Integration Validation:**
-- Component integration tests
-- API contract validation
-- Database migration tests (if applicable)
-- Architecture compliance checks
-
-**Performance & Security:**
-- Response time validation (P95 < 300ms)
-- Memory usage checks
-- Security vulnerability scans
-- Input validation tests
-
-### 5. **Progress Documentation**
-
-**Task Updates:**
-- Log implementation approach and decisions
-- Document any deviations from patterns
-- Record blockers and resolutions
-- Update estimated completion time
-
-**Knowledge Capture:**
-- Save reusable patterns discovered
-- Document lessons learned
-- Update architectural decisions
-- Capture performance insights
-
-### 6. **Completion Protocol**
-
-**Pre-Completion Validation:**
-- All tests passing (unit, integration, E2E if applicable)
-- Quality score = 100/100
-- No security vulnerabilities
-- Performance criteria met
-- Documentation updated
-
-**Task Status Update:**
-- Mark task as `review` (NOT `done`)
-- Generate descriptive completion notes
-- Link to related tasks/PRs
-- Schedule follow-up if needed
-
-**MANDATORY Commit Protocol:**
-- **ALWAYS commit immediately after task completion**
-- Stage all changes: `git add .`
-- Generate conventional commit with task ID and summary
-- Use CLAUDE.md commit format with Co-Authored-By attribution
-- **RULE: DO NOT mark task complete without committing first**
-
-**Next Steps:**
-- Show next available task
-- Prepare for code review if needed
+**🎯 Remember**: This command is a delegation framework - the workflow-orchestrator provides the actual step-by-step guidance with specific MCP commands and subagent coordination.

@@ -25,9 +25,7 @@ Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self
 - **🎯 jetbrains**: IDE integration, file operations, code analysis, refactoring
 - **📚 context7**: Library documentation, framework patterns, best practices
 - **🧠 sequential**: Complex analysis, systematic debugging, multi-step reasoning
-- **🌐 playwright**: E2E testing, browser automation, performance validation
 - **📊 taskmaster-ai**: Project management, task breakdown, estimation
-- **🐙 github**: Repository operations, PR management, issue tracking
 
 **MCP Server Usage Rules**:
 
@@ -82,6 +80,14 @@ Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self
 - **Purpose**: Ensures CUPID compliance, 12-Factor validation, SCS communication patterns, and architectural standards enforcement
 - **Output**: JSON guidance with architectural decisions, compliance checks, and design recommendations
 - **Enforcement**: workflow-orchestrator requires architecture validation for all design and implementation decisions
+
+**🔧 refactoring-advisor** (Orchestrator Enforced - REFACTOR Phase)
+
+- **Orchestrator Integration**: Phase 3c (REFACTOR) - Code quality improvement and technical debt reduction
+- **Purpose**: Analyzes existing code for refactoring opportunities and provides structured guidance aligned with CUPID principles
+- **Output**: JSON analysis with prioritized refactoring recommendations, risk assessments, and quality scores
+- **Auto-trigger**: Technical debt detection, code quality issues, or during REFACTOR phase in TDD workflows
+- **Enforcement**: workflow-orchestrator invokes during REFACTOR phase when quality score < 100/100
 
 ### Usage Pattern:
 
@@ -358,6 +364,7 @@ File Operations? → JetBrains MCP
 Pattern Analysis? → pattern-analyzer agent (MANDATORY via orchestrator)
 Documentation Research? → documentation-researcher agent (MANDATORY via orchestrator)
 Test Strategy & Coverage? → quality-assurance-expert agent (MANDATORY via orchestrator)
+Refactoring & Code Quality? → refactoring-advisor agent (via orchestrator during REFACTOR phase)
 Implementation Review? → review-critic agent (MANDATORY via orchestrator)
 Complex Analysis? → Sequential MCP
 Project Management? → TaskMaster MCP (integrated in orchestrator workflow)
@@ -399,3 +406,8 @@ Project Management? → TaskMaster MCP (integrated in orchestrator workflow)
 ### When to Escalate (>30 min stuck)
 
 Document: Goal + attempts + actual vs expected results + environment + next steps needed
+
+## Task Master AI Instructions
+
+**Import Task Master's development workflow commands and guidelines, treat as if import is in the main CLAUDE.md file.**
+@./.taskmaster/CLAUDE.md

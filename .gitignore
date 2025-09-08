@@ -43,8 +43,8 @@ dev-debug.log
 *.sw?
 # OS specific
 
+kotlin-compiler*
+
 # Task files
 # tasks.json
-# tasks/
-
-kotlin-compiler*
+# tasks/ 

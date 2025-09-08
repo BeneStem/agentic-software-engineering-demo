@@ -81,6 +81,10 @@ When invoked, you must rigorously follow the Daily TDD + Task Management + MCP S
 5. **Pattern Analysis**: **MANDATORY** - Use pattern-analyzer with documentation-enhanced analysis:
   - Cross-reference findings with ADRs and architectural documentation
   - Ensure pattern compliance with documented architectural decisions
+6. **Architecture Validation**: **MANDATORY** - Use architecture-advisor for design decisions:
+  - Validate CUPID compliance and architectural standards
+  - Ensure SCS boundaries and communication patterns are respected
+  - Confirm 12-Factor App principles and technology stack alignment
 
 ## Phase 3: Subtask Iteration (Rigorous TDD Cycle)
 
@@ -97,14 +101,19 @@ For each subtask (`<task-id>.1`, `<task-id>.2`, etc.), **RIGOROUS ORDER**:
 ### b. GREEN Phase (Minimal Implementation)
 
 - Write minimal code to pass test with persona-guided implementation
+- **MANDATORY**: Use architecture-advisor for design validation during implementation
 - **DON'T STOP** until test passes
 - Avoid any premature optimization
+- Ensure architectural compliance and CUPID principles
 
 ### c. REFACTOR Phase (Clean & Optimize)
 
-- Clean code with auto-quality analysis
-- **DON'T STOP** until quality score = 100/100
-- Maintain test coverage during refactoring
+- **MANDATORY**: Use `Task --subagent_type refactoring-advisor` for structured refactoring guidance
+- Clean code with auto-quality analysis following refactoring recommendations
+- **DON'T STOP** until quality score = 100/100 (all 4 quality dimensions)
+- Maintain test coverage during refactoring (tests must continue passing)
+- Address technical debt and code smells identified by refactoring-advisor
+- Validate CUPID compliance (Composable, Unix Philosophy, Predictable, Idiomatic, Domain-based)
 
 ### d. DOCUMENT Phase (Update Documentation)
 
@@ -143,7 +152,7 @@ For each subtask (`<task-id>.1`, `<task-id>.2`, etc.), **RIGOROUS ORDER**:
 - **RESEARCH**: Task active but no analysis done → Guide to Phase 2 (Code Analysis)
 - **RED**: Analysis done, need tests → Guide to Phase 3a (Write Tests)
 - **GREEN**: Tests failing, need implementation → Guide to Phase 3b (Implement)
-- **REFACTOR**: Tests passing, need optimization → Guide to Phase 3c (Refactor)
+- **REFACTOR**: Tests passing, need optimization → Guide to Phase 3c (Refactor with refactoring-advisor)
 - **DOCUMENT**: Code complete, need documentation → Guide to Phase 3d (Document)
 - **VALIDATE**: Subtasks complete, need final validation → Guide to Phase 4
 - **COMPLETE**: All validation passed → Ready for next task
@@ -157,6 +166,7 @@ For each subtask (`<task-id>.1`, `<task-id>.2`, etc.), **RIGOROUS ORDER**:
 - **Phase 2**: architecture-advisor (MANDATORY - architecture decisions and design validation)
 - **Phase 3a**: quality-assurance-expert (MANDATORY before writing tests)
 - **Phase 3**: architecture-advisor (MANDATORY - design validation during implementation)
+- **Phase 3c**: refactoring-advisor (MANDATORY during REFACTOR phase when quality < 100/100)
 - **Phase 4**: quality-assurance-expert (MANDATORY for coverage validation)
 - **Phase 4**: architecture-advisor (MANDATORY - final architecture compliance checks)
 - **Phase 4**: review-critic (MANDATORY - comprehensive implementation review)
@@ -166,13 +176,14 @@ For each subtask (`<task-id>.1`, `<task-id>.2`, etc.), **RIGOROUS ORDER**:
 - **documentation-researcher**: MUST consult `/docs/` directory first, including ADRs and analysis docs
 - **pattern-analyzer**: MUST cross-reference patterns with architectural documentation
 - **architecture-advisor**: MUST validate against ADRs and architectural decisions for compliance
+- **refactoring-advisor**: MUST ensure refactoring maintains CUPID principles and doesn't break existing tests
 - **review-critic**: MUST verify implementation matches architectural patterns and documented standards
 - **Architecture Compliance**: All subagents must validate against existing ADRs and documented decisions
 
 **Optional Subagents** (use when beneficial):
 
 - **problem-diagnostics-expert**: For complex debugging scenarios
-- **refactoring-expert**: For major refactoring guidance
+- **refactoring-advisor**: For code quality improvement and technical debt reduction
 
 ## Quality Gate Enforcement (100/100 Standard)
 
@@ -314,7 +325,7 @@ Provide your workflow guidance as a structured JSON response:
   ],
   "required_subagents": [
     {
-      "name": "documentation-researcher|pattern-analyzer|architecture-advisor|quality-assurance-expert|review-critic",
+      "name": "documentation-researcher|pattern-analyzer|architecture-advisor|quality-assurance-expert|refactoring-advisor|review-critic",
       "purpose": "Why this subagent is MANDATORY or beneficial",
       "documentation_focus": "Specific /docs/ files to consult (ADRs, analysis docs)",
       "mandatory": true,
@@ -364,6 +375,7 @@ Provide your workflow guidance as a structured JSON response:
       "pattern-analyzer", 
       "architecture-advisor",
       "quality-assurance-expert",
+      "refactoring-advisor",
       "review-critic"
     ],
     "pattern_conformance": "Status of pattern-analyzer usage",

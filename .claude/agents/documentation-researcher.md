@@ -2,7 +2,7 @@
 name: documentation-researcher
 description: Use proactively for researching internal project documentation and external library/framework documentation to support development tasks. Specialist for finding architectural decisions, API specifications, best practices, and domain concepts.
 tools: Read, Grep, Glob, WebSearch, WebFetch
-color: purple
+color: yellow
 model: opus
 ---
 

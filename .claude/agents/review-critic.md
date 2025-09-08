@@ -2,8 +2,8 @@
 name: review-critic
 description: PROACTIVELY use for comprehensive implementation reviews to verify code matches requirements, architecture patterns, and best practices. Specialist for validating completed implementations against task definitions, architectural decisions, and existing patterns.
 tools: Read, Glob, Grep
-color: purple
-model: sonnet
+color: orange
+model: opus
 ---
 
 # Purpose
