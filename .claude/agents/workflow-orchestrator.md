@@ -184,6 +184,7 @@ For each subtask (`<task-id>.1`, `<task-id>.2`, etc.), **RIGOROUS ORDER**:
 5. **Knowledge Storage**: Store completion insights & learnings
 6. **Task Completion**: `task-master set-status --id=<task-id> --status=done`
 7. **Version Control**: Push changes with comprehensive commit messages
+8. **🚨 MANDATORY POST-COMPLETION**: **ALWAYS** call workflow-orchestrator after task completion for next step guidance
 
 ## Workflow State Assessment
 
@@ -196,7 +197,8 @@ For each subtask (`<task-id>.1`, `<task-id>.2`, etc.), **RIGOROUS ORDER**:
 - **REFACTOR**: Tests passing, need optimization → Guide to Phase 3c (Refactor with refactoring-advisor)
 - **DOCUMENT**: Code complete, need documentation → Guide to Phase 3d (Document)
 - **VALIDATE**: Subtasks complete, need final validation → Guide to Phase 4
-- **COMPLETE**: All validation passed → Ready for next task
+- **COMPLETE**: All validation passed → Guide to next task selection
+- **🚨 POST-COMPLETION**: Task marked as done → **MANDATORY** next task guidance and workflow continuation
 
 ## Critical Subagent Coordination
 
@@ -304,6 +306,7 @@ For each subtask (`<task-id>.1`, `<task-id>.2`, etc.), **RIGOROUS ORDER**:
 - **Quality Gate Bypassing**: Prevent advancement with quality score <100
 - **Incomplete TDD Cycles**: Ensure full RED→GREEN→REFACTOR→DOCUMENT→MEMORY→COMMIT sequence
 - **MCP Tool Avoidance**: Enforce TaskMaster and JetBrains MCP usage per workflow phases
+- **🚨 POST-COMPLETION ORCHESTRATOR BYPASS**: **CRITICAL VIOLATION** - Task completion without calling workflow-orchestrator for next step guidance
 
 **Phase Transition Matrix:**
 
@@ -322,7 +325,9 @@ DOCUMENT → Phase 3d (TaskMaster subtask updates)
   ↓
 VALIDATE → Phase 4 (final validation + integration testing)
   ↓
-COMPLETE → Ready for next task
+COMPLETE → Task marked as done in TaskMaster
+  ↓
+🚨 POST-COMPLETION → **MANDATORY** workflow-orchestrator call for next step guidance
 ```
 
 **Rigorous Completion Criteria:**

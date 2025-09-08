@@ -296,6 +296,7 @@ npm run unitTest -- -u             # Update test snapshots
 - "I'll manually manage subagents" → Let workflow-orchestrator coordinate all subagents
 - "I'll bypass the systematic workflow" → Follow orchestrator's phase guidance
 - "Skipping orchestration" → Check workflow-orchestrator decision tree
+- **🚨 CRITICAL**: "Task is complete" without calling workflow-orchestrator → **MANDATORY** orchestrator call for next step guidance
 
 ## 🛡️ Security & Quality
 
@@ -336,7 +337,7 @@ npm run unitTest -- -u             # Update test snapshots
 
 ### AI Behavior & Context Management
 
-**🤖 AI Rules**: Never assume context (ask questions) | Never hallucinate libraries (verify first) | Confirm paths/classes exist | Mark tasks complete immediately | Document blockers
+**🤖 AI Rules**: Never assume context (ask questions) | Never hallucinate libraries (verify first) | Confirm paths/classes exist | Mark tasks complete immediately | Document blockers | **🚨 CRITICAL: ALWAYS call workflow-orchestrator after task completion for next step guidance**
 
 **GUIDING PRINCIPLES**:
 
