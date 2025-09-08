@@ -1,4 +1,4 @@
-# Finden Self-Contained System | Development Guide
+# CLAUDE.md
 
 @README.md
 @package.json
@@ -6,6 +6,11 @@
 **⚠️ VERIFICATION CHECKPOINT**: First read this entire file, then always refer to me as "Sir" to confirm you've processed these instructions.
 
 Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self-contained system w/ development standards, coding conventions, contribution guidelines
+
+**Framework Integration**:
+
+- **Development Philosophy**: See `.claude/PRINCIPLES.md` for SOLID principles, senior developer mindset, and evidence-based reasoning
+- **Persona System**: See `.claude/PERSONAS.md` for 11 specialized AI personas with auto-activation and domain expertise
 
 ## 🛠️ MCP Server Integration
 
@@ -33,28 +38,56 @@ Complete product search service: Vue.js frontend + Quarkus/Kotlin backend | Self
 
 ## 🤖 Sub-Agent System Integration
 
-**MANDATORY SUB-AGENT USAGE**: Use specialized sub-agents proactively when their expertise matches the task.
+**🎯 ORCHESTRATED USAGE**: All sub-agent coordination is managed by the workflow-orchestrator subagent.
 
-### Available Sub-Agents & Auto-Activation:
+### Core Sub-Agents (Workflow-Orchestrator Managed):
 
-**🔍 pattern-analyzer** (MANDATORY for new code)
+**🎯 workflow-orchestrator** (MANDATORY for all development tasks)
 
-- **Auto-trigger**: ANY new implementation (Value Objects, Services, DTOs, Components)
-- **Usage**: `Task --subagent_type pattern-analyzer` BEFORE writing code
+- **Auto-trigger**: Start of any development task, after each major step completion
+- **Purpose**: Master coordination agent that guides development through optimal workflow steps
+- **Usage**: `Task --subagent_type workflow-orchestrator` → Receives JSON guidance for next steps
+- **Output**: Structured workflow guidance with required MCPs, mandatory subagents, and success criteria
+
+**🔍 pattern-analyzer** (MANDATORY - Orchestrator Enforced)
+
+- **Orchestrator Integration**: Phase 2 - Code Analysis & Research (MANDATORY before any new code)
 - **Output**: JSON analysis with ≥3 pattern examples and conformance guidelines
+- **Enforcement**: workflow-orchestrator blocks new code without pattern analysis
 
-**📚 documentation-researcher** (MANDATORY for documentation tasks)
+**📚 documentation-researcher** (MANDATORY - Orchestrator Enforced)
 
-- **Auto-trigger**: README updates, API documentation, architectural decisions, setup guides
-- **Usage**: `Task --subagent_type documentation-researcher` BEFORE documenting
+- **Orchestrator Integration**: Phase 2 - Code Analysis & Research (MANDATORY for specs/framework patterns)
+- **Documentation Priority**: 1) `/docs/` internal documentation → 2) Framework docs → 3) External resources
+- **Key Sources**: ADRs for architectural decisions, analysis docs for system context, architectural patterns
 - **Output**: JSON research with internal/external docs, best practices, and actionable insights
+- **Enforcement**: workflow-orchestrator requires documentation research before implementation
 
-**🧪 quality-assurance-expert** (MANDATORY for test development)
+**🧪 quality-assurance-expert** (MANDATORY - Orchestrator Enforced)
 
-- **Auto-trigger**: Writing new tests, analyzing test coverage, improving test suites, TDD cycles
-- **Usage**: `Task --subagent_type quality-assurance-expert` BEFORE writing tests
-- **Output**: JSON analysis with test recommendations, edge cases, coverage strategies, BDD scenarios
-- **Sequential MCP**: Uses systematic analysis for complex test scenarios and coverage evaluation
+- **Orchestrator Integration**: Phase 3a (RED) and Phase 4 (Validation)
+- **Output**: JSON analysis with test requirements, edge cases, coverage strategies, BDD scenarios
+- **Enforcement**: workflow-orchestrator mandates test analysis before writing tests and final coverage validation
+
+**🔍 review-critic** (MANDATORY - Orchestrator Enforced)
+
+- **Orchestrator Integration**: Phase 4 - Implementation Review & Validation
+- **Purpose**: Comprehensive implementation review to verify code matches requirements, architecture patterns, and best practices
+- **Output**: JSON analysis with implementation validation, pattern conformance, and improvement recommendations
+- **Enforcement**: workflow-orchestrator requires final implementation review before task completion
+
+**🏗️ architecture-advisor** (MANDATORY - Orchestrator Enforced)
+
+- **Orchestrator Integration**: All phases - Architecture decisions, design validation, technology stack questions
+- **Purpose**: Ensures CUPID compliance, 12-Factor validation, SCS communication patterns, and architectural standards enforcement
+- **Output**: JSON guidance with architectural decisions, compliance checks, and design recommendations
+- **Enforcement**: workflow-orchestrator requires architecture validation for all design and implementation decisions
+
+### Usage Pattern:
+
+```
+Development Task → workflow-orchestrator → Guided subagent coordination → Systematic execution
+```
 
 ## 🔧 CLI Tools & System Commands
 
@@ -210,91 +243,11 @@ npm run unitTest -- -u             # Update test snapshots
 
 1. Stop coding | 2. Use debugger/logs | 3. Write minimal test | 4. Ask for help | 5. Check patterns
 
-## 🏛️ Software Engineering Principles
+## 🏗️ Architecture Rules
 
-### CUPID Properties (Joyful Code)
+**Complete Standards**: See `.claude/agents/architecture-advisor.md` for comprehensive architectural guidelines including SCS patterns, technology stack requirements, CUPID properties, Clean Code practices, and 12-Factor compliance.
 
-**🧩 Composable**: Small surface area | Minimal dependencies | Intention-revealing | Easy to combine
-**🔧 Unix Philosophy**: Do one thing well | Specific, well-defined purpose | Outside-in perspective
-**📊 Predictable**: Does what it looks like | Consistent behavior | No surprises | Easy to confirm
-**🎯 Idiomatic**: Feels familiar | Language/framework conventions | Team patterns
-**🌐 Domain-based**: Minimize cognitive distance | Domain language in code | Business-aligned
-
-### Clean Code Practices
-
-**Self-Documenting Code**: Clear naming > comments | Structure reveals intent | Function size <20 lines
-**Boy Scout Rule**: Leave code cleaner than found | Continuous improvement | Refactor ruthlessly
-**Comment Philosophy**: Code failure → comment | Explain "why" not "what" | Remove commented code
-
-### 12-Factor App (Cloud-Native)
-
-**☁️ Codebase**: One repo, many deploys | Git as single source
-**📦 Dependencies**: Explicit declaration | package.json, build.gradle | No implicit deps
-**⚙️ Config**: Environment variables only | NO hardcoded values | Per-environment cfg
-**🔗 Backing Services**: MongoDB as attached resource | Kafka as message broker
-**🔄 Build/Release/Run**: Strict separation | CI/CD pipeline | Immutable releases
-**🎯 Processes**: Stateless execution | NO sticky sessions | Share-nothing
-**🌐 Port Binding**: Self-contained services | Export via port binding
-**📈 Concurrency**: Horizontal scaling | Process model | Multiple instances
-**⚡ Disposability**: Fast startup <10s | Graceful shutdown | Robust against failure
-**🔄 Dev/Prod Parity**: Minimize gaps | Same backing services | Same deployment process
-**📋 Logs**: Event streams to stdout | Structured logging | NO log files
-**🔧 Admin**: One-off processes | Separate admin tasks | Same codebase
-
-## 🏗️ System Architecture
-
-### SCS Communication Principles
-
-**🏗️ SCS Pattern**: UI ownership (no shared components) | Data autonomy (dedicated DB) | Async communication (Kafka+Avro only) | Independent deployment | Infrastructure auth/authz
-
-### Technology Stack (MANDATORY)
-
-**🔧 Backend**: Kotlin + Quarkus (≠Spring) + MongoDB Panache + Gradle + Kafka+Avro
-**🎨 Frontend**: TypeScript + Vue.js Composition API (≠Options) + Vuex + Fastify SSR + Axios (≠fetch)
-
-### Architecture Layers
-
-**🔧 Backend (Hexagonal/Onion)**:
-
-- **Domain**: Pure business logic, zero dependencies | 📁 model/, service/, repository/, exception/
-- **Application**: Use cases, DTOs, mappers | 📁 usecase/, dto/, mapper/, service/
-- **Adapter**: REST controllers, DB adapters | 📁 web/, persistence/, messaging/, external/
-
-**🎨 Frontend (3-Layer)**:
-
-- **Presentation**: Vue components (UI only) | 📁 apps/, shared/
-- **Business**: Composables (reactive logic) | 📁 composables/
-- **Data**: HTTP clients, API abstractions | 📁 api/, store/
-
-**Dependencies**: Domain ← Application ← Adapter | Presentation → Business → Data
-
-### CUPID Architecture Integration
-
-**🧩 Composable Design**:
-
-- Small surface area: <5 public methods per class | Minimal external dependencies
-- Intention-revealing: Clear naming for classes/methods | Self-documenting interfaces
-- Easy combination: Components work together without complex configuration
-
-**🔧 Unix Philosophy Application**:
-
-- Each service does ONE thing well | Clear, specific purpose per module
-- Domain services: Single business capability | Controllers: Single endpoint responsibility
-
-**📊 Predictable Behavior**:
-
-- Consistent error handling across layers | Standard response formats
-- No hidden side effects | Pure functions in domain layer
-
-**🎯 Idiomatic Implementation**:
-
-- Follow Kotlin/Vue.js conventions | Use established patterns from community
-- Consistent naming across codebase | Team-agreed patterns documented
-
-**🌐 Domain-based Organization**:
-
-- Package by feature, not layer | Business concepts in code structure
-- Domain language in class/method names | Business rules explicit in code
+**Auto-Activation**: Use `Task --subagent_type architecture-advisor` for architecture decisions, design validation, technology stack questions, and compliance checks.
 
 ## 📊 Development Standards
 
@@ -305,6 +258,8 @@ npm run unitTest -- -u             # Update test snapshots
 3. **Measure First**: Functionality before optimization | NO PREMATURE OPTIMIZATION
 4. **Optimize for Clarity**: Every instruction must be unambiguous and actionable
 
+**Complete Framework**: See `.claude/PRINCIPLES.md` for comprehensive SOLID principles, senior developer mindset, error handling, and AI-driven development philosophy.
+
 ### Documentation Standards
 
 **📚 Documentation Hierarchy (STRICT ORDER)**:
@@ -312,54 +267,14 @@ npm run unitTest -- -u             # Update test snapshots
 1. **Working Code**: Self-documenting through clear naming & structure
 2. **Tests**: Executable documentation (BDD format) → Given-When-Then
 3. **README.md**: Project setup & overview only
-4. **Markdown in /doc**: Detailed architecture, API specs, guides
+4. **Markdown in /docs**: Detailed architecture, API specs, guides
 5. **Comments**: LAST RESORT - only for "why" not "what"
-
-**📝 Rules**:
-
-- NO comments for obvious code → code should explain itself
-- NO commented-out code → delete it (use Git history)
-- NO redundant documentation → tests ARE documentation
-- Code structure IS documentation → use clear naming & organization
-- Comments only when code cannot self-explain after all other options exhausted
-
-**🎯 Comment Standards**:
-
-- Explain intent, not implementation
-- Warning of consequences only
-- Legal/regulatory requirements only
-- Amplification of non-obvious business rules only
 
 ### Convention Conformance Protocol
 
 **EXAMINE FIRST**: Before adding new code → analyze existing patterns → understand conventions → conform to established approaches
 
-**🎯 PREPARE TO DISCUSS**: Load all relevant context → Study existing patterns → Understand architectural decisions → Then implement
-
-**Discovery Workflow**:
-
-1. **Pattern Analysis**: Search similar implementations → identify naming patterns → understand architectural decisions
-2. **Convention Mapping**: Document discovered conventions → note deviations → understand rationale
-3. **Conformance Implementation**: Apply patterns → maintain consistency → extend logically
-
-**PATTERN RECOGNITION REQUIREMENTS**:
-
-- Search for ≥3 similar implementations before writing new code
-- Extract common patterns and naming conventions
-- Document why existing patterns were chosen
-- NEVER deviate without explicit justification
-
-**🔧 Kotlin/Backend Standards**:
-
-- **File Naming**: PascalCase w/ suffixes (`UserService`, `ProductRepository`) + lowercase packages
-- **✅ Required**: `val` > `var` | Immutable data classes w/ `copy()` | Safe operators (`?.`, `?:`) | Functional ops | Pure domain functions
-- **❌ Forbidden**: Force unwrapping | Imperative loops | Side effects in domain | Resource leaks
-
-**🎨 Vue.js/Frontend Standards**:
-
-- **File Naming**: PascalCase components (`ProductCard.vue`) + camelCase composables w/ `use` prefix + lowercase dirs w/ hyphens
-- **✅ Required**: Composition API + TypeScript interfaces | Single responsibility components | Semantic HTML + BEM + scoped styles
-- **❌ Forbidden**: Options API | Direct API calls from components | Business logic in components
+**Complete Analysis**: Use `Task --subagent_type pattern-analyzer` for comprehensive pattern discovery and conformance guidance.
 
 ### 🚨 Red Flags (STOP Immediately)
 
@@ -370,148 +285,47 @@ npm run unitTest -- -u             # Update test snapshots
 - "This should be good enough" → Achieve 100/100 standard
 - "Skip tests for now" → TDD is mandatory
 - Writing >30 lines without tests → Run tests continuously
-- "I'll manually search for patterns" → USE pattern-analyzer agent
-- "I'll do anything without researching" → USE documentation-researcher agent
-- "Writing tests without analysis" → USE quality-assurance-expert agent
-- "Skipping agent delegation" → Check decision tree
-
-**CUPID Violations**:
-
-- Large interfaces (>5 methods) → Break into smaller, composable pieces
-- Unclear naming → Make intention-revealing
-- Unpredictable behavior → Ensure consistent, obvious outcomes
-- Framework-specific code in domain → Keep domain pure
-- Technical language in business code → Use domain language
-
-**Clean Code Violations**:
-
-- Adding explanatory comments → Make code self-explaining first
-- Commented-out code → Delete it (use Git)
-- Long functions (>20 lines) → Break down into smaller functions
-- Nested conditions (>3 levels) → Extract methods or early returns
-
-**12-Factor Violations**:
-
-- Hardcoded configuration → Use environment variables
-- Stateful services → Make stateless
-- Direct file system usage → Treat as attached resource
-- Manual deployment steps → Automate everything
+- "I'll skip workflow orchestration" → ALWAYS use workflow-orchestrator subagent first
+- "I'll manually manage subagents" → Let workflow-orchestrator coordinate all subagents
+- "I'll bypass the systematic workflow" → Follow orchestrator's phase guidance
+- "Skipping orchestration" → Check workflow-orchestrator decision tree
 
 ## 🛡️ Security & Quality
 
-### Security Boundaries
-
-**Infrastructure**: Auth/authz handled by infrastructure (SCS NEVER implements authentication)
-**SCS Responsibility**: Input validation + business logic security + data protection
-**🛡️ Requirements**: Anonymous search only | NO personal data storage | GDPR compliance | Parameterized queries only
-
-### Testing Stack & Standards
-
-**🔧 Backend**: JUnit 5 + Mockk + TestContainers + ArchUnit | **🎨 Frontend**: Jest + Vue Test Utils + Playwright
-**Coverage**: 80% unit | 70% integration | 100% critical paths | **Format**: BDD/ATDD (Given-When-Then)
-**Strategy**: Use quality-assurance-expert agent for comprehensive test analysis before implementation
-
-### Performance Standards
-
-**⚡ Algorithm**: O(n) efficient (NO O(n²)+) | Functional operations | Proper DB indexes
-**⚡ API**: P95 < 300ms | Bounded data loading | JSON envelope responses
-**⚡ Frontend**: Core Web Vitals | Lazy loading + route splitting
-
-### 12-Factor App Compliance
-
-**☁️ Cloud-Native Validation Checklist**:
-
-- Codebase: ✅ Single Git repo | ✅ Multiple environment deploys
-- Dependencies: ✅ package.json + build.gradle explicit | ❌ NO global dependencies
-- Config: ✅ Environment variables | ❌ NO hardcoded config
-- Backing Services: ✅ MongoDB/Kafka as attached resources
-- Build/Release/Run: ✅ CI/CD pipeline separation | ✅ Immutable releases
-- Processes: ✅ Stateless services | ❌ NO session storage
-- Port Binding: ✅ Self-contained services | ✅ Export via port binding
-- Concurrency: ✅ Horizontal scaling ready | ✅ Process model
-- Disposability: ✅ Fast startup/shutdown | ✅ Graceful termination
-- Dev/Prod Parity: ✅ Same backing services | ✅ Same deployment
-- Logs: ✅ stdout streams | ✅ Structured logging
-- Admin: ✅ One-off processes | ✅ Same codebase
-
 ### Quality Gates (3-Stage)
 
-1. **Local**: Unit tests, lint, build + CUPID validation + Clean code checks + Documentation hierarchy compliance
-
-- Backend: `unitTest`, `integrationTest`, `detekt`, `build`
-- Frontend: `install`, `lint`, `unitTest`, `build`
-- Principles: CUPID property check, comment ratio <5%, function size <20 lines
-- **Test Strategy**: quality-assurance-expert analysis required before test implementation
-
-2. **Pre-Merge**: Integration tests + Architecture compliance + 12-Factor validation + Code review
-
-- TestContainers integration tests, arch compliance validation
-- CUPID composability check, 12-factor compliance scan
-- Code review approval, SCS communication pattern compliance
-
+1. **Local**: Unit tests, lint, build + CUPID validation + Clean code checks
+2. **Pre-Merge**: Integration tests + Architecture compliance + Code review
 3. **Pre-Deploy**: E2E tests + Performance + Security + Cloud-native compliance
 
-- E2E tests w/ Playwright, performance tests under load, security validation
-- 12-factor deployment validation, stateless service verification
-- Docker image build & push, K8s deployment validation
+**Complete Details**: See `.claude/agents/workflow-orchestrator.md` for detailed quality gate commands and enforcement.
 
 ## 🔄 Development Workflow (MCP-Integrated)
 
-### SuperClaude Integration
+### Persona Integration
 
 **🤖 Auto-Persona Activation**: Frontend files → 🎨 | API/server/DB → 🔧 | Tests → 📊 | Architecture/design → 🏗️ | Security → 🛡️ | Performance → ⚡
 
-### Daily TDD + Task Management + MCP Server Loop
+**Complete Persona System**: See `.claude/PERSONAS.md` for detailed persona specifications, decision frameworks, and cross-persona collaboration patterns.
 
-**0. Conversation Setup**: Clear context with `/clear` command
+### Workflow Management
 
-**1. Task Setup** (TaskMaster MCP):
+**🎯 MANDATORY**: Use workflow-orchestrator subagent for all development tasks
 
-- `task-master next` → select prioritized task
-- `task-master show <task-id>` → review requirements
-- `task-master set-status --id=<task-id> --status=in-progress`
-- Auto-persona selection based on file patterns & task context
+**Primary Workflow**: `Task → workflow-orchestrator → Guided 4-Phase Development Process`
 
-**2. Each Subtask Code Analysis & Research** (JetBrains MCP):
+**Complete Workflow**: See `.claude/agents/workflow-orchestrator.md` for detailed 4-phase TDD process, quality gates, and systematic progression guidelines.
 
-- `mcp__jetbrains__list_directory_tree` → Explore project structure
-- `mcp__jetbrains__search_in_files_by_text` → Find similar implementations
-- `mcp__jetbrains__get_file_problems` → Identify existing issues
-- **RESEARCH**: Use documentation-researcher for API specs, framework patterns, and best practices
+### Sub-Agent Integration
 
-**3. Each Subtask Iteration (TDD Cycle)**:
-For each subtask (`<task-id>.1`, `<task-id>.2`, etc.):
-a. **RED**: Use quality-assurance-expert to analyze test requirements → Write failing BDD test (Given-When-Then format) → DON'T STOP until test fails correctly
-b. **GREEN**: Minimal code to pass test w/ persona-guided implementation → DON'T STOP until test passes
-c. **REFACTOR**: Clean code w/ auto-quality analysis → DON'T STOP until quality score = 100
-d. **DOCUMENT**: `task-master update-subtask --id=<task-id>.<subtask> --prompt="notes"`
-e. **MEMORY**: Capture patterns, problems, solutions in development episode
-f. **COMMIT**: Atomic commit w/ pre-commit validation → DON'T STOP until all hooks pass
+**Workflow-Orchestrator Managed**: All subagent coordination is handled by workflow-orchestrator
 
-**4. Validation & Task Completion** (Multiple MCP):
+**Key Integration Principles**:
 
-- Sequential: Complex debugging if needed
-- JetBrains: Code quality analysis
-- Integration testing across subtasks (quality-assurance-expert for coverage validation)
-- Final refactoring for consistency
-- Store completion insights & learnings
-- `task-master set-status --id=<task-id> --status=done`
-- Push changes
-
-### Sub-Agent Best Practices
-
-**Performance Benefits**:
-
-- pattern-analyzer: Ensures consistency, prevents deviations
-- documentation-researcher: Ensures comprehensive docs, finds best practices
-- quality-assurance-expert: Ensures comprehensive test coverage, identifies edge cases, validates quality metrics
-
-**Integration Rules**:
-
-- Sub-agents have no context - provide complete information
-- Use specific, detailed prompts
-- Review agent output before proceeding
-- Chain agents for complex workflows
+- Sub-agents have no context - orchestrator provides complete information
+- Orchestrator determines optimal subagent sequence and timing
+- Mandatory subagents (pattern-analyzer, documentation-researcher, quality-assurance-expert, review-critic) are enforced
+- Review orchestrator guidance and subagent output before proceeding
 
 ### AI Behavior & Context Management
 
@@ -538,13 +352,18 @@ f. **COMMIT**: Atomic commit w/ pre-commit validation → DON'T STOP until all h
 ### MCP Server Decision Tree
 
 ```
+Development Task? → workflow-orchestrator subagent (MANDATORY)
+  ↓
 File Operations? → JetBrains MCP
-Patterns Analysis? → pattern-analyzer agent
-Documentation Research? → documentation-researcher agent
-Test Strategy & Coverage? → quality-assurance-expert agent
+Pattern Analysis? → pattern-analyzer agent (MANDATORY via orchestrator)
+Documentation Research? → documentation-researcher agent (MANDATORY via orchestrator)
+Test Strategy & Coverage? → quality-assurance-expert agent (MANDATORY via orchestrator)
+Implementation Review? → review-critic agent (MANDATORY via orchestrator)
 Complex Analysis? → Sequential MCP
-Project Management? → TaskMaster MCP
+Project Management? → TaskMaster MCP (integrated in orchestrator workflow)
 ```
+
+**Primary Rule**: ALWAYS start with workflow-orchestrator subagent for systematic guidance
 
 ### Git Workflow
 
@@ -559,38 +378,6 @@ Project Management? → TaskMaster MCP
 **🧠 Development Episodes**: Store patterns, problems, solutions during TDD cycles
 **📊 Anti-Pattern Detection**: Capture recurring issues & prevention methods
 **🏗️ Architecture Decisions**: Record performance metrics & architectural choices
-
-**🏛️ Principle Violation Tracking**:
-
-- **CUPID Violations**: Non-composable interfaces, unclear naming, unpredictable behavior
-- **Clean Code Issues**: Excessive comments, long functions, unclear intent
-- **12-Factor Deviations**: Configuration hardcoding, stateful services, manual processes
-- **Documentation Failures**: Comments before refactoring, missing tests, poor structure
-
-**🎯 Pattern Recognition Enhancement**:
-
-- Track successful CUPID implementations for reuse
-- Monitor clean code practices adoption rates
-- Record 12-factor compliance improvements over time
-- Analyze documentation hierarchy effectiveness
-
-### CLAUDE.md Evolution
-
-**Self-Learning Cycle**:
-
-- Weekly analysis of memory patterns (>3 occurrences)
-- Auto-update FORBIDDEN Anti-Patterns based on real issues
-- Refine standards based on proven practices
-- Generate recommendations for team review
-
-**Principle Evolution Tracking**:
-
-- CUPID property adherence metrics and improvement suggestions
-- Clean code practice effectiveness measurement
-- 12-factor compliance gaps and resolution patterns
-- Documentation hierarchy violations and corrections
-
-**Context Management**: Maintain full context across operations | Use consistent UUIDs for improved artifacts | Strictly adhere to language/framework requirements
 
 ## 🔍 Troubleshooting
 
@@ -612,7 +399,3 @@ Project Management? → TaskMaster MCP
 ### When to Escalate (>30 min stuck)
 
 Document: Goal + attempts + actual vs expected results + environment + next steps needed
-
----
-
-*Finden Development Guide v12.0 | Self-Contained System | Optimized for SuperClaude | Token-efficient | Evidence-based practices*
