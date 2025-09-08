@@ -386,9 +386,11 @@ Project Management? → TaskMaster CLI (integrated in orchestrator workflow)
 
 **🧠 Development Episodes**: Store patterns, problems, solutions during TDD cycles in `./docs/episodes/`
 - **File Format**: `YYYY-MM-DD-HH-MM-task-{task-id}-episode.md`
-- **Required Sections**: Context, Problem, Solution, Patterns Discovered, Lessons Learned, Anti-patterns to Avoid
+- **Required Sections**: Context, Problem, Solution, Patterns Discovered, Lessons Learned, Anti-patterns to Avoid, Agile Retrospective
+- **Retrospective Integration**: What Went Well, What Could Be Improved, 4Ls Analysis (Liked/Learned/Lacked/Longed For), Action Items
 - **Usage**: Created during Phase 3e (MEMORY) of workflow-orchestrator TDD cycle
-- **Purpose**: Enable pattern analysis, knowledge transfer, and future development optimization
+- **Purpose**: Enable pattern analysis, knowledge transfer, continuous improvement, and team retrospective aggregation
+- **Continuous Improvement Loop**: Individual episodes → pattern recognition → team learning → process evolution
 
 **📊 Anti-Pattern Detection**: Capture recurring issues & prevention methods
 **🏗️ Architecture Decisions**: Record performance metrics & architectural choices

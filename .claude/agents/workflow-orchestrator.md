@@ -146,8 +146,14 @@ For each subtask (`<task-id>.1`, `<task-id>.2`, etc.), **RIGOROUS ORDER**:
   - **Patterns Discovered**: New patterns found in codebase, reusable approaches
   - **Lessons Learned**: Key insights for future development
   - **Anti-patterns to Avoid**: What didn't work, pitfalls to prevent
-- **DON'T STOP** until episode is created and stored in `./docs/episodes/`
-- Store learnings for future reference and pattern analysis
+  - **Agile Retrospective**: 
+    - **What Went Well**: Technical achievements, process improvements, collaboration highlights
+    - **What Could Be Improved**: Process inefficiencies, communication gaps, tool limitations
+    - **4Ls Analysis**: Liked, Learned, Lacked, Longed For
+    - **Action Items**: Immediate improvements, medium-term changes, strategic recommendations
+- **DON'T STOP** until episode is created with ALL sections completed in `./docs/episodes/`
+- **Retrospective Focus**: Capture both technical learnings AND process/team insights for continuous improvement
+- Store learnings for future reference, pattern analysis, and team retrospective aggregation
 
 ### f. COMMIT Phase (Atomic Commits)
 

@@ -81,6 +81,68 @@
 - [Pitfall 1]: Warning for future developers
 - [Pitfall 2]: Edge case to watch out for
 
+## Agile Retrospective
+
+### What Went Well (Celebrations & Successes)
+
+**Technical Achievements**:
+- [Achievement 1]: Successful implementation or breakthrough
+- [Achievement 2]: Effective solution or pattern application
+
+**Process Improvements**:
+- [Process 1]: Workflow or methodology that worked well
+- [Process 2]: Communication or collaboration success
+
+**Team Collaboration Highlights**:
+- [Collaboration 1]: Effective teamwork or knowledge sharing
+- [Collaboration 2]: Support received or provided
+
+### What Could Be Improved (Constructive Reflection)
+
+**Process Inefficiencies**:
+- [Inefficiency 1]: Process that slowed down development
+- [Inefficiency 2]: Workflow bottleneck or friction point
+
+**Communication Gaps**:
+- [Gap 1]: Information that was unclear or missing
+- [Gap 2]: Coordination challenge or misunderstanding
+
+**Tool/Resource Limitations**:
+- [Limitation 1]: Tool or resource that wasn't adequate
+- [Limitation 2]: Missing capability or access issue
+
+### 4Ls Analysis
+
+**Liked** (What was enjoyable/satisfying):
+- [Liked 1]: Aspect of the work that was rewarding
+- [Liked 2]: Tool, process, or interaction that felt good
+
+**Learned** (New knowledge/skills acquired):
+- [Learned 1]: Technical knowledge or skill gained
+- [Learned 2]: Process insight or domain understanding
+
+**Lacked** (What was missing):
+- [Lacked 1]: Tool, information, or support that was needed
+- [Lacked 2]: Skill or resource that would have helped
+
+**Longed For** (Future improvements/wishes):
+- [Longed 1]: Improvement that would make future tasks easier
+- [Longed 2]: Tool, process, or capability desired for the future
+
+### Action Items (Concrete Next Steps)
+
+**Immediate Improvements** (Apply to next task):
+- [Action 1]: Specific change to implement immediately
+- [Action 2]: Quick fix or adjustment to make
+
+**Medium-term Process Changes** (Next few tasks/sprint):
+- [Process Change 1]: Workflow or methodology improvement
+- [Process Change 2]: Tool or setup enhancement
+
+**Long-term Strategic Recommendations** (Project/team level):
+- [Strategic 1]: Architectural or organizational suggestion
+- [Strategic 2]: Investment in tools, training, or infrastructure
+
 ## References
 
 **Related Episodes**: [Links to related episode files]  
@@ -93,6 +155,16 @@
 
 1. Copy this template when creating a new episode
 2. Fill in all sections during Phase 3e (MEMORY) of TDD cycle  
-3. Focus on capturing knowledge that will benefit future development
-4. Use specific examples and code references where possible
-5. Link to related episodes for pattern tracking
+3. Focus on capturing both technical knowledge and process insights
+4. Use the retrospective sections to support continuous improvement
+5. Be specific with examples and code references where possible
+6. Fill action items that can be realistically implemented
+7. Link to related episodes for pattern tracking and retrospective aggregation
+
+### Retrospective Section Guidelines
+
+- **What Went Well**: Celebrate successes to reinforce positive patterns
+- **What Could Be Improved**: Focus on constructive feedback, not blame
+- **4Ls Analysis**: Be honest but balanced in your assessment
+- **Action Items**: Make them SMART (Specific, Measurable, Achievable, Relevant, Time-bound)
+- Consider both individual and team perspectives where applicable
