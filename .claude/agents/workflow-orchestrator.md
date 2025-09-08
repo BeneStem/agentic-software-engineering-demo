@@ -69,22 +69,37 @@ When invoked, you must rigorously follow the Daily TDD + Task Management + MCP S
 ## Phase 2: Subtask Code Analysis & Research (JetBrains MCP Integration)
 
 **Goal**: Understand codebase context and architecture before implementation
-**Required Actions** (in order):
+**Optimization**: Execute research subagents in parallel for maximum efficiency
 
+**Required Actions** (parallel execution recommended):
+
+### 2.1 Initial Exploration (Sequential)
 1. **Structure Exploration**: Recommend `mcp__jetbrains__list_directory_tree` → Explore project structure
 2. **Pattern Discovery**: Recommend `mcp__jetbrains__search_in_files_by_text` → Find similar implementations
 3. **Issue Identification**: Recommend `mcp__jetbrains__get_file_problems` → Identify existing issues
-4. **Documentation Research**: **MANDATORY** - Use documentation-researcher with documentation priority:
+
+### 2.2 Research & Analysis (PARALLEL EXECUTION)
+**MANDATORY PARALLEL SUBAGENTS** - Launch simultaneously for optimal efficiency:
+
+**Parallel Group A - Documentation & Patterns**:
+- **documentation-researcher** (parallel): Documentation priority system:
   - **Primary**: `/docs/` internal documentation (ADRs, analysis docs, architecture)
   - **Secondary**: Framework documentation and external resources
   - **Key Sources**: ADRs for architectural decisions, context-analysis for system boundaries
-5. **Pattern Analysis**: **MANDATORY** - Use pattern-analyzer with documentation-enhanced analysis:
+- **pattern-analyzer** (parallel): Documentation-enhanced pattern analysis:
   - Cross-reference findings with ADRs and architectural documentation
   - Ensure pattern compliance with documented architectural decisions
-6. **Architecture Validation**: **MANDATORY** - Use architecture-advisor for design decisions:
+  - Discover ≥3 similar implementations and extract conventions
+
+**Parallel Group B - Architecture & Quality**:
+- **architecture-advisor** (parallel): Design validation and standards enforcement:
   - Validate CUPID compliance and architectural standards
   - Ensure SCS boundaries and communication patterns are respected
   - Confirm 12-Factor App principles and technology stack alignment
+- **quality-assurance-expert** (parallel): Proactive quality analysis:
+  - Analyze existing test patterns and coverage strategies
+  - Identify quality gaps and improvement opportunities
+  - Prepare comprehensive test scenarios for upcoming implementation
 
 ## Phase 3: Subtask Iteration (Rigorous TDD Cycle)
 
@@ -134,12 +149,38 @@ For each subtask (`<task-id>.1`, `<task-id>.2`, etc.), **RIGOROUS ORDER**:
 ## Phase 4: Validation & Task Completion (Multi-MCP Integration)
 
 **Goal**: Comprehensive validation before task completion
-**Required Actions** (in order):
+**Optimization**: Execute validation subagents in parallel for comprehensive coverage
 
+**Required Actions**:
+
+### 4.1 Pre-Validation Setup (Sequential)
 1. **Complex Debugging**: Use Sequential MCP for any complex debugging needs
 2. **Code Quality Analysis**: Use JetBrains MCP for comprehensive code quality analysis
-3. **Integration Testing**: Use quality-assurance-expert for coverage validation across subtasks
-4. **Final Refactoring**: Ensure consistency across all subtasks
+
+### 4.2 Comprehensive Validation (PARALLEL EXECUTION)
+**MANDATORY PARALLEL SUBAGENTS** - Launch simultaneously for thorough validation:
+
+**Parallel Group A - Quality & Standards**:
+- **quality-assurance-expert** (parallel): Coverage validation across subtasks:
+  - Verify test coverage meets thresholds (≥80% unit, ≥70% integration)
+  - Validate comprehensive edge case testing
+  - Confirm BDD scenarios match requirements
+- **architecture-advisor** (parallel): Final architecture compliance checks:
+  - Validate CUPID principles and clean architecture
+  - Confirm SCS boundaries and communication patterns
+  - Verify 12-Factor App compliance and technology stack alignment
+
+**Parallel Group B - Implementation Review**:
+- **review-critic** (parallel): Comprehensive implementation review:
+  - Verify code matches requirements and architectural patterns
+  - Validate implementation against existing conventions
+  - Ensure code quality and best practices compliance
+- **refactoring-advisor** (parallel): Final refactoring assessment:
+  - Identify remaining technical debt or quality issues
+  - Ensure consistency across all subtasks
+  - Validate 100/100 quality standard achievement
+
+### 4.3 Completion & Storage (Sequential)
 5. **Knowledge Storage**: Store completion insights & learnings
 6. **Task Completion**: `task-master set-status --id=<task-id> --status=done`
 7. **Version Control**: Push changes with comprehensive commit messages
@@ -161,15 +202,26 @@ For each subtask (`<task-id>.1`, `<task-id>.2`, etc.), **RIGOROUS ORDER**:
 
 **Mandatory Subagent Usage** (NEVER skip these):
 
-- **Phase 2**: documentation-researcher (MANDATORY - internal `/docs/` priority, then external)
-- **Phase 2**: pattern-analyzer (MANDATORY - documentation-enhanced pattern analysis)
-- **Phase 2**: architecture-advisor (MANDATORY - architecture decisions and design validation)
+**Phase 2 - PARALLEL EXECUTION GROUPS**:
+- **Parallel Group A**: documentation-researcher + pattern-analyzer (MANDATORY - simultaneous research)
+  - documentation-researcher: Internal `/docs/` priority, then external framework docs
+  - pattern-analyzer: Documentation-enhanced analysis with ≥3 pattern discoveries
+- **Parallel Group B**: architecture-advisor + quality-assurance-expert (MANDATORY - simultaneous analysis)
+  - architecture-advisor: Architecture decisions and design validation
+  - quality-assurance-expert: Proactive quality analysis and test strategy preparation
+
+**Phase 3 - TDD CYCLE INTEGRATION**:
 - **Phase 3a**: quality-assurance-expert (MANDATORY before writing tests)
-- **Phase 3**: architecture-advisor (MANDATORY - design validation during implementation)
+- **Phase 3b**: architecture-advisor (MANDATORY - design validation during implementation)
 - **Phase 3c**: refactoring-advisor (MANDATORY during REFACTOR phase when quality < 100/100)
-- **Phase 4**: quality-assurance-expert (MANDATORY for coverage validation)
-- **Phase 4**: architecture-advisor (MANDATORY - final architecture compliance checks)
-- **Phase 4**: review-critic (MANDATORY - comprehensive implementation review)
+
+**Phase 4 - PARALLEL VALIDATION GROUPS**:
+- **Parallel Group A**: quality-assurance-expert + architecture-advisor (MANDATORY - simultaneous validation)
+  - quality-assurance-expert: Coverage validation and comprehensive testing analysis
+  - architecture-advisor: Final architecture compliance and CUPID validation
+- **Parallel Group B**: review-critic + refactoring-advisor (MANDATORY - simultaneous review)
+  - review-critic: Comprehensive implementation review against requirements
+  - refactoring-advisor: Final refactoring assessment and quality standard verification
 
 **Documentation Integration Requirements**:
 
@@ -329,7 +381,20 @@ Provide your workflow guidance as a structured JSON response:
       "purpose": "Why this subagent is MANDATORY or beneficial",
       "documentation_focus": "Specific /docs/ files to consult (ADRs, analysis docs)",
       "mandatory": true,
+      "execution_mode": "sequential|parallel",
+      "parallel_group": "A|B - for parallel execution grouping",
       "order": 1
+    }
+  ],
+  "parallel_execution_groups": [
+    {
+      "group_id": "A|B",
+      "phase": "Phase 2|Phase 4",
+      "subagents": [
+        "List of subagents to execute in parallel"
+      ],
+      "execution_strategy": "Launch all subagents simultaneously for maximum efficiency",
+      "synchronization": "Wait for all subagents to complete before proceeding"
     }
   ],
   "success_criteria": [
@@ -372,15 +437,27 @@ Provide your workflow guidance as a structured JSON response:
     "tdd_cycle_integrity": "RED before GREEN enforcement status",
     "mandatory_subagents": [
       "documentation-researcher",
-      "pattern-analyzer",
+      "pattern-analyzer", 
       "architecture-advisor",
       "quality-assurance-expert",
       "refactoring-advisor",
       "review-critic"
     ],
+    "parallel_execution_compliance": {
+      "phase_2_groups": "Status of Phase 2 parallel group execution",
+      "phase_4_groups": "Status of Phase 4 parallel group execution",
+      "synchronization_integrity": "All parallel subagents completed before proceeding"
+    },
     "pattern_conformance": "Status of pattern-analyzer usage",
+    "optimization_metrics": {
+      "research_efficiency": "Parallel vs sequential execution time savings",
+      "validation_coverage": "Comprehensive validation through parallel subagents",
+      "workflow_bottlenecks": "Any identified inefficiencies in parallel execution"
+    },
     "anti_patterns_detected": [
-      "Any workflow violations detected"
+      "Any workflow violations detected",
+      "Sequential execution when parallel is optimal",
+      "Skipping parallel synchronization checkpoints"
     ]
   }
 }
